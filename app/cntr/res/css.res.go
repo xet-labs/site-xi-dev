@@ -1,6 +1,8 @@
 package res
 
 import (
+	"strings"
+	"sync"
 	"time"
 
 	"xi/app/lib"
@@ -11,36 +13,47 @@ import (
 )
 
 type CssRes struct {
-	Dir    []string
-	RdbTTL time.Duration
-	Files  []string
+	Files    map[string][]string // key: baseName, value: list of CSS file paths
+	BaseDir string
+	RdbTTL  time.Duration
+
+	CacheFilePath bool
+	once sync.Once
+	mu   sync.RWMutex
 }
 
 var Css = &CssRes{
-	RdbTTL: 12 * time.Hour,
+	Files:    make(map[string][]string),
+	BaseDir: cfg.View.CssBaseDir,
+	RdbTTL:  12 * time.Hour,
+
+	CacheFilePath: false,
 }
 
 // Css handler: serves combined+cssMin CSS (Redis cached)
-func (c *CssRes) Get(g *gin.Context) {
-	if c.Files == nil {
-		c.getFiles()
-	}
-	rdbKey := g.Request.URL.String()
-
-	if lib.View.OutCache(g, rdbKey).Css() {
-		return
+func (r *CssRes) Get(c *gin.Context) {
+	rdbKey := c.Request.RequestURI
+	base := cfg.View.CssBaseDir + "/" + strings.TrimSuffix(c.Param("name"), ".css")
+	
+	if lib.View.OutCache(c, rdbKey).Css() {
+		return 	// Send cache
 	}
 
-	lib.View.OutCss(g, lib.File.MergeByte(c.Files), rdbKey)
-}
+	if _, ok := r.Files[base]; !r.CacheFilePath || !ok {
+		var (
+			files []string
+			err   error
+		)
+		files, err = lib.Util.File.GetWithExt(".css", base)
+		if err != nil {
+			log.Error().Err(err).Str("Dir", base).Msg("Controller CSS files")
+			return
+		}
 
-func (c *CssRes) getFiles() {
-	var err error
-	Css.Files, err = lib.File.GetExt(".css", cfg.View.CssDir...)
-	if err != nil {
-		log.Error().Err(err).Msg("Controller CSS files")
+		r.mu.Lock()
+		r.Files[base] = files
+		r.mu.Unlock()
 	}
-	if len(Css.Files) == 0 {
-		log.Warn().Msgf("Controller CSS no files found in directory: %s", lib.Util.QuoteSlice(cfg.View.CssDir))
-	}
+
+	lib.View.OutCss(c, lib.Util.File.MergeByte(r.Files[base]), rdbKey)
 }

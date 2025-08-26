@@ -32,36 +32,18 @@ var Blog = &BlogCntr{
 }
 
 // GET /blog
-func (b *BlogCntr) Index(c *gin.Context) {
-	rdbKey := "/blog"
-
-	if lib.View.OutCache(c, rdbKey).Html() {
-		return
-	} // Try cache
-
-	b.mu.RLock()
-	defer b.mu.RUnlock()
-
-	// Build data
-	P := cfg.View.Pages["blogs"]
-	P.Data = map[string]any{
-		"Url": c.Request.URL.String(),
-	}
-
-	lib.View.OutHtmlLyt(c, P, rdbKey) // Cache renderer
-}
+// func (b *BlogCntr) Index(c *gin.Context) {}
 
 func (b *BlogCntr) Show(c *gin.Context) {
-	rawUID := c.Param("uid") // @username or UID
-	rawID := c.Param("id")   // blog ID or slug
-	rdbKey := "/blog/" + rawUID + "/" + rawID
+	rdbKey := c.Request.RequestURI
 
 	if lib.View.OutCache(c, rdbKey).Html() {
 		return
 	} // Try cache
 
-	b.mu.Lock()
-	defer b.mu.Unlock()
+	// On cache miss fetch data from DB
+	rawUID := c.Param("uid") // @username or UID
+	rawID := c.Param("id")   // blog ID or slug
 
 	blog := model.Blog{}
 	if err := BlogApi.Validate(rawUID, rawID); err != nil {
@@ -69,6 +51,7 @@ func (b *BlogCntr) Show(c *gin.Context) {
 		return
 	}
 
+	b.mu.Lock()
 	if err := BlogApi.ShowCore(&blog, rawUID, rawID); err != nil { // Fallback to DB
 		status := http.StatusNotFound
 		if err == ErrInvalidUID {
@@ -77,15 +60,32 @@ func (b *BlogCntr) Show(c *gin.Context) {
 		c.JSON(status, gin.H{"error": err.Error()})
 		return
 	}
+	b.mu.Unlock()
 
-	P := cfg.View.Pages["blog"]
-	P.Data = map[string]any{
+	p := cfg.View.Pages["blogs"]
+	b.PrepMeta(c, &p.Meta, &blog)
+	p.Rt = map[string]any{
 		"B":       blog,
 		"Content": template.HTML(blog.Content),
-		"Url":     c.Request.URL.String(),
 	}
 
-	lib.View.OutHtmlLyt(c, P, rdbKey)
+	lib.View.OutHtmlLyt(c, p, rdbKey)
+}
+
+func (b *BlogCntr) PrepMeta(c *gin.Context, meta *model.PageMeta, raw *model.Blog) {
+	meta.Type = "Article"
+	meta.Title = raw.Title
+	meta.URL = lib.Util.Url.Full(c)
+	meta.AltJson = lib.Util.Url.Host(c) + "/api" + c.Request.RequestURI
+	meta.Description = raw.Description
+	meta.Img.URL = lib.Util.Url.Host(c) + raw.FeaturedImg
+	meta.Tags = raw.Tags
+	meta.Author.Name = raw.User.Name
+	meta.Author.Img = raw.User.ProfileImg
+	meta.Author.URL = lib.Util.Url.Host(c) + "/@" + raw.User.Username
+	meta.CreatedAt = raw.CreatedAt
+	meta.UpdatedAt = raw.UpdatedAt
+	// meta.Category = raw.Tags
 }
 
 // POST api/blog/uid/id
