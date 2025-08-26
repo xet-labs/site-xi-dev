@@ -11,17 +11,18 @@ before:
 
 builds:
   - main: ./app
+    binary: app  
     env:
       - CGO_ENABLED=0
     ldflags:
       - -s -w
-      - -X 'xl/app/lib/cfg.BuildVersion={{ if index .Env "BuildVerPrepend" }}{{ .Env.BuildVerPrepend }}{{ else }}{{ .Branch }}{{ end }}-{{.Version}}'
-      - -X 'xl/app/lib/cfg.BuildName={{ if index .Env "BuildName" }}{{ .Env.BuildName }}{{ else }}{{ .ProjectName  }}{{ end }}'
-      - -X 'xl/app/lib/cfg.BuildRevision={{.ShortCommit}}'
-      - -X 'xl/app/lib/cfg.BuildDate={{.Date}}'
+      - -X 'xi/app/lib/cfg.BuildVersion={{ if index .Env "BuildVerPrepend" }}{{ .Env.BuildVerPrepend }}{{ else }}{{ .Branch }}{{ end }}-{{.Version}}'
+      - -X 'xi/app/lib/cfg.BuildName={{ if index .Env "BuildName" }}{{ .Env.BuildName }}{{ else }}{{ .ProjectName  }}{{ end }}'
+      - -X 'xi/app/lib/cfg.BuildRevision={{.ShortCommit}}'
+      - -X 'xi/app/lib/cfg.BuildDate={{.Date}}'
     goos:
       - linux
-      - darwin
+      # - darwin
       # - windows
     ignore:
       - goos: windows

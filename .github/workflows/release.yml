@@ -54,7 +54,7 @@ jobs:
         if: steps.detect_branch.outputs.branch != ''
         id: file_list
         run: |
-          files=$(find dist -type f \( -name '*.tar.gz' -o -name '*.zip' -o -name '*checksums.txt' \))
+          files=$(find dist -type f \( -name '*.tar.gz' -o -name '*.zip' -o -name '*checksums.txt' -o -name '*CHANGELOG.md' \))
           echo "files<<EOF" >> $GITHUB_OUTPUT
           echo "$files" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
