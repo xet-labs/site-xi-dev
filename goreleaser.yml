@@ -1,5 +1,5 @@
 version: 2
-project_name: "xi"
+project_name: "MediasMonk"
 
 env:
   - GO111MODULE=on
@@ -15,10 +15,10 @@ builds:
       - CGO_ENABLED=0
     ldflags:
       - -s -w
-      - -X 'xi/app/lib/cfg.BuildVersion={{ if index .Env "BuildVerPrepend" }}{{ .Env.BuildVerPrepend }}{{ else }}{{ .Branch }}{{ end }}-{{.Version}}'
-      - -X 'xi/app/lib/cfg.BuildName={{ if index .Env "BuildName" }}{{ .Env.BuildName }}{{ else }}{{ .ProjectName  }}{{ end }}'
-      - -X 'xi/app/lib/cfg.BuildRevision={{.ShortCommit}}'
-      - -X 'xi/app/lib/cfg.BuildDate={{.Date}}'
+      - -X 'xl/app/lib/cfg.BuildVersion={{ if index .Env "BuildVerPrepend" }}{{ .Env.BuildVerPrepend }}{{ else }}{{ .Branch }}{{ end }}-{{.Version}}'
+      - -X 'xl/app/lib/cfg.BuildName={{ if index .Env "BuildName" }}{{ .Env.BuildName }}{{ else }}{{ .ProjectName  }}{{ end }}'
+      - -X 'xl/app/lib/cfg.BuildRevision={{.ShortCommit}}'
+      - -X 'xl/app/lib/cfg.BuildDate={{.Date}}'
     goos:
       - linux
       - darwin

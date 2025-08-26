@@ -35,8 +35,6 @@ func (r *CssRes) Get(c *gin.Context) {
 	rdbKey := c.Request.RequestURI
 	base := cfg.View.CssBaseDir + "/" + strings.TrimSuffix(c.Param("name"), ".css")
 	
-	log.Info().Str("filepath", base).Msg("Css")
-
 	if lib.View.OutCache(c, rdbKey).Css() {
 		return 	// Send cache
 	}

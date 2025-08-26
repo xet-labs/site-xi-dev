@@ -1,0 +1,72 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v[0-9]+.[0-9]+.[0-9]+"
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout full history
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Required to detect branches from tag
+
+      - name: Detect branch for this tag
+        id: detect_branch
+        run: |
+          # Find which branch contains this tag's commit
+          BRANCH=$(git branch -r --contains ${{ github.ref }} | grep -E 'origin/(main|nightly)' | sed 's|origin/||' | head -n1 || true)
+
+          if [ -z "$BRANCH" ]; then
+            echo "Tag does not belong to 'main' or 'nightly'. Exiting."
+            echo "branch=" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
+          echo "branch=$BRANCH" >> $GITHUB_OUTPUT
+          echo "Detected branch: $BRANCH"
+
+      - name: Stop if branch is not main or nightly
+        if: steps.detect_branch.outputs.branch == ''
+        run: echo "Skipping release because branch is not main or nightly."
+
+      - name: Setup Go
+        if: steps.detect_branch.outputs.branch != ''
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.24"
+
+      - name: Run GoReleaser
+        if: steps.detect_branch.outputs.branch != ''
+        uses: goreleaser/goreleaser-action@v6
+        with:
+          version: "~> v2"
+          args: release --clean
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BuildVerPrepend: ${{ steps.detect_branch.outputs.branch }}
+
+      - name: Find release artifacts
+        if: steps.detect_branch.outputs.branch != ''
+        id: file_list
+        run: |
+          files=$(find dist -type f \( -name '*.tar.gz' -o -name '*.zip' -o -name '*checksums.txt' -o -name '*CHANGELOG.md' \))
+          echo "files<<EOF" >> $GITHUB_OUTPUT
+          echo "$files" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+          echo "Release Files: $files"
+
+      - name: Release Public Assets
+        if: steps.detect_branch.outputs.branch != ''
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: "Release ${{ github.ref_name }}"
+          body: |
+            Public release of version ${{ github.ref_name }} for branch ${{ steps.detect_branch.outputs.branch }}.
+          files: ${{ steps.file_list.outputs.files }}
+          repository: xet-labs/site-xi
+          token: ${{ secrets.SITE_XI_RELEASE_TOKEN }}

@@ -132,7 +132,8 @@
         "js99": [
           "/res/js/jquery/jquery.min.js",
           "/res/js/app.js",
-          "/res/js/util/content-src",
+          "/res/js/util/content-src.js",
+          "/res/js/util/data-href",
           "/res/js/util/theme.js",
           "/res/js/blog.js"
         ],
