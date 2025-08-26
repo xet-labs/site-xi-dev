@@ -17,7 +17,6 @@ jobs:
       - name: Detect branch for this tag
         id: detect_branch
         run: |
-          # Find which branch contains this tag's commit
           BRANCH=$(git branch -r --contains ${{ github.ref }} | grep -E 'origin/(main|nightly)' | sed 's|origin/||' | head -n1 || true)
 
           if [ -z "$BRANCH" ]; then
@@ -26,8 +25,10 @@ jobs:
             exit 0
           fi
 
-          echo "branch=$BRANCH" >> $GITHUB_OUTPUT
-          echo "Detected branch: $BRANCH"
+          CLEAN_BRANCH=$(echo "$BRANCH" | sed 's/[^a-zA-Z0-9_-]//g')  # removes dots and special chars
+          echo "branch=$CLEAN_BRANCH" >> $GITHUB_OUTPUT
+          echo "Detected branch: $CLEAN_BRANCH"
+
 
       - name: Stop if branch is not main or nightly
         if: steps.detect_branch.outputs.branch == ''
@@ -53,7 +54,7 @@ jobs:
         if: steps.detect_branch.outputs.branch != ''
         id: file_list
         run: |
-          files=$(find dist -type f \( -name '*.tar.gz' -o -name '*.zip' -o -name '*checksums.txt' -o -name '*CHANGELOG.md' \))
+          files=$(find dist -type f \( -name '*.tar.gz' -o -name '*.zip' -o -name '*checksums.txt' \))
           echo "files<<EOF" >> $GITHUB_OUTPUT
           echo "$files" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
