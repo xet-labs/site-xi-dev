@@ -10,17 +10,17 @@ before:
     - go mod tidy
 
 builds:
-  - main: ./app
-    binary: app-bin
+  - main: ./cmd/web
+    binary: app
     env:
       - CGO_ENABLED=0
     ldflags:
       - -s -w
-      - -X 'xi/app/lib/cfg/static.BuildDate={{.Date}}'
-      - -X 'xi/app/lib/cfg/static.BuildRevision={{.ShortCommit}}'
-      - -X 'xi/app/lib/cfg/static.BuildVersion={{ if index .Env "BuildVerPrepend" }}{{ .Env.BuildVerPrepend }}{{ else }}{{ .Branch }}{{ end }}-{{.Version}}'
-      - -X 'xi/app/lib/cfg/static.BuildName={{ if index .Env "BuildName" }}{{ .Env.BuildName }}{{ else }}{{ .ProjectName  }}{{ end }}'
-      - -X 'xi/app/lib/cfg/static.BuildMode=release'
+      - -X 'xi/internal/app/lib/cfg/static.BuildDate={{.Date}}'
+      - -X 'xi/internal/app/lib/cfg/static.BuildRevision={{.ShortCommit}}'
+      - -X 'xi/internal/app/lib/cfg/static.BuildVersion={{ if index .Env "BuildVerPrepend" }}{{ .Env.BuildVerPrepend }}{{ else }}{{ .Branch }}{{ end }}-{{.Version}}'
+      - -X 'xi/internal/app/lib/cfg/static.BuildName={{ if index .Env "BuildName" }}{{ .Env.BuildName }}{{ else }}{{ .ProjectName  }}{{ end }}'
+      - -X 'xi/internal/app/lib/cfg/static.BuildMode=release'
     goos:
       - linux
       # - darwin
@@ -30,14 +30,15 @@ builds:
         goarch: "386"
 
 archives:
-  - formats: ["tar.gz"]
-    name_template: '{{ if index .Env "BuildName" }}{{ .Env.BuildName }}{{ else }}{{ .ProjectName  }}{{ end }}-{{ if index .Env "BuildVerPrepend" }}{{ .Env.BuildVerPrepend }}{{ else }}{{ .Branch }}{{ end }}-{{.Version}}-{{ .Os }}-{{ if eq .Arch "amd64" }}x86_64{{ else if eq .Arch "386" }}i386{{ else }}{{ .Arch }}{{ end }}'
+  - name_template: '{{ if index .Env "BuildName" }}{{ .Env.BuildName }}{{ else }}{{ .ProjectName  }}{{ end }}-{{ if index .Env "BuildVerPrepend" }}{{ .Env.BuildVerPrepend }}{{ else }}{{ .Branch }}{{ end }}-{{.Version}}-{{ .Os }}-{{ if eq .Arch "amd64" }}x86_64{{ else if eq .Arch "386" }}i386{{ else }}{{ .Arch }}{{ end }}'
+    formats: ["tar.gz"]
     files:
-      - app/data/**
       - config/**
+      - internal/app/config/**
+      - internal/data/**
       - public/**
+      - resource/**
       - storage/**
-      - view/**
       - LICENSE
       - README.md
     format_overrides:

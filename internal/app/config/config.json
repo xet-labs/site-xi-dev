@@ -1,18 +1,19 @@
 {
+  "api": {
+    "jwt_secret": "${JWT_SECRET:-5up3r5tr0n6p455}"
+  },
   "app": {
     "mode": "${APP_MODE:-release}",
-    "port": "${APP_PORT:-5000}",
+    "port": "${APP_PORT:-8080}",
     "env_files": []
   },
-  "org": {
-    "abbr": "XI",
-    "name": "Xet Industries",
+  "brand": {
+    "name": "${APP_NAME:-Xet Labs}",
+    "abbr": "${APP_ABBR:-XL}",
     "logo": [],
-    "featured_img": [
-      "/res/static/brand/brand.svg"
-    ],
-    "domain": "xetindustries.com",
-    "url": "https://xetindustries.com"
+    "featured_img": [],
+    "domain": "${APP_DOMAIN:-example.com}",
+    "url": "${APP_URL:-https://example.com}"
   },
   "db": {
     "db_default": "${DB_DEFAULT:-db}",
@@ -20,10 +21,10 @@
     "rdb_prefix": "${APP_ABBR:-redis}",
     "conn": {
       "db": {
-        "enable": "${DB_ENABLE:-true}",
+        "enable": "${DB_ENABLE:-false}",
         "db": "${DB:-XI}",
         "user": "${DB_USER:-XI_u}",
-        "pass": "${DB_PASS}",
+        "pass": "${DB_PASS:-5up3r5tr0n6p455}",
         "driver": "${DB_DRIVER:-mysql}",
         "host": "${DB_HOST:-127.0.0.1}",
         "port": "${DB_PORT:-3306}",
@@ -46,6 +47,10 @@
     }
   },
   "view": {
+    "css_base_dir": "resource/partials",
+    "template_dirs": [
+      "resource"
+    ],
     "default": {
       "mode": "managed",
       "layout": "layout/default",
@@ -83,15 +88,11 @@
         "referrer": "no-referrer-when-downgrade",
         "robots": "index, follow",
         "tags": [
-          "XetIndustries",
-          "Xet Industries",
-          "xetindustries",
-          "xet industries",
-          "Xtreme Embedded Tech Industries"
+          "XetLabs"
         ],
         "publisher": {
-          "name": "Xet Industries",
-          "url": "https://xetindustries.com"
+          "name": "Xet Labs",
+          "url": "${APP_URL:-https://example.com}"
         },
         "brand": {
           "inc_title_suffix": true,
@@ -103,57 +104,12 @@
       "home": {
         "route": "/",
         "render": "file",
-        "content_file": "resource/partials/home/home.part.html",
+        "content_file": "view/pages/partials/home/home.part.html",
         "menu": "Home",
         "meta": {
-          "title": "Xet Industries",
+          "title": "XetLabs",
           "description": "A Collaborative Platform for Makers, Creators, and Developers."
         }
-      },
-      "blog": {
-        "route": "/blog",
-        "render": "file",
-        "content_file": "resource/partials/blog/blog.part.html",
-        "menu": "Blog",
-        "sub_brand": "Blog",
-        "css": [
-          "/res/css/app.css",
-          "/res/css/blog.css"
-        ],
-        "js99": [
-          "/res/js/jquery/jquery.min.js",
-          "/res/js/app.js",
-          "/res/js/util/content-src.js",
-          "/res/js/util/data-href.js",
-          "/res/js/blog.js"
-        ],
-        "meta": {
-          "title": "Blog",
-          "description": "Discover Insightful Articles, Expert Tips and Inspiring Ideas. Write, Share and Connect with a thriving like-minded community.",
-          "canonical": "https://xetindustries.com/blog"
-        }
-      },
-      "blogs": {
-        "mode": "unmanaged",
-        "route": "/blog/*",
-        "layout": "layout/blogs",
-        "menu": "Blog",
-        "sub_brand": "Blog",
-        "css": [
-          "/res/css/app.css",
-          "/res/css/blogs.css"
-        ],
-        "js99": [
-          "/res/js/jquery/jquery.min.js",
-          "/res/js/app.js",
-          "/res/js/util/content-src.js",
-          "/res/js/util/code-copy.js",
-          "/res/js/util/clickable-h2.js",
-          "/res/js/blogs.js"
-        ],
-        "lib99": [
-          "hljs"
-        ]
       }
     }
   }
