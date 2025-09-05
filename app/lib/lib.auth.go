@@ -3,7 +3,7 @@ package lib
 import (
 	"sync"
 	"time"
-	"xi/app/model"
+	model_db "xi/app/model/db"
 
 	"github.com/golang-jwt/jwt/v5"
 	"golang.org/x/crypto/bcrypt"
@@ -54,7 +54,7 @@ func (a *AuthLib) Hash(pw string) (string, error) {
 }
 
 // -------------------------------------------------------------
-func (a *AuthLib) GenerateJWT(user model.User) (string, error) {
+func (a *AuthLib) GenerateJWT(user model_db.User) (string, error) {
 	claims := jwt.MapClaims{
 		"username": user.Username,
 		"exp":      time.Now().Add(time.Hour * 72).Unix(),

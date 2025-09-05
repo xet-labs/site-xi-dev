@@ -11,20 +11,20 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-type LogLib struct {
+type LoggerLib struct {
 	Log zerolog.Logger
 
 	mu   sync.RWMutex
 	once sync.Once
 }
 
-var Logger = &LogLib{}
+var Logger = &LoggerLib{}
 
 // func init() { Logger.Init() }
 
-func (l *LogLib) Init() { l.once.Do(l.InitCore) }
+func (l *LoggerLib) Init() { l.once.Do(l.InitCore) }
 
-func (l *LogLib) InitCore() {
+func (l *LoggerLib) InitCore() {
 	// Set timestamp behavior globally
 	zerolog.TimeFieldFormat = time.RFC3339
 	zerolog.TimestampFunc = func() time.Time {
@@ -45,9 +45,10 @@ func (l *LogLib) InitCore() {
 				return ""
 			}
 		},
-		FormatMessage: func(i any) string {
-			return "\x1b[0m" + i.(string) + "\x1b[0m"
-		},
+		// - for messages to appear normal rather than bold 
+		// FormatMessage: func(i any) string {
+		// 	return "\x1b[0m" + i.(string) + "\x1b[0m"
+		// },
 	}
 
 	// Create a new logger and store in struct

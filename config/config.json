@@ -48,34 +48,29 @@
     }
   },
   "view": {
-    "css_base_dir": "view/partials",
-    "template_dirs": [
-      "view/layout",
-      "view/partials",
-      "view/pages"
-    ],
     "default": {
+      "mode": "managed",
       "layout": "layout/default",
       "nav_menu": [
         {
           "label": "Home",
-          "href": "/"
+          "url": "/"
         },
         {
           "label": "Blog",
-          "href": "/blog"
+          "url": "/blog"
         },
         {
           "label": "Product",
-          "href": "#"
+          "url": "#"
         },
         {
           "label": "Support",
-          "href": "#"
+          "url": "#"
         },
         {
           "label": "Contact",
-          "href": "#"
+          "url": "#"
         }
       ],
       "css": [
@@ -84,8 +79,7 @@
       "js99": [
         "/res/js/jquery/jquery.min.js",
         "/res/js/app.js",
-        "/res/js/util/content-src",
-        "/res/js/util/theme.js"
+        "/res/js/util/content-src.js"
       ],
       "meta": {
         "referrer": "no-referrer-when-downgrade",
@@ -111,18 +105,17 @@
       "home": {
         "route": "/",
         "render": "file",
-        "content_file": "view/pages/home.part.html",
+        "content_file": "view/partials/home/home.part.html",
         "menu": "Home",
         "meta": {
           "title": "Xet Industries",
-          "canonical": "https://xetindustries.com/",
           "description": "A Collaborative Platform for Makers, Creators, and Developers."
         }
       },
       "blog": {
         "route": "/blog",
         "render": "file",
-        "content_file": "view/pages/blog.part.html",
+        "content_file": "view/partials/blog/blog.part.html",
         "menu": "Blog",
         "sub_brand": "Blog",
         "css": [
@@ -133,8 +126,7 @@
           "/res/js/jquery/jquery.min.js",
           "/res/js/app.js",
           "/res/js/util/content-src.js",
-          "/res/js/util/data-href",
-          "/res/js/util/theme.js",
+          "/res/js/util/data-href.js",
           "/res/js/blog.js"
         ],
         "meta": {
@@ -144,7 +136,7 @@
         }
       },
       "blogs": {
-        "enable": false,
+        "mode": "unmanaged",
         "route": "/blog/*",
         "layout": "layout/blogs",
         "menu": "Blog",
@@ -156,10 +148,9 @@
         "js99": [
           "/res/js/jquery/jquery.min.js",
           "/res/js/app.js",
-          "/res/js/util/content-src",
-          "/res/js/util/theme.js",
-          "/res/js/util/code-copy.util.js",
-          "/res/js/util/clickable-h2.util.js",
+          "/res/js/util/content-src.js",
+          "/res/js/util/code-copy.js",
+          "/res/js/util/clickable-h2.js",
           "/res/js/blogs.js"
         ],
         "lib99": [

@@ -11,10 +11,10 @@ import (
 
 	"xi/app/lib/util"
 	"xi/app/lib/cfg"
-	"xi/app/model"
+	model_config "xi/app/model/config"
 )
 
-func GenMeta(m *model.PageMeta) template.HTML {
+func GenMeta(m *model_config.PageMeta) template.HTML {
 
 	var b strings.Builder
 
@@ -45,7 +45,7 @@ func GenMeta(m *model.PageMeta) template.HTML {
 	// --- Open Graph ---
 	add(&b, `<meta property="og:type" content="%s">`, m.OG.Type)
 	add(&b, `<meta property="og:locale" content="%s">`, m.Locale)
-	add(&b, `<meta property="og:site_name" content="%s">`, cfg.Brand.Name)
+	add(&b, `<meta property="og:site_name" content="%s">`, cfg.Org.Name)
 	add(&b, `<meta property="og:title" content="%s">`, util.Str.Fallback(m.OG.Title, title))
 	add(&b, `<meta property="og:description" content="%s">`, util.Str.Fallback(m.OG.Description, m.Description))
 	add(&b, `<meta property="og:url" content="%s">`, util.Str.Fallback(m.OG.URL, m.URL))
@@ -56,7 +56,7 @@ func GenMeta(m *model.PageMeta) template.HTML {
 	add(&b, `<meta name="twitter:card" content="%s">`, util.Str.NotEmptyThen("summary_large_image", m.Img.URL))
 	add(&b, `<meta name="twitter:site" content="%s">`, m.Twitter.Site)
 	add(&b, `<meta name="twitter:creator" content="%s">`, m.Twitter.Creator)
-	add(&b, `<meta property="twitter:domain" value="%s">`, cfg.Brand.Domain)
+	add(&b, `<meta property="twitter:domain" value="%s">`, cfg.Org.Domain)
 	add(&b, `<meta name="twitter:title" content="%s">`, util.Str.Fallback(m.OG.Title, title))
 	add(&b, `<meta name="twitter:description" content="%s">`, util.Str.Fallback(m.OG.Description, m.Description))
 	add(&b, `<meta name="twitter:url" content="%s">`, util.Str.Fallback(m.OG.URL, m.URL))
@@ -77,7 +77,7 @@ func GenMeta(m *model.PageMeta) template.HTML {
 		add(&b, `<meta name="twitter:label2" content="%s">`, util.Str.NotEmptyThen("Category", m.Category))
 		add(&b, `<meta name="twitter:data2" content="%s">`, m.Category)
 
-		add(&b, `<meta name="twitter:label3" content="%s">`, util.StrIfPtrNotNil("Published on", &m.CreatedAt))
+		add(&b, `<meta name="twitter:label3" content="%s">`, util.StrIfPtrNotNil("Published on", m.CreatedAt))
 		add(&b, `<meta name="twitter:data3" content="%s">`, m.CreatedAt.UTC().Format(time.RFC3339Nano))
 
 		add(&b, `<meta name="twitter:label4" content="%s">`, util.Str.NotEmptyThen("Reading time", m.ReadingTime))
@@ -107,7 +107,7 @@ func GenMeta(m *model.PageMeta) template.HTML {
 
 // ------- JSON-LD builder -------
 
-func ldJSON(m *model.PageMeta) []byte {
+func ldJSON(m *model_config.PageMeta) []byte {
 	// computed
 	title := metaTitle(m)
 
@@ -176,7 +176,7 @@ func ldJSON(m *model.PageMeta) []byte {
 }
 
 // metaTitle builds the final page <title>
-func metaTitle(m *model.PageMeta) string {
+func metaTitle(m *model_config.PageMeta) string {
 	base := m.Title
 
 	// add author if provided
@@ -194,7 +194,7 @@ func metaTitle(m *model.PageMeta) string {
 	return base
 }
 
-func metaType(m *model.PageMeta) {
+func metaType(m *model_config.PageMeta) {
 	if m.Type == "" {
 		m.Type = "WebSite"
 	}

@@ -9,9 +9,8 @@ import (
 	"time"
 	"xi/app/lib/cfg"
 	"xi/app/lib/db"
-	"xi/app/lib/minify"
 	"xi/app/lib/util"
-	"xi/app/model"
+	model_config "xi/app/model/config"
 
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog/log"
@@ -21,7 +20,7 @@ func (v *ViewLib) PageHandler(pageName string) gin.HandlerFunc {
 	return func(c *gin.Context) { v.Page(c, cfg.View.Pages[pageName]) }
 }
 
-func (v *ViewLib) Page(c *gin.Context, p *model.PageParam) bool {
+func (v *ViewLib) Page(c *gin.Context, p *model_config.PageParam) bool {
 	rdbKey := c.Request.URL.Path
 
 	// Try cache
@@ -80,7 +79,7 @@ func (v *ViewLib) Page(c *gin.Context, p *model.PageParam) bool {
 	}
 
 	// Minify HTML
-	pageMin, err := minify.Minify.Html(page)
+	pageMin, err := util.Minify.Html(page)
 	if err != nil {
 		// Serve the response with optional cache if rdbKey is provided in args[0]
 		c.Data(http.StatusOK, "text/html; charset=utf-8", page)

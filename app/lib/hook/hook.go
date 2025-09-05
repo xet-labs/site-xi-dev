@@ -1,39 +1,66 @@
 package hook
 
-import "sort"
+import (
+	"fmt"
+	"sort"
+)
 
-type Hook struct {
-	pre  []NamedHook
-	post []NamedHook
-}
+type HookFunc func(args ...any) (any, error)
 
 type NamedHook struct {
 	Name string
-	Fn   func()
+	Fn   HookFunc
 }
 
-func (h *Hook) AddPre(name string, fn func()) {
-	h.pre = append(h.pre, NamedHook{name, fn})
+type Hook struct {
+	Pre  []NamedHook
+	Core []NamedHook
+	Post []NamedHook
 }
 
-func (h *Hook) AddPost(name string, fn func()) {
-	h.post = append(h.post, NamedHook{name, fn})
-}
+func (h *Hook) AddPre(name string, fn HookFunc)  { h.Pre = append(h.Pre, NamedHook{name, fn}) }
+func (h *Hook) AddCore(name string, fn HookFunc) { h.Core = append(h.Core, NamedHook{name, fn}) }
+func (h *Hook) AddPost(name string, fn HookFunc) { h.Post = append(h.Post, NamedHook{name, fn}) }
 
-func (h *Hook) RunPre() {
-	sort.SliceStable(h.pre, func(i, j int) bool {
-		return h.pre[i].Name < h.pre[j].Name
+func runHooks(hooks []NamedHook, args ...any) ([]any, []error) {
+	sort.SliceStable(hooks, func(i, j int) bool {
+		return hooks[i].Name < hooks[j].Name
 	})
-	for _, hook := range h.pre {
-		hook.Fn()
+
+	var (
+		results []any
+		errs    []error
+	)
+
+	for _, hook := range hooks {
+		func() {
+			defer func() {
+				if r := recover(); r != nil {
+					errs = append(errs, fmt.Errorf("panic in hook %s: %v", hook.Name, r))
+				}
+			}()
+
+			res, err := hook.Fn(args...)
+			if err != nil {
+				errs = append(errs, fmt.Errorf("hook %s failed: %w", hook.Name, err))
+				return
+			}
+			if res != nil {
+				results = append(results, res)
+			}
+		}()
 	}
+	return results, errs
 }
 
-func (h *Hook) RunPost() {
-	sort.SliceStable(h.post, func(i, j int) bool {
-		return h.post[i].Name < h.post[j].Name
-	})
-	for _, hook := range h.post {
-		hook.Fn()
-	}
+func (h *Hook) RunPre(args ...any) ([]any, []error) {
+	return runHooks(h.Pre, args...)
+}
+
+func (h *Hook) RunCore(args ...any) ([]any, []error) {
+	return runHooks(h.Core, args...)
+}
+
+func (h *Hook) RunPost(args ...any) ([]any, []error) {
+	return runHooks(h.Post, args...)
 }

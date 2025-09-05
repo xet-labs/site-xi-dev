@@ -1,44 +1,46 @@
 package cfg
 
-import "xi/app/model"
+import (
+	model_config "xi/app/model/config"
+	"xi/app/lib/cfg/static"
+)
 
-// --------------------
 // Runtime config (mutable)
-// --------------------
-var global = &model.Config{}
+var Config = &model_config.Config{}
 
 // Direct pointers for convenience
 var (
-	App   = &global.App
-	Brand = &global.Brand
-	Db    = &global.Db
-	View  = &global.View
+	Api   = &Config.Api
+	App   = &Config.App
+	Org = &Config.Org
+	Db    = &Config.Db
+	View  = &Config.View
 )
 
 // Static BuildConf (never changes at runtime)
-var Build = model.BuildConf{
-	Date:     BuildDate,
-	Name:     BuildName,
-	Revision: BuildRevision,
-	Version:  BuildVersion,
+var Build = model_config.BuildConf{
+	Date:     static.BuildDate,
+	Name:     static.BuildName,
+	Revision: static.BuildRevision,
+	Version:  static.BuildVersion,
 }
 
-
 // Get returns current runtime config
-func Get() *model.Config { return global }
+func Get() *model_config.Config { return Config }
 
 // Set replaces the entire config (except Build, which stays static)
-func Set(cfg model.Config) {
+func Set(cfg model_config.Config) {
 	cfg.Build = Build         // enforce static build info
-	*global = cfg
+	*Config = cfg
 }
 
 // Update merges in a new config but keeps Build static
-func Update(cfg model.Config) {
+func Update(cfg model_config.Config) {
 	cfg.Build = Build
-	*global = cfg
-	App   = &global.App
-	Brand = &global.Brand
-	Db    = &global.Db
-	View  = &global.View
+	*Config = cfg
+	Api   = &Config.Api
+	App   = &Config.App
+	Org = &Config.Org
+	Db    = &Config.Db
+	View  = &Config.View
 }

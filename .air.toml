@@ -4,9 +4,9 @@ tmp_dir = "tmp"
 [build]
 bin = "tmp/app-bin"
 cmd = "go build -o ./tmp/app-bin \
-  -ldflags=\"-X 'xi/app/lib/cfg.BuildDate=$(date -u +%Y-%m-%dT%H:%M:%SZ )' \
-             -X 'xi/app/lib/cfg.BuildRevision=$(git rev-parse --short HEAD)' \
-             -X 'xi/app/lib/cfg.BuildVersion=$(git describe --tags --match v*.*.* --abbrev=0 2>/dev/null || echo dev)'\" \
+  -ldflags=\"-X 'xi/app/lib/cfg/static.BuildDate=$(date -u +%Y-%m-%dT%H:%M:%SZ )' \
+             -X 'xi/app/lib/cfg/static.BuildRevision=$(git rev-parse --short HEAD)' \
+             -X 'xi/app/lib/cfg/static.BuildVersion=$(git describe --tags --match v*.*.* --abbrev=0 2>/dev/null || echo dev)'\" \
   ./app"
 delay = 1000
 

@@ -12,8 +12,8 @@ import (
 // Shared global Redis clients
 var sharedClients = make(map[string]*redis.Client)
 
-// RedisLib wraps Redis client management and access
-type RedisLib struct {
+// RdbLib wraps Redis client management and access
+type RdbLib struct {
 	prefix     string
 	defaultCli string
 	clients    map[string]*redis.Client
@@ -26,7 +26,7 @@ type RedisLib struct {
 }
 
 // Global instance
-var Rdb = &RedisLib{
+var Rdb = &RdbLib{
 	prefix:     "app",
 	defaultCli: "redis",
 	clients:    sharedClients,
@@ -34,12 +34,12 @@ var Rdb = &RedisLib{
 }
 
 // RegisterLazyFn allows deferred initialization
-func (r *RedisLib) RegisterLazyFn(fn func()) {
+func (r *RdbLib) RegisterLazyFn(fn func()) {
 	r.lazyInit = fn
 }
 
 // Ensures lazyInit runs once
-func (r *RedisLib) lazyFnOnce() {
+func (r *RdbLib) lazyFnOnce() {
 	r.once.Do(func() {
 		if r.lazyInit != nil {
 			r.lazyInit()
@@ -47,8 +47,8 @@ func (r *RedisLib) lazyFnOnce() {
 	})
 }
 
-// New returns a new RedisLib instance with optional prefix/context
-func (r *RedisLib) New(defaultCli string, opts ...any) *RedisLib {
+// New returns a new RdbLib instance with optional prefix/context
+func (r *RdbLib) New(defaultCli string, opts ...any) *RdbLib {
 	Db.Init()
 	r.lazyFnOnce()
 
@@ -64,7 +64,7 @@ func (r *RedisLib) New(defaultCli string, opts ...any) *RedisLib {
 		}
 	}
 
-	return &RedisLib{
+	return &RdbLib{
 		prefix:     prefix,
 		defaultCli: defaultCli,
 		client:     r.GetCli(defaultCli),
@@ -74,7 +74,7 @@ func (r *RedisLib) New(defaultCli string, opts ...any) *RedisLib {
 }
 
 // SetCli registers a new Redis client
-func (r *RedisLib) SetCli(name string, client *redis.Client) {
+func (r *RdbLib) SetCli(name string, client *redis.Client) {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 
@@ -96,7 +96,7 @@ func (r *RedisLib) SetCli(name string, client *redis.Client) {
 }
 
 // GetCli returns a Redis client by name or default
-func (r *RedisLib) GetCli(name ...string) *redis.Client {
+func (r *RdbLib) GetCli(name ...string) *redis.Client {
 	r.lazyFnOnce()
 	r.mu.RLock()
 	defer r.mu.RUnlock()
@@ -109,7 +109,7 @@ func (r *RedisLib) GetCli(name ...string) *redis.Client {
 }
 
 // SetDefault sets the default Redis client by name
-func (r *RedisLib) SetDefault(name string) {
+func (r *RdbLib) SetDefault(name string) {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 
@@ -128,41 +128,41 @@ func (r *RedisLib) SetDefault(name string) {
 }
 
 // SetPrefix updates the Redis key prefix
-func (r *RedisLib) SetPrefix(prefix string) {
+func (r *RdbLib) SetPrefix(prefix string) {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 	r.prefix = strings.TrimSpace(prefix)
 }
 
 // GetPrefix returns current Redis key prefix
-func (r *RedisLib) GetPrefix() string {
+func (r *RdbLib) GetPrefix() string {
 	r.mu.RLock()
 	defer r.mu.RUnlock()
 	return r.prefix
 }
 
 // SetCtx sets Redis context
-func (r *RedisLib) SetCtx(ctx context.Context) {
+func (r *RdbLib) SetCtx(ctx context.Context) {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 	r.ctx = ctx
 }
 
 // GetCtx returns current context
-func (r *RedisLib) GetCtx() context.Context {
+func (r *RdbLib) GetCtx() context.Context {
 	r.mu.RLock()
 	defer r.mu.RUnlock()
 	return r.ctx
 }
 
 // GetDefault returns default client name
-func (r *RedisLib) GetDefault() string {
+func (r *RdbLib) GetDefault() string {
 	r.mu.RLock()
 	defer r.mu.RUnlock()
 	return r.defaultCli
 }
 
-// With returns a new RedisLib bound to the given client name
-func (r *RedisLib) With(cliName string) *RedisLib {
+// With returns a new RdbLib bound to the given client name
+func (r *RdbLib) With(cliName string) *RdbLib {
 	return r.New(cliName, r.prefix)
 }

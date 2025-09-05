@@ -1,15 +1,16 @@
 package main
 
 import (
+	"xi/app/lib"
 	"xi/app/lib/cfg"
-	"xi/app/routes"
+	"xi/app/route"
 	"xi/app/service"
 
 	"github.com/gin-gonic/gin"
-	// "xi/app/lib"
 )
 
 func main() {
+
 	// Init services
 	service.Init()
 
@@ -18,12 +19,8 @@ func main() {
 	app := gin.Default()
 
 	// Init routes
-	routes.Route.Init(app)
+	lib.Route.Init(app, route.Controllers)
 
 	// Init server
-
-	err := service.InitServer(app)
-	if err != nil {
-		return
-	}
+	service.Server.Init(app)
 }

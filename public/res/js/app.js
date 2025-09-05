@@ -1,4 +1,30 @@
 document.addEventListener("DOMContentLoaded", () => {
+  // === Theme toggle (light/dark) ===
+  document.documentElement.classList.add(localStorage.getItem('theme') || 'light');
+
+  const themeSwitch = document.getElementById("id-themeswitch");
+  if (themeSwitch) {
+    themeSwitch.addEventListener("click", () => {
+      document.documentElement.classList.toggle("dark");
+      const theme = document.documentElement.classList.contains("dark") ? "dark" : "light";
+      localStorage.setItem("theme", theme);
+    });
+  }
+
+  // Nav hide|reveal on scroll
+  let lastScrollTop = 0;
+  const nav = document.querySelector('nav');
+  const navHeight = nav.offsetHeight;
+
+  window.addEventListener('scroll', function () {
+    const currentScroll = window.pageYOffset || document.documentElement.scrollTop;
+
+    if (currentScroll > lastScrollTop) {
+      nav.style.top = `-${navHeight}px`;
+    } else { nav.style.top = '0'; }
+
+    lastScrollTop = currentScroll <= 0 ? 0 : currentScroll;
+  });
 
   // === Fix modal flicker for login/signup switch ===
   const loginBtn = document.getElementById('id-login-btn');
@@ -19,21 +45,6 @@ document.addEventListener("DOMContentLoaded", () => {
   if (loginBtn) loginBtn.addEventListener('click', toggleAuthForm);
   if (signupBtn) signupBtn.addEventListener('click', toggleAuthForm);
 
-  // Nav hide|reveal on scroll
-  let lastScrollTop = 0;
-  const nav = document.querySelector('nav');
-  const navHeight = nav.offsetHeight;
-  
-  window.addEventListener('scroll', function () {
-    const currentScroll = window.pageYOffset || document.documentElement.scrollTop;
-    
-    if (currentScroll > lastScrollTop) {
-      nav.style.top = `-${navHeight}px`;
-    } else { nav.style.top = '0'; }
-    
-    lastScrollTop = currentScroll <= 0 ? 0 : currentScroll;
-  });
-  
   // === Optional: Add fix for scrollbar shift if needed ===
 });
 

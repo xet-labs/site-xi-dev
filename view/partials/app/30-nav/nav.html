@@ -3,27 +3,9 @@
 <nav role="navigation">
 	<div class="nav-con">
 
-		{{ template "prtls/nav.brand" }}
-
-		<div class="nav-m">
-			<div class="menu">
-				{{ range .P.NavMenu }}
-				{{ if eq .Label $.P.Menu }}
-				<a href="{{ .Href }}" class="menu-current">{{ .Label }}</a>
-				{{ else }}
-				<a href="{{ .Href }}">{{ .Label }}</a>
-				{{ end }}
-				{{ end }}
-			</div>
-		</div>
-
-		<div class="nav-r">
-			{{/* template "prtls/nav.toast" . */}}
-			{{ template "prtls/nav.search-wdgt" . }}
-			{{ template "prtls/nav.signuplogin" . }}
-			{{ template "prtls/nav.theme-switch" . }}
-			{{ template "prtls/nav.sidemenu" . }}
-		</div>
+		{{ template "prtls/nav.brand" . }}
+		{{ template "prtls/nav.menu" . }}
+		{{ template "prtls/nav.action" . }}
 
 	</div>
 </nav>
