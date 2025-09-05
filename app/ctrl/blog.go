@@ -8,7 +8,7 @@ import (
 	"xi/app/lib"
 	"xi/app/lib/cfg"
 	model_config "xi/app/model/config"
-	// model_db "xi/app/model/db"
+	model_ctrlBlog "xi/app/model/ctrl/blog"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
@@ -60,13 +60,7 @@ func (b *BlogCtrl) Sitemap(c *gin.Context) (any, error) {
 	}
 
 	// Try DB
-	type BlogSitemap struct {
-		Username  string    `json:"username"`
-		Slug      string    `json:"slug"`
-		UpdatedAt time.Time `json:"updated_at"`
-	}
-
-	var blogs []BlogSitemap
+	var blogs []model_ctrlBlog.BlogSitemap
 	
 	b.mu.Lock()
 	err := b.db.

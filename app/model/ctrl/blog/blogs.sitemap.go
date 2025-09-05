@@ -2,7 +2,7 @@ package blog
 
 import "time"
 
-type SitemapBlogs struct {
+type BlogSitemap struct {
     Username  string    `json:"username"`
     Slug      string    `json:"slug"`
     UpdatedAt time.Time `json:"updated_at"`

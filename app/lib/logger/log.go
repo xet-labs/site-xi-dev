@@ -12,19 +12,25 @@ import (
 )
 
 type LoggerLib struct {
-	Log zerolog.Logger
+	Log *zerolog.Logger
 
-	mu   sync.RWMutex
+	// mu   sync.RWMutex
 	once sync.Once
 }
 
 var Logger = &LoggerLib{}
 
-// func init() { Logger.Init() }
-
 func (l *LoggerLib) Init() { l.once.Do(l.InitCore) }
 
 func (l *LoggerLib) InitCore() {
+	// Decide log level based on build mode
+	switch cfg.Build.Mode {
+	case "release":
+		zerolog.SetGlobalLevel(zerolog.InfoLevel) // show Info/Warn/Error but hide Debug
+	default:
+		zerolog.SetGlobalLevel(zerolog.DebugLevel) // show everything in dev/test
+	}
+
 	// Set timestamp behavior globally
 	zerolog.TimeFieldFormat = time.RFC3339
 	zerolog.TimestampFunc = func() time.Time {
@@ -45,17 +51,15 @@ func (l *LoggerLib) InitCore() {
 				return ""
 			}
 		},
-		// - for messages to appear normal rather than bold
+		//- for messages to appear normal rather than bold
 		// FormatMessage: func(i any) string {
 		// 	return "\x1b[0m" + i.(string) + "\x1b[0m"
 		// },
 	}
 
 	// Create a new logger and store in struct
-	l.Log = zerolog.New(writer).With().Timestamp().Logger()
-
-	// Update global `log.Logger` too, if needed
-	log.Logger = l.Log
+	log.Logger = zerolog.New(writer).With().Timestamp().Logger()
+	l.Log = &log.Logger // Sotre a local pointer
 
 	if cfg.Build.Mode == "release" {
 		log.Info().
