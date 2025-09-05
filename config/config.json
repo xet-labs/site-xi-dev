@@ -4,17 +4,15 @@
     "port": "${APP_PORT:-8080}",
     "env_files": []
   },
-  "brand": {
+  "org": {
     "name": "${APP_NAME:-XetLabs}",
     "abbr": "${APP_ABBR:-XL}",
-    "logo": [
-      "${APP_LOGO}"
-    ],
+    "logo": [],
     "featured_img": [
       "/res/static/brand/brand.svg"
     ],
-    "domain": "${APP_DOMAIN:-localhost}",
-    "url": "${APP_URL:-http://localhost}"
+    "domain": "xetindustries.com",
+    "url": "https://xetindustries.com"
   },
   "db": {
     "db_default": "${DB_DEFAULT:-db}",

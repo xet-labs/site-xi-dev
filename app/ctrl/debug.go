@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"sort"
 	"xi/app/lib"
+	"xi/app/lib/cfg"
 
 	"github.com/gin-gonic/gin"
 )
@@ -12,11 +13,15 @@ type DebugCtrl struct {}
 var Debug = &DebugCtrl{}
 
 func (d *DebugCtrl) Routes(r *gin.Engine) {
-	r.GET("/d", d.Index(r))
-	r.GET("/d/c", func(c *gin.Context) {
+	if cfg.App.Mode != "test" {
+		return
+	}
+
+	r.GET("/t", d.Index(r))
+	r.GET("/t/c", func(c *gin.Context) {
 		c.Data(200, "application/json", lib.Conf.AllJsonPretty())
 	})
-	r.GET("/d/cs", func(c *gin.Context) {
+	r.GET("/t/cs", func(c *gin.Context) {
 		c.Data(200, "application/json", lib.Conf.AllJsonStructPretty())
 	})
 }

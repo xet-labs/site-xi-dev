@@ -45,7 +45,7 @@ func (l *LoggerLib) InitCore() {
 				return ""
 			}
 		},
-		// - for messages to appear normal rather than bold 
+		// - for messages to appear normal rather than bold
 		// FormatMessage: func(i any) string {
 		// 	return "\x1b[0m" + i.(string) + "\x1b[0m"
 		// },
@@ -57,10 +57,20 @@ func (l *LoggerLib) InitCore() {
 	// Update global `log.Logger` too, if needed
 	log.Logger = l.Log
 
-	log.Info().
-		Str("Date", cfg.Build.Date).
-		Str("Name", cfg.Build.Name).
-		Str("Revision", cfg.Build.Revision).
-		Str("Version", cfg.Build.Version).
-		Msg("App build")
+	if cfg.Build.Mode == "release" {
+		log.Info().
+			Str("date", cfg.Build.Date).
+			Str("mode", cfg.Build.Mode).
+			Str("name", cfg.Build.Name).
+			Str("revision", cfg.Build.Revision).
+			Str("version", cfg.Build.Version).
+			Msg("App build")
+	} else {
+		log.Info().
+			Str("date", cfg.Build.Date).
+			Str("name", cfg.Build.Name).
+			Str("revision", cfg.Build.Revision).
+			Str("version", cfg.Build.Version).
+			Msg("App build")
+	}
 }

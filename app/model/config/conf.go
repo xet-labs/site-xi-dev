@@ -3,7 +3,7 @@ package config
 type Config struct {
 	Api   ApiConf   `json:"api"`
 	App   AppConf   `json:"app"`
-	Org OrgConf `json:"brand"`
+	Org   OrgConf   `json:"org"`
 	Build BuildConf `json:"build"`
 	Db    DbConf    `json:"db"`
 	View  ViewConf  `json:"view"`
@@ -24,4 +24,5 @@ type BuildConf struct {
 	Name     string `json:"name,omitempty"`
 	Revision string `json:"revision,omitempty"`
 	Version  string `json:"version,omitempty"`
+	Mode     string `json:"mode,omitempty"`
 }

@@ -8,7 +8,7 @@ import (
 	"xi/app/lib"
 	"xi/app/lib/cfg"
 	model_config "xi/app/model/config"
-	model_db "xi/app/model/db"
+	// model_db "xi/app/model/db"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
@@ -17,7 +17,7 @@ import (
 type BlogCtrl struct {
 	Http *blog.BlogHttpCtrl
 	Api  *blog.BlogApiCtrl
-	db *gorm.DB
+	db   *gorm.DB
 
 	mu   sync.RWMutex
 	once sync.Once
@@ -53,31 +53,39 @@ func (b *BlogCtrl) Routes(r *gin.Engine) {
 func (b *BlogCtrl) Sitemap(c *gin.Context) (any, error) {
 	rdbKey := c.Request.URL.Path + ".blog"
 	urls := []model_config.SitemapURL{}
-	
+
 	// Try cache
 	if err := lib.Rdb.GetJson(rdbKey, &urls); err == nil {
 		return urls, nil
 	}
-	
+
 	// Try DB
-	blogs := []model_db.Blog{}
-	b.mu.Lock()
-	if err := b.db.
-	Preload("User").
-	Select("slug, updated_at").
-	Where("status = ?", "published").
-		Order("updated_at DESC").
-		Find(&blogs).
-		Error; err != nil {
-			return nil, err
-		}
-	b.mu.Unlock()
+	type BlogSitemap struct {
+		Username  string    `json:"username"`
+		Slug      string    `json:"slug"`
+		UpdatedAt time.Time `json:"updated_at"`
+	}
+
+	var blogs []BlogSitemap
 	
+	b.mu.Lock()
+	err := b.db.
+		Table("blogs").
+		Select("users.username, blogs.slug, blogs.updated_at").
+		Joins("join users on users.uid = blogs.uid").
+		Where("blogs.status = ?", "published").
+		Find(&blogs).Error
+	if err != nil {
+		b.mu.Unlock()
+		return nil, err
+	}
+	b.mu.Unlock()
+
 	for _, p := range blogs {
 
 		// If meta info available, override
 		urls = append(urls, model_config.SitemapURL{
-			Loc:        cfg.Org.Url + "/" + p.Slug,
+			Loc:        cfg.Org.Url + "/blog/@" + p.Username + "/" + p.Slug,
 			LastMod:    lib.Util.Str.Fallback(p.UpdatedAt.Format("2006-01-02"), time.Now().Format("2006-01-02")),
 			ChangeFreq: "daily",
 			Priority:   "0.5",

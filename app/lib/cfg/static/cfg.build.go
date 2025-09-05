@@ -8,4 +8,5 @@ var (
 	BuildName     = "dev"
 	BuildRevision = "00000"
 	BuildVersion  = "v0.0.0"
+	BuildMode     = "test"
 )
