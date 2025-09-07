@@ -16,5 +16,5 @@ var Sitemap = &SitemapLib{
 }
 
 type PreSitemap interface { SitemapPre(c *gin.Context) (any, error) }
-type CoreSitemap interface { Sitemap(c *gin.Context) (any, error) }
-type PostSitemap interface { SitemapPost(c *gin.Context, urls []model_config.SitemapURL) (any, error) }
+type CoreSitemap interface { SitemapCore(c *gin.Context) (any, error) }
+type PostSitemap interface { SitemapPost(c *gin.Context, urls []model_config.Sitemap) (any, error) }

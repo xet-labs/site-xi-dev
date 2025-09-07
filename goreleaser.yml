@@ -37,8 +37,8 @@ archives:
       - internal/app/config/**
       - internal/data/**
       - public/**
-      - resource/**
       - storage/**
+      - web/**
       - LICENSE
       - README.md
     format_overrides:

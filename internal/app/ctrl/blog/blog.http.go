@@ -34,7 +34,7 @@ var BlogHttp = &BlogHttpCtrl{
 func (b *BlogHttpCtrl) Show(c *gin.Context) {
 	rdbKey := c.Request.RequestURI
 
-	if lib.View.OutCache(c, rdbKey).Html() {
+	if lib.Web.OutCache(c, rdbKey).Html() {
 		return
 	} // Try cache
 
@@ -59,17 +59,17 @@ func (b *BlogHttpCtrl) Show(c *gin.Context) {
 	}
 	b.mu.Unlock()
 
-	p := cfg.View.Pages["blogs"]
+	p := cfg.Web.Pages["blogs"]
 	b.PrepMeta(c, &p.Meta, &blog)
 	p.Rt = map[string]any{
 		"B":       blog,
 		"Content": template.HTML(blog.Content),
 	}
 
-	lib.View.OutHtmlLyt(c, p, rdbKey)
+	lib.Web.OutHtmlLyt(c, p, rdbKey)
 }
 
-func (b *BlogHttpCtrl) PrepMeta(c *gin.Context, meta *model_config.PageMeta, raw *model_db.Blog) {
+func (b *BlogHttpCtrl) PrepMeta(c *gin.Context, meta *model_config.Meta, raw *model_db.Blog) {
 	meta.Type = "Article"
 	meta.Title = raw.Title
 	meta.URL = lib.Util.Url.Full(c)

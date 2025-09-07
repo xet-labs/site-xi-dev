@@ -35,7 +35,7 @@ func (e *EnvLib) InitCore() {
 
 	if _, err := os.Stat(".env"); err == nil || !os.IsNotExist(err) {
 		if err := godotenv.Load(".env"); err == nil {
-			log.Info().Str("file", ".env").Msg("Env loaded")
+			log.Info().Str("file", ".env").Msg("env loaded")
 		}
 	}
 

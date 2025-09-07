@@ -1,0 +1,43 @@
+{{ define "prtls/head" }}
+
+<!DOCTYPE html>
+<html>
+
+<head>
+	<script>
+		(function () {
+			document.documentElement.classList.add(localStorage.getItem('theme') || 'light');
+			document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'light');
+		})();
+	</script>
+
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+	<link data-default-icon="/res/static/org/icon-192x192.png" rel="shortcut icon" href="/res/static/org/icon-192x192.png">
+	
+	<link rel="icon" href="/favicon.ico" sizes="any">
+	<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+	<link rel="icon" type="image/png" sizes="32x32" href="/res/static/org/icon-32x32.png">
+	<link rel="icon" type="image/png" sizes="48x48" href="/res/static/org/icon-48x48.png">
+	<link rel="icon" type="image/png" sizes="192x192" href="/res/static/org/icon-192x192.png">
+	<link rel="apple-touch-icon" sizes="180x180" href="/res/static/org/icon-180x180.png">
+	<meta name="msapplication-TileImage" content="/res/static/org/icon-192x192.png">
+	<meta name="msapplication-TileColor" content="#ff9700" />
+	<link rel="manifest" href="/manifest.json">
+
+	<meta name="theme-color" content="#ffffff">
+	<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#000000">
+
+	<!-- FONTS -->
+	<link rel="preload" href="/res/static/fonts/Inter/Inter-VariableFont_slnt_wght.woff2" as="font" type="font/woff2"
+		crossorigin="anonymous">
+
+	{{ linkCssSlice "preload" .P.Css }}
+	{{ metaGen .P }}
+	{{ template "prtls/head.script" . }}
+	{{ linkLibSlice .P.LibHead }}
+
+</head>
+
+{{ end }}

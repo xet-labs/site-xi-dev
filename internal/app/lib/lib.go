@@ -8,7 +8,7 @@ import (
 	"xi/internal/app/lib/logger"
 	"xi/internal/app/lib/route"
 	"xi/internal/app/lib/util"
-	"xi/internal/app/lib/view"
+	"xi/internal/app/lib/web"
 )
 
 type (
@@ -20,7 +20,7 @@ type (
 	LoggerLib = logger.LoggerLib
 	RouteLib  = route.RouteLib
 	UtilLib   = util.UtilLib
-	ViewLib   = view.ViewLib
+	WebLib   = web.WebLib
 )
 
 var (
@@ -32,5 +32,5 @@ var (
 	Logger = logger.Logger
 	Route  = route.Route
 	Util   = util.Util
-	View   = view.View
+	Web   = web.Web
 )

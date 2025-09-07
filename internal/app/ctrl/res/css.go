@@ -24,7 +24,7 @@ type CssRes struct {
 
 var Css = &CssRes{
 	Files:    make(map[string][]string),
-	BaseDir: cfg.View.CssBaseDir,
+	BaseDir: cfg.Web.CssBaseDir,
 	RdbTTL:  12 * time.Hour,
 
 	CacheFilePath: false,
@@ -33,9 +33,9 @@ var Css = &CssRes{
 // Css handler: serves combined+cssMin CSS (Redis cached)
 func (r *CssRes) Index(c *gin.Context) {
 	rdbKey := c.Request.RequestURI
-	base := cfg.View.CssBaseDir + "/" + strings.TrimSuffix(c.Param("name"), ".css")
+	base := cfg.Web.CssBaseDir + "/" + strings.TrimSuffix(c.Param("name"), ".css")
 	
-	if lib.View.OutCache(c, rdbKey).Css() {
+	if lib.Web.OutCache(c, rdbKey).Css() {
 		return 	// Send cache
 	}
 
@@ -46,7 +46,7 @@ func (r *CssRes) Index(c *gin.Context) {
 		)
 		files, err = lib.Util.File.GetWithExt(".css", base)
 		if err != nil {
-			log.Error().Err(err).Str("Dir", base).Msg("Controller CSS files")
+			log.Error().Caller().Err(err).Str("Dir", base).Msg("ctrl.css.index files")
 			return
 		}
 
@@ -55,5 +55,5 @@ func (r *CssRes) Index(c *gin.Context) {
 		r.mu.Unlock()
 	}
 
-	lib.View.OutCss(c, lib.Util.File.MergeByte(r.Files[base]), rdbKey)
+	lib.Web.OutCss(c, lib.Util.File.MergeByte(r.Files[base]), rdbKey)
 }

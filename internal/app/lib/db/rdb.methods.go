@@ -18,7 +18,7 @@ func (r *RdbLib) Set(k string, v any, ttl time.Duration) error {
 	}
 
 	if err := r.client.Set(r.ctx, r.key(k), v, ttl).Err(); err != nil {
-		log.Warn().Err(err).Str("key", k).Msg("Rdb SET")
+		log.Warn().Err(err).Str("key", k).Msg("rdb SET")
 		return err
 	}
 	return nil
@@ -31,7 +31,7 @@ func (r *RdbLib) Get(k string) (string, error) {
 
 	v, err := r.client.Get(r.ctx, r.key(k)).Result()
 	if err != nil {
-		log.Warn().Err(err).Str("key", k).Msg("Rdb GET")
+		log.Warn().Err(err).Str("key", k).Msg("rdb GET")
 	}
 	return v, err
 }
@@ -46,7 +46,7 @@ func (r *RdbLib) GetBytes(k string) ([]byte, error) {
 func (r *RdbLib) SetJson(k string, v any, ttl time.Duration) error {
 	val, err := json.Marshal(v)
 	if err != nil {
-		log.Error().Err(err).Str("key", k).Msg("Rdb SetJson: json marshal")
+		log.Warn().Err(err).Str("key", k).Msg("rdb SetJson")
 		return err
 	}
 	return r.Set(k, val, ttl)
