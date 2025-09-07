@@ -1,12 +1,11 @@
 package route
 
 import (
-	"fmt"
 	"sync"
 
 	"xi/internal/app/lib/cfg"
 	"xi/internal/app/lib/hook"
-	"xi/internal/app/lib/view"
+	"xi/internal/app/lib/web"
 	model_config "xi/internal/app/model/config"
 
 	"github.com/gin-gonic/gin"
@@ -27,24 +26,15 @@ var (
 	}
 )
 
-// ================== Route Hook Interfaces ==================
-//
-// These interfaces are *optional* for controllers to implement.
-// The central route registry (lib/route) will detect and call
-// them during Init(), in the correct stage (Pre/Core/Post).
-//
-// Usage: add the method to your controller struct to hook
-// routes into that stage without touching central registry.
-//
-
 // Used for setup routes, health checks, middleware, etc.
 type PreRoutable interface{ RoutesPre(r *gin.Engine) }
 
 // Used for main application routes (APIs, business logic).
-type CoreRoutable interface{ Routes(r *gin.Engine) }
+type CoreRoutable interface{ RoutesCore(r *gin.Engine) }
 
 // Used for fallback routes, debug endpoints, catch-alls.
 type PostRoutable interface{ RoutesPost(r *gin.Engine) }
+
 
 // Initializes all routes and templates
 func (rh *RouteLib) Init(r *gin.Engine, ctrls any) {
@@ -55,7 +45,7 @@ func (rh *RouteLib) Init(r *gin.Engine, ctrls any) {
 	rh.RegisterController(r, ctrls)
 
 	// Register templates
-	r.SetHTMLTemplate(view.View.NewTmpl("main", ".html", cfg.View.TemplateDirs...))
+	r.SetHTMLTemplate(web.Web.NewTmpl("main", ".html", cfg.Web.TemplateDirs...))
 
 	// Run Hooks
 	rh.hooks.RunPre(r, rh)
@@ -63,12 +53,11 @@ func (rh *RouteLib) Init(r *gin.Engine, ctrls any) {
 	rh.hooks.RunPost(r, rh)
 }
 
-// RegisterController registers one or multiple controllers to Pre, Core, and Post hooks
-// It safely checks which hook methods each controller implements before registering.
+// RegisterController controllers to route and sitemap
 func (rh *RouteLib) RegisterController(r *gin.Engine, ctrls any) {
-	controllers := make([]any, 0)
-
+	
 	// Normalize input: single controller or slice of controllers
+	var controllers []any
 	switch v := ctrls.(type) {
 	case []any:
 		controllers = v
@@ -79,23 +68,21 @@ func (rh *RouteLib) RegisterController(r *gin.Engine, ctrls any) {
 	for _, c := range controllers {
 		// Register Pre routes if implemented
 		if pre, ok := c.(PreRoutable); ok {
-			rh.hooks.AddPre("pre_"+fmt.Sprintf("%T", c), func(args ...any) (any, error) {
+			rh.hooks.AddPre(func(args ...any) (any, error) {
 				pre.RoutesPre(r)
 				return nil, nil
 			})
 		}
-
 		// Register Core routes if implemented
 		if core, ok := c.(CoreRoutable); ok {
-			rh.hooks.AddCore("core_"+fmt.Sprintf("%T", c), func(args ...any) (any, error) {
-				core.Routes(r)
+			rh.hooks.AddCore(func(args ...any) (any, error) {
+				core.RoutesCore(r)
 				return nil, nil
 			})
 		}
-
 		// Register Post routes if implemented
 		if post, ok := c.(PostRoutable); ok {
-			rh.hooks.AddPost("post_"+fmt.Sprintf("%T", c), func(args ...any) (any, error) {
+			rh.hooks.AddPost(func(args ...any) (any, error) {
 				post.RoutesPost(r)
 				return nil, nil
 			})
@@ -103,7 +90,7 @@ func (rh *RouteLib) RegisterController(r *gin.Engine, ctrls any) {
 
 		// Register Pre Sitemaps if implemented
 		if pre, ok := c.(PreSitemap); ok {
-			Sitemap.Hooks.AddPre("pre_"+fmt.Sprintf("%T", c), func(args ...any) (any, error) {
+			Sitemap.Hooks.AddPre(func(args ...any) (any, error) {
 				if len(args) > 0 {
 					if ctx, ok := args[0].(*gin.Context); ok {
 						return pre.SitemapPre(ctx)
@@ -112,25 +99,23 @@ func (rh *RouteLib) RegisterController(r *gin.Engine, ctrls any) {
 				return nil, nil
 			})
 		}
-
 		// Register Core Sitemaps if implemented
 		if core, ok := c.(CoreSitemap); ok {
-			Sitemap.Hooks.AddCore("core_"+fmt.Sprintf("%T", c), func(args ...any) (any, error) {
+			Sitemap.Hooks.AddCore(func(args ...any) (any, error) {
 				if len(args) > 0 {
 					if ctx, ok := args[0].(*gin.Context); ok {
-						return core.Sitemap(ctx)
+						return core.SitemapCore(ctx)
 					}
 				}
 				return nil, nil
 			})
 		}
-
 		// Register Post Sitemaps if implemented
 		if post, ok := c.(PostSitemap); ok {
-			Sitemap.Hooks.AddPost("post_"+fmt.Sprintf("%T", c), func(args ...any) (any, error) {
+			Sitemap.Hooks.AddPost(func(args ...any) (any, error) {
 				if len(args) >= 2 {
 					if ctx, ok := args[0].(*gin.Context); ok {
-						if urls, ok := args[1].([]model_config.SitemapURL); ok {
+						if urls, ok := args[1].([]model_config.Sitemap); ok {
 							return post.SitemapPost(ctx, urls)
 						}
 					}
@@ -138,6 +123,5 @@ func (rh *RouteLib) RegisterController(r *gin.Engine, ctrls any) {
 				return nil, nil
 			})
 		}
-
 	}
 }

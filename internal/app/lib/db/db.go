@@ -68,20 +68,20 @@ func (d *DbLib) InitForce() {
 				c.User, c.Pass, c.Host, c.Port, c.Db, c.Charset)
 			dbConn, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 			if err != nil {
-				log.Error().Err(err).Str("profile", profile).Str("type", "MySQL").Msg("DB couldn't connect")
+				log.Error().Caller().Err(err).Str("profile", profile).Str("type", "MySQL").Msg("db connect")
 				continue
 			}
 			Db.SetCli(profile, dbConn)
-			log.Info().Str("profile", profile).Str("type", "MySQL").Msg("DB connected")
+			log.Info().Str("profile", profile).Str("type", "MySQL").Msg("db connected")
 
 		case "sqlite":
 			dbConn, err := gorm.Open(sqlite.Open(c.Db), &gorm.Config{})
 			if err != nil {
-				log.Error().Err(err).Str("profile", profile).Str("type", "SQLite").Msg("DB couldn't connect")
+				log.Error().Caller().Err(err).Str("profile", profile).Str("type", "SQLite").Msg("db connect")
 				continue
 			}
 			Db.SetCli(profile, dbConn)
-			log.Info().Str("profile", profile).Str("type", "SQLite").Msg("DB connected")
+			log.Info().Str("profile", profile).Str("type", "SQLite").Msg("db connected")
 
 		case "redis":
 			rdb := redis.NewClient(&redis.Options{
@@ -90,14 +90,14 @@ func (d *DbLib) InitForce() {
 				DB:       c.Rdb,
 			})
 			if err := rdb.Ping(context.Background()).Err(); err != nil {
-				log.Error().Err(err).Str("profile", profile).Str("type", "Redis").Msg("DB couldn't connect")
+				log.Error().Caller().Err(err).Str("profile", profile).Str("type", "Redis").Msg("db connect")
 				continue
 			}
 			Rdb.SetCli(profile, rdb)
-			log.Info().Str("profile", profile).Str("type", "Redis").Msg("DB connected")
+			log.Info().Str("profile", profile).Str("type", "Redis").Msg("db connected")
 
 		default:
-			log.Warn().Str("profile", profile).Str("driver", c.Driver).Msg("DB unsupported driver")
+			log.Warn().Caller().Str("profile", profile).Str("driver", c.Driver).Msg("db unsupported driver")
 		}
 	}
 

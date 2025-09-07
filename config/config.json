@@ -1,4 +1,7 @@
 {
+  "api": {
+    "jwt_secret": "${JWT_SECRET:-5up3r5tr0n6p455}"
+  },
   "app": {
     "mode": "${APP_MODE:-release}",
     "port": "${APP_PORT:-5000}",
@@ -7,12 +10,12 @@
   "org": {
     "abbr": "XI",
     "name": "Xet Industries",
-    "logo": [],
-    "featured_img": [
-      "/res/static/brand/brand.svg"
-    ],
     "domain": "xetindustries.com",
-    "url": "https://xetindustries.com"
+    "url": "https://xetindustries.com",
+    "img": [
+      "public/res/static/org/icon-wordmark-black-bg-2000x1500.svg"
+    ],
+    "logo": []
   },
   "db": {
     "db_default": "${DB_DEFAULT:-db}",
@@ -45,10 +48,34 @@
       }
     }
   },
-  "view": {
+  "web": {
+    "css_base_dir": "web/partials",
+    "template_dirs": [
+      "web"
+    ],
     "default": {
-      "mode": "managed",
-      "layout": "layout/default",
+      "ctrl": {
+        "mode": "managed",
+        "layout": "layout/default"
+      },
+      "org": {
+        "name": "Xet Industries",
+        "domain": "xetindustries.com",
+        "url": "https://xetindustries.com",
+        "img": {
+          "url": "/res/static/org/icon-wordmark-black-bg-2000x1500.svg",
+          "alt": "Xet Industries"
+        }
+      },
+      "meta": {
+        "robots": "index, follow",
+        "referrer": "no-referrer-when-downgrade",
+        "tags": [
+          "xetindustries",
+          "xet industries",
+          "Xtreme Embedded Tech Industries"
+        ]
+      },
       "nav_menu": [
         {
           "label": "Home",
@@ -78,44 +105,42 @@
         "/res/js/jquery/jquery.min.js",
         "/res/js/app.js",
         "/res/js/util/content-src.js"
-      ],
-      "meta": {
-        "referrer": "no-referrer-when-downgrade",
-        "robots": "index, follow",
-        "tags": [
-          "XetIndustries",
-          "Xet Industries",
-          "xetindustries",
-          "xet industries",
-          "Xtreme Embedded Tech Industries"
-        ],
-        "publisher": {
-          "name": "Xet Industries",
-          "url": "https://xetindustries.com"
-        },
-        "brand": {
-          "inc_title_suffix": true,
-          "title_suffix_sep": " | "
-        }
-      }
+      ]
     },
     "pages": {
       "home": {
         "route": "/",
-        "render": "file",
-        "content_file": "resource/partials/home/home.part.html",
-        "menu": "Home",
+        "ctrl": {
+          "render": "file"
+        },
+        "content": {
+          "file": "web/partials/home/home.part.html"
+        },
         "meta": {
           "title": "Xet Industries",
           "description": "A Collaborative Platform for Makers, Creators, and Developers."
+        },
+        "web": {
+          "menu": "Home"
         }
       },
       "blog": {
         "route": "/blog",
-        "render": "file",
-        "content_file": "resource/partials/blog/blog.part.html",
-        "menu": "Blog",
-        "sub_brand": "Blog",
+        "ctrl": {
+          "render": "file"
+        },
+        "content": {
+          "file": "web/partials/blog/blog.part.html"
+        },
+        "meta": {
+          "title": "Blog",
+          "description": "Discover Insightful Articles, Expert Tips and Inspiring Ideas. Write, Share and Connect with a thriving like-minded community.",
+          "canonical": "https://xetindustries.com/blog"
+        },
+        "web": {
+          "menu": "Blog",
+          "sub_brand": "Blog"
+        },
         "css": [
           "/res/css/app.css",
           "/res/css/blog.css"
@@ -126,19 +151,18 @@
           "/res/js/util/content-src.js",
           "/res/js/util/data-href.js",
           "/res/js/blog.js"
-        ],
-        "meta": {
-          "title": "Blog",
-          "description": "Discover Insightful Articles, Expert Tips and Inspiring Ideas. Write, Share and Connect with a thriving like-minded community.",
-          "canonical": "https://xetindustries.com/blog"
-        }
+        ]
       },
       "blogs": {
-        "mode": "unmanaged",
         "route": "/blog/*",
-        "layout": "layout/blogs",
-        "menu": "Blog",
-        "sub_brand": "Blog",
+        "ctrl": {
+          "mode": "unmanaged",
+          "layout": "layout/blogs"
+        },
+        "web": {
+          "menu": "Blog",
+          "sub_brand": "Blog"
+        },
         "css": [
           "/res/css/app.css",
           "/res/css/blogs.css"

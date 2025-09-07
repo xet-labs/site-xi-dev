@@ -30,7 +30,7 @@ var Blog = &BlogCtrl{
 }
 
 // Blog Routes
-func (b *BlogCtrl) Routes(r *gin.Engine) {
+func (b *BlogCtrl) RoutesCore(r *gin.Engine) {
 	api := r.Group("api/blog") // route /api/blog
 	{
 		api.GET("", Blog.Api.Index)
@@ -50,9 +50,9 @@ func (b *BlogCtrl) Routes(r *gin.Engine) {
 }
 
 // Blog Sitemap
-func (b *BlogCtrl) Sitemap(c *gin.Context) (any, error) {
+func (b *BlogCtrl) SitemapCore(c *gin.Context) (any, error) {
 	rdbKey := c.Request.URL.Path + ".blog"
-	urls := []model_config.SitemapURL{}
+	urls := []model_config.Sitemap{}
 
 	// Try cache
 	if err := lib.Rdb.GetJson(rdbKey, &urls); err == nil {
@@ -78,8 +78,8 @@ func (b *BlogCtrl) Sitemap(c *gin.Context) (any, error) {
 	for _, p := range blogs {
 
 		// If meta info available, override
-		urls = append(urls, model_config.SitemapURL{
-			Loc:        cfg.Org.Url + "/blog/@" + p.Username + "/" + p.Slug,
+		urls = append(urls, model_config.Sitemap{
+			Loc:        cfg.Org.URL + "/blog/@" + p.Username + "/" + p.Slug,
 			LastMod:    lib.Util.Str.Fallback(p.UpdatedAt.Format("2006-01-02"), time.Now().Format("2006-01-02")),
 			ChangeFreq: "daily",
 			Priority:   "0.5",

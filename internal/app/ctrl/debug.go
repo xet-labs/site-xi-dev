@@ -9,31 +9,56 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type DebugCtrl struct {}
+type DebugCtrl struct{}
+
 var Debug = &DebugCtrl{}
 
-func (d *DebugCtrl) Routes(r *gin.Engine) {
+func (d *DebugCtrl) RoutesCore(r *gin.Engine) {
 	if cfg.App.Mode != "test" {
 		return
 	}
 
 	r.GET("/t", d.Index(r))
+
 	r.GET("/t/c", func(c *gin.Context) {
-		c.Data(200, "application/json", lib.Conf.AllJsonPretty())
+		cfg, err := lib.Conf.All()
+		if err != nil {
+			c.JSON(500, gin.H{"error": "failed to load config", "details": err.Error()})
+			return
+		}
+		c.JSON(200, cfg)
 	})
-	r.GET("/t/cs", func(c *gin.Context) {
-		c.Data(200, "application/json", lib.Conf.AllJsonStructPretty())
+
+	r.GET("/t/cr", func(c *gin.Context) {
+		cfg, err := lib.Conf.RAll()
+		if err != nil {
+			c.JSON(500, gin.H{"error": "failed to load config", "details": err.Error()})
+			return
+		}
+		c.JSON(200, cfg)
+	})
+
+	r.GET("/t/r", func(c *gin.Context) {
+		routes, _ := d.routeData(r)
+		c.JSON(200, routes)
 	})
 }
 
 func (d *DebugCtrl) Index(r *gin.Engine) gin.HandlerFunc {
 
 	return func(c *gin.Context) {
-		routes, _ := d.routeData(r)
 		c.JSON(http.StatusOK, gin.H{
-			"route": routes,
-			// "routeDetailed": detailed,
-			"conf": lib.Conf.AllMap(),
+			"route": func() []string {
+				routes, _ := d.routeData(r)
+				return routes
+			}(),
+			"conf": func() any {
+				cfg, err := lib.Conf.All()
+				if err != nil {
+					return gin.H{"error": "failed to load config", "details": err.Error()}
+				}
+				return cfg
+			}(),
 		})
 	}
 }

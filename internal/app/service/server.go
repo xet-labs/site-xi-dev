@@ -17,17 +17,17 @@ func (s *ServerService) Init(app *gin.Engine) error {
 
 	log.Info().
 		Str("mode", cfg.App.Mode).
-		Msgf("\a\033[1;94mApp running \033[0;34m'http://localhost:%s'%s\033[0m", cfg.App.Port,
+		Msgf("\a\033[1;94mapp running \033[0;34m'http://localhost:%s'%s\033[0m", cfg.App.Port,
 			func() string {
-				if cfg.Org.Url != "" {
-					return ", '" + cfg.Org.Url + "'"
+				if cfg.Org.URL != "" {
+					return ", '" + cfg.Org.URL + "'"
 				}
 				return ""
 			}())
 
 	// Start Web-Server
 	if err := app.Run(":" + cfg.App.Port); err != nil {
-		log.Error().Msgf("Failed to start server: %v", err)
+		log.Error().Caller().Err(err).Msg("server")
 		return err
 	}
 

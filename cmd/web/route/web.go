@@ -19,14 +19,8 @@ var Controllers = []any{
 
 // CustomRoutes allows adding simple/ad-hoc routes without creating a dedicated controller.
 type customRoutes struct{}
-
 var CustomRoutes = &customRoutes{}
 
-// Use this to add any middleware-dependent or prerequisite routes.
 func (u *customRoutes) RoutesPre(r *gin.Engine) {}
-
-// Use this for simple pages or routes that do not need a full controller.
-func (u *customRoutes) Routes(r *gin.Engine) {}
-
-// Use this for routes that should run last, e.g., catch-all, 404 pages, etc.
+func (u *customRoutes) RoutesCore(r *gin.Engine) {}
 func (u *customRoutes) RoutesPost(r *gin.Engine) {}

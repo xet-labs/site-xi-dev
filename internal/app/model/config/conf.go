@@ -6,17 +6,17 @@ type Config struct {
 	Org   OrgConf   `json:"org"`
 	Build BuildConf `json:"build"`
 	Db    DbConf    `json:"db"`
-	View  ViewConf  `json:"view"`
+	Web   WebConf   `json:"web"`
 }
 
 type OrgConf struct {
-	Name        string   `json:"name,omitempty"`
-	Abbr        string   `json:"abbr,omitempty"`
-	Domain      string   `json:"domain,omitempty"`
-	Url         string   `json:"url,omitempty"`
-	Logo        []string `json:"logo"`
-	FeaturedImg []string `json:"featured_img,omitempty"`
-	Tagline     string   `json:"tagline,omitempty"`
+	Abbr    string   `json:"abbr,omitempty"`
+	Name    string   `json:"name,omitempty"`
+	Domain  string   `json:"domain,omitempty"`
+	URL     string   `json:"url,omitempty"`
+	Logo    []string `json:"logo"`
+	Img     []string `json:"img,omitempty"`
+	Tagline string   `json:"tagline,omitempty"`
 }
 
 type BuildConf struct {

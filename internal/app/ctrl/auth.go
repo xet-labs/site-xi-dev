@@ -16,7 +16,7 @@ var Auth = &AuthCtrl{
 	Api: auth.AuthApi,
 }
 
-func (a *AuthCtrl) Routes(r *gin.Engine) {
+func (a *AuthCtrl) RoutesCore(r *gin.Engine) {
 
 	authApi := r.Group("/api")
 	{

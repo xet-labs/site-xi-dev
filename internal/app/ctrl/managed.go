@@ -19,39 +19,39 @@ type ManagedCtrl struct {
 
 var Managed = &ManagedCtrl{}
 
-// All cfg.View.Pages[@].Route are added automatically for mode={"", "managed"}
-func (m *ManagedCtrl) Routes(r *gin.Engine) {
-	for _, p := range cfg.View.Pages {
-		if p != nil && (p.Mode == "" || strings.ToLower(p.Mode) == "managed") {
+// All cfg.Web.Pages[@].Route are added automatically for mode={"", "managed"}
+func (m *ManagedCtrl) RoutesCore(r *gin.Engine) {
+	for _, p := range cfg.Web.Pages {
+		if p != nil && (p.Ctrl.Mode == "" || strings.ToLower(p.Ctrl.Mode) == "managed") {
 
 			// determine the HTTP method, default to GET
 			method := "GET"
-			if p.Method != "" {
-				method = strings.ToUpper(p.Method)
+			if p.Ctrl.Method != "" {
+				method = strings.ToUpper(p.Ctrl.Method)
 			}
 
 			// register route based on method
 			switch method {
 			case "GET":
-				r.GET(p.Route, func(c *gin.Context) { lib.View.Page(c, p) })
+				r.GET(p.Route, func(c *gin.Context) { lib.Web.Page(c, p) })
 			case "POST":
-				r.POST(p.Route, func(c *gin.Context) { lib.View.Page(c, p) })
+				r.POST(p.Route, func(c *gin.Context) { lib.Web.Page(c, p) })
 			case "PUT":
-				r.PUT(p.Route, func(c *gin.Context) { lib.View.Page(c, p) })
+				r.PUT(p.Route, func(c *gin.Context) { lib.Web.Page(c, p) })
 			case "PATCH":
-				r.PATCH(p.Route, func(c *gin.Context) { lib.View.Page(c, p) })
+				r.PATCH(p.Route, func(c *gin.Context) { lib.Web.Page(c, p) })
 			case "DELETE":
-				r.DELETE(p.Route, func(c *gin.Context) { lib.View.Page(c, p) })
+				r.DELETE(p.Route, func(c *gin.Context) { lib.Web.Page(c, p) })
 			case "HEAD":
-				r.HEAD(p.Route, func(c *gin.Context) { lib.View.Page(c, p) })
+				r.HEAD(p.Route, func(c *gin.Context) { lib.Web.Page(c, p) })
 			case "OPTIONS":
-				r.OPTIONS(p.Route, func(c *gin.Context) { lib.View.Page(c, p) })
+				r.OPTIONS(p.Route, func(c *gin.Context) { lib.Web.Page(c, p) })
 			case "PURGE":
 				// Gin doesn't have built-in PURGE, use Handle
-				r.Handle("PURGE", p.Route, func(c *gin.Context) { lib.View.Page(c, p) })
+				r.Handle("PURGE", p.Route, func(c *gin.Context) { lib.Web.Page(c, p) })
 			default:
 				// fallback to GET if unknown
-				r.GET(p.Route, func(c *gin.Context) { lib.View.Page(c, p) })
+				r.GET(p.Route, func(c *gin.Context) { lib.Web.Page(c, p) })
 			}
 		}
 	}
@@ -59,18 +59,18 @@ func (m *ManagedCtrl) Routes(r *gin.Engine) {
 }
 
 // Sitemap
-func (m *ManagedCtrl) Sitemap(c *gin.Context) (any, error) {
+func (m *ManagedCtrl) SitemapCore(c *gin.Context) (any, error) {
 	rdbKey := c.Request.URL.Path + ".managed"
-	urls := []model_config.SitemapURL{}
+	urls := []model_config.Sitemap{}
 
 	// Try cache
 	if err := lib.Rdb.GetJson(rdbKey, &urls); err == nil {
 		return urls, nil
 	}
 
-	for _, p := range cfg.View.Pages {
+	for _, p := range cfg.Web.Pages {
 
-		if p == nil || p.Route == "" || !(p.Mode == "" || strings.ToLower(p.Mode) == "managed") {
+		if p == nil || p.Route == "" || !(p.Ctrl.Mode == "" || strings.ToLower(p.Ctrl.Mode) == "managed") {
 			continue
 		}
 
@@ -82,8 +82,8 @@ func (m *ManagedCtrl) Sitemap(c *gin.Context) (any, error) {
 			}
 
 			// Case 2: If page is file-based, check its mod time
-			if p.Render == "file" && p.ContentFile != "" {
-				if fi, err := os.Stat(p.ContentFile); err == nil {
+			if p.Ctrl.Render == "file" && p.Content.File != "" {
+				if fi, err := os.Stat(p.Content.File); err == nil {
 					return fi.ModTime().Format("2006-01-02")
 				}
 			}
@@ -94,8 +94,8 @@ func (m *ManagedCtrl) Sitemap(c *gin.Context) (any, error) {
 		priority := "0.5"
 
 		// If meta info available, override
-		urls = append(urls, model_config.SitemapURL{
-			Loc:        lib.Util.Str.Fallback(p.Meta.Canonical, cfg.Org.Url+p.Route),
+		urls = append(urls, model_config.Sitemap{
+			Loc:        lib.Util.Str.Fallback(p.Meta.Canonical, cfg.Org.URL + p.Route),
 			LastMod:    lib.Util.Str.Fallback(p.Meta.Sitemap.LastMod, lastMod),
 			ChangeFreq: lib.Util.Str.Fallback(p.Meta.Sitemap.ChangeFreq, changeFreq),
 			Priority:   lib.Util.Str.Fallback(p.Meta.Sitemap.Priority, priority),

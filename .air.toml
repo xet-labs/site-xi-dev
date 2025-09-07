@@ -7,7 +7,7 @@ cmd = "go build -o storage/tmp/app \
   -ldflags=\"-X 'xi/internal/app/lib/cfg/static.BuildDate=$(date -u +%Y-%m-%dT%H:%M:%SZ )' \
              -X 'xi/internal/app/lib/cfg/static.BuildRevision=$(git rev-parse --short HEAD)' \
              -X 'xi/internal/app/lib/cfg/static.BuildMode=test' \
-             -X 'xi/internal/app/lib/cfg/static.BuildVersion=$(git describe --tags --match v*.*.* --abbrev=0 2>/dev/null || echo dev)'\" \
+             -X 'xi/internal/app/lib/cfg/static.BuildVersion=$(git describe --tags --match v*.*.* --abbrev=0 2>/dev/null || echo vx.x.x)'\" \
   ./cmd/web"
 delay = 1000
 

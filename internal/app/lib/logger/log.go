@@ -68,13 +68,13 @@ func (l *LoggerLib) InitCore() {
 			Str("name", cfg.Build.Name).
 			Str("revision", cfg.Build.Revision).
 			Str("version", cfg.Build.Version).
-			Msg("App build")
+			Msg("app build")
 	} else {
 		log.Info().
 			Str("date", cfg.Build.Date).
 			Str("name", cfg.Build.Name).
 			Str("revision", cfg.Build.Revision).
 			Str("version", cfg.Build.Version).
-			Msg("App build")
+			Msg("app build")
 	}
 }

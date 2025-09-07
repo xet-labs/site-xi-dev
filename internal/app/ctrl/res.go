@@ -17,7 +17,7 @@ var Res = &ResCtrl {
 	Sitemap: res.Sitemap,
 }
 
-func (rc *ResCtrl) Routes(r *gin.Engine) {
+func (rc *ResCtrl) RoutesCore(r *gin.Engine) {
 	// css
 	r.GET("/res/css/*name", rc.Css.Index)
 	

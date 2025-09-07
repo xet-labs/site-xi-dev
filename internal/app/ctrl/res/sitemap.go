@@ -16,8 +16,8 @@ import (
 type SitemapRes struct {
 	route.SitemapLib
 
-	once sync.Once
 	mu   sync.RWMutex
+	once sync.Once
 }
 
 var Sitemap = &SitemapRes{
@@ -36,7 +36,7 @@ func (s *SitemapRes) Index(c *gin.Context) {
 		return
 	}
 
-	var urls []model_config.SitemapURL
+	var urls []model_config.Sitemap
 	// Run Pre Hooks
 	if _, errs := s.Hooks.RunPre(c); len(errs) > 0 {
 		for _, e := range errs {
@@ -50,7 +50,7 @@ func (s *SitemapRes) Index(c *gin.Context) {
 		c.Error(e)
 	}
 	for _, r := range results {
-		if u, ok := r.([]model_config.SitemapURL); ok {
+		if u, ok := r.([]model_config.Sitemap); ok {
 			urls = append(urls, u...)
 		}
 	}
