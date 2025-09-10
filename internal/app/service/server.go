@@ -2,7 +2,7 @@
 package service
 
 import (
-	"xi/internal/app/lib/cfg"
+	"xi/pkg/cfg"
 
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog/log"

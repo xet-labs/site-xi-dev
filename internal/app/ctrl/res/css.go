@@ -1,45 +1,43 @@
 package res
 
 import (
+	"net/http"
 	"strings"
 	"sync"
 	"time"
 
-	"xi/internal/app/lib"
-	"xi/internal/app/lib/cfg"
+	"xi/pkg"
+	"xi/pkg/cfg"
 
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog/log"
 )
 
 type CssRes struct {
-	Files    map[string][]string // key: baseName, value: list of CSS file paths
+	Files   sync.Map // key: string, value: []string
 	BaseDir string
 	RdbTTL  time.Duration
 
-	CacheFilePath bool
 	once sync.Once
 	mu   sync.RWMutex
 }
 
 var Css = &CssRes{
-	Files:    make(map[string][]string),
 	BaseDir: cfg.Web.CssBaseDir,
 	RdbTTL:  12 * time.Hour,
-
-	CacheFilePath: false,
 }
 
 // Css handler: serves combined+cssMin CSS (Redis cached)
 func (r *CssRes) Index(c *gin.Context) {
 	rdbKey := c.Request.RequestURI
 	base := cfg.Web.CssBaseDir + "/" + strings.TrimSuffix(c.Param("name"), ".css")
-	
+
 	if lib.Web.OutCache(c, rdbKey).Css() {
-		return 	// Send cache
+		return // Send cache
 	}
 
-	if _, ok := r.Files[base]; !r.CacheFilePath || !ok {
+	// if files list for path 'base' doesnt exists in []Files then geenerate
+	if _, ok := r.Files.Load(base); cfg.Web.Cache.Css.FilesList != nil && !*cfg.Web.Cache.Css.FilesList || !ok {
 		var (
 			files []string
 			err   error
@@ -50,10 +48,14 @@ func (r *CssRes) Index(c *gin.Context) {
 			return
 		}
 
-		r.mu.Lock()
-		r.Files[base] = files
-		r.mu.Unlock()
+		r.Files.Store(base, files)
 	}
 
-	lib.Web.OutCss(c, lib.Util.File.MergeByte(r.Files[base]), rdbKey)
+	// response and cache
+	if v, ok := r.Files.Load(base); ok {
+		lib.Web.OutCss(c, lib.Util.File.MergeByte(v.([]string)), rdbKey)
+		return
+	}
+
+	c.Status(http.StatusInternalServerError)
 }

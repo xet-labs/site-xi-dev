@@ -1,19 +1,19 @@
 {{ define "layout/blogs" }}
 
-{{ template "prtls/head" . }}
+{{ template "prtl/head" . }}
 
 <body class="blog">
 
 	{{ linkJsSlice "preload" .P.Js }}
 	{{ linkLibSlice .P.Lib }}
-	{{ template "prtls/nav" . }}
+	{{ template "prtl/nav" . }}
 
 	<main>
 
 		<div class="wrap">
 			<article class="blog-con con">
 				<header class="blog-head">
-					{{ template "prtls/blog.header" . }}
+					{{ template "prtl/blog.header" . }}
 				</header>
 
 				<section class="blog-content">
@@ -28,7 +28,7 @@
 		
 	</main>
 
-	{{ template "prtls/footer" . }}
+	{{ template "prtl/footer" . }}
 	{{ linkJsSlice "preload" .P.Js99 }}
 	{{ linkLibSlice .P.Lib99 }}
 

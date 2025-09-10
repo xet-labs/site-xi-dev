@@ -1,0 +1,20 @@
+{{ define "layout/main" }}
+
+{{ template "prtl/html.begin" . }}
+{{ template "prtl/head" . }}
+{{ template "prtl/body.begin" . }}
+
+	{{ linkJsSlice "preload" .P.Js }}
+	{{ linkLibSlice .P.Lib }}
+	{{ template "prtl/header" . }}
+
+		{{ .P.Rt.Content }}
+
+	{{ template "prtl/footer" . }}
+	{{ linkJsSlice "preload" .P.Js99 }}
+	{{ linkLibSlice .P.Lib99 }}
+	
+{{ template "prtl/body.end" . }}
+{{ template "prtl/html.end" . }}
+
+{{ end }}

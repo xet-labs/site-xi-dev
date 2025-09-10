@@ -1,10 +1,10 @@
 package service
 
 import (
-	"xi/internal/app/lib"
+	"xi/pkg"
 )
 
-// xi/internal/app/lib.* are designed so self init on method calls but adding them here ensures they are called once
+// xi/pkg.* are designed so self init on method calls but adding them here ensures they are called once
 func Init() {
 	// Init Core Libs
 	lib.Logger.Init()

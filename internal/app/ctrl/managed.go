@@ -5,8 +5,8 @@ import (
 	"strings"
 	"time"
 
-	"xi/internal/app/lib"
-	"xi/internal/app/lib/cfg"
+	"xi/pkg"
+	"xi/pkg/cfg"
 	model_config "xi/internal/app/model/config"
 
 	"github.com/gin-gonic/gin"
@@ -61,7 +61,7 @@ func (m *ManagedCtrl) RoutesCore(r *gin.Engine) {
 // Sitemap
 func (m *ManagedCtrl) SitemapCore(c *gin.Context) (any, error) {
 	rdbKey := c.Request.URL.Path + ".managed"
-	urls := []model_config.Sitemap{}
+	urls := []model_config.MetaSitemap{}
 
 	// Try cache
 	if err := lib.Rdb.GetJson(rdbKey, &urls); err == nil {
@@ -94,7 +94,7 @@ func (m *ManagedCtrl) SitemapCore(c *gin.Context) (any, error) {
 		priority := "0.5"
 
 		// If meta info available, override
-		urls = append(urls, model_config.Sitemap{
+		urls = append(urls, model_config.MetaSitemap{
 			Loc:        lib.Util.Str.Fallback(p.Meta.Canonical, cfg.Org.URL + p.Route),
 			LastMod:    lib.Util.Str.Fallback(p.Meta.Sitemap.LastMod, lastMod),
 			ChangeFreq: lib.Util.Str.Fallback(p.Meta.Sitemap.ChangeFreq, changeFreq),

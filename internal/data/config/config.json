@@ -18,7 +18,6 @@
   "db": {
     "db_default": "${DB_DEFAULT:-db}",
     "rdb_default": "${RDB_DEFAULT:-rdb}",
-    "rdb_prefix": "${APP_ABBR:-redis}",
     "conn": {
       "db": {
         "enable": "${DB_ENABLE:-false}",
@@ -48,7 +47,8 @@
   },
   "web": {
     "css_base_dir": "web/partials",
-    "template_dirs": [
+    "template_dir": [
+      "internal/data/web",
       "web"
     ],
     "default": {

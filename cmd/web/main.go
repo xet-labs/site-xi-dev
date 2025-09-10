@@ -2,8 +2,8 @@ package main
 
 import (
 	"xi/cmd/web/route"
-	"xi/internal/app/lib"
-	"xi/internal/app/lib/cfg"
+	"xi/pkg"
+	"xi/pkg/cfg"
 	"xi/internal/app/service"
 
 	"github.com/gin-gonic/gin"

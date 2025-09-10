@@ -5,8 +5,8 @@ import (
 	"html/template"
 	"net/http"
 	"sync"
-	"xi/internal/app/lib"
-	"xi/internal/app/lib/cfg"
+	"xi/pkg"
+	"xi/pkg/cfg"
 	model_config "xi/internal/app/model/config"
 	model_db "xi/internal/app/model/db"
 
@@ -59,17 +59,17 @@ func (b *BlogHttpCtrl) Show(c *gin.Context) {
 	}
 	b.mu.Unlock()
 
-	p := cfg.Web.Pages["blogs"]
+	p := *cfg.Web.Pages["blogs"]
 	b.PrepMeta(c, &p.Meta, &blog)
 	p.Rt = map[string]any{
-		"B":       blog,
+		"B":       &blog,
 		"Content": template.HTML(blog.Content),
 	}
 
-	lib.Web.OutHtmlLyt(c, p, rdbKey)
+	lib.Web.OutHtmlLyt(c, &p, rdbKey)
 }
 
-func (b *BlogHttpCtrl) PrepMeta(c *gin.Context, meta *model_config.Meta, raw *model_db.Blog) {
+func (b *BlogHttpCtrl) PrepMeta(c *gin.Context, meta *model_config.WebMeta, raw *model_db.Blog) {
 	meta.Type = "Article"
 	meta.Title = raw.Title
 	meta.URL = lib.Util.Url.Full(c)

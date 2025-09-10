@@ -3,8 +3,8 @@ package ctrl
 import (
 	"net/http"
 	"sort"
-	"xi/internal/app/lib"
-	"xi/internal/app/lib/cfg"
+	"xi/pkg"
+	"xi/pkg/cfg"
 
 	"github.com/gin-gonic/gin"
 )
@@ -21,16 +21,11 @@ func (d *DebugCtrl) RoutesCore(r *gin.Engine) {
 	r.GET("/t", d.Index(r))
 
 	r.GET("/t/c", func(c *gin.Context) {
-		cfg, err := lib.Conf.All()
-		if err != nil {
-			c.JSON(500, gin.H{"error": "failed to load config", "details": err.Error()})
-			return
-		}
-		c.JSON(200, cfg)
+		c.JSON(200, cfg.All())
 	})
 
 	r.GET("/t/cr", func(c *gin.Context) {
-		cfg, err := lib.Conf.RAll()
+		cfg, err := cfg.RAll()
 		if err != nil {
 			c.JSON(500, gin.H{"error": "failed to load config", "details": err.Error()})
 			return

@@ -1,0 +1,23 @@
+{{ define "prtl/nav.begin" }}
+
+<nav role="navigation">
+	<div class="nav-con">
+
+		{{ template "prtl/nav.brand" . }}
+		{{ template "prtl/nav.menu" . }}
+		{{ template "prtl/nav.action" . }}
+
+	</div>
+		
+{{ end }}
+
+
+{{ define "prtl/nav.end" }}
+</nav>
+{{ end }}
+
+
+{{ define "prtl/nav" }}
+	{{ template "prtl/nav.begin" . }}
+	{{ template "prtl/nav.end" . }}
+{{ end }}

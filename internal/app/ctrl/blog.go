@@ -5,8 +5,8 @@ import (
 	"time"
 
 	"xi/internal/app/ctrl/blog"
-	"xi/internal/app/lib"
-	"xi/internal/app/lib/cfg"
+	"xi/pkg"
+	"xi/pkg/cfg"
 	model_config "xi/internal/app/model/config"
 	model_ctrlBlog "xi/internal/app/model/ctrl/blog"
 
@@ -52,7 +52,7 @@ func (b *BlogCtrl) RoutesCore(r *gin.Engine) {
 // Blog Sitemap
 func (b *BlogCtrl) SitemapCore(c *gin.Context) (any, error) {
 	rdbKey := c.Request.URL.Path + ".blog"
-	urls := []model_config.Sitemap{}
+	urls := []model_config.MetaSitemap{}
 
 	// Try cache
 	if err := lib.Rdb.GetJson(rdbKey, &urls); err == nil {
@@ -78,7 +78,7 @@ func (b *BlogCtrl) SitemapCore(c *gin.Context) (any, error) {
 	for _, p := range blogs {
 
 		// If meta info available, override
-		urls = append(urls, model_config.Sitemap{
+		urls = append(urls, model_config.MetaSitemap{
 			Loc:        cfg.Org.URL + "/blog/@" + p.Username + "/" + p.Slug,
 			LastMod:    lib.Util.Str.Fallback(p.UpdatedAt.Format("2006-01-02"), time.Now().Format("2006-01-02")),
 			ChangeFreq: "daily",

@@ -3,7 +3,7 @@ package auth
 import (
     "time"
     
-    "xi/internal/app/lib/cfg"
+    "xi/pkg/cfg"
 
     "github.com/golang-jwt/jwt/v5"
 )

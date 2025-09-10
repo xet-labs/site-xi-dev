@@ -5,8 +5,8 @@ import (
 	"sync"
 	"time"
 
-	"xi/internal/app/lib"
-	"xi/internal/app/lib/route"
+	"xi/pkg"
+	"xi/pkg/route"
 	model_config "xi/internal/app/model/config"
 	model_ctrlRes "xi/internal/app/model/ctrl/res"
 
@@ -36,7 +36,7 @@ func (s *SitemapRes) Index(c *gin.Context) {
 		return
 	}
 
-	var urls []model_config.Sitemap
+	var urls []model_config.MetaSitemap
 	// Run Pre Hooks
 	if _, errs := s.Hooks.RunPre(c); len(errs) > 0 {
 		for _, e := range errs {
@@ -50,7 +50,7 @@ func (s *SitemapRes) Index(c *gin.Context) {
 		c.Error(e)
 	}
 	for _, r := range results {
-		if u, ok := r.([]model_config.Sitemap); ok {
+		if u, ok := r.([]model_config.MetaSitemap); ok {
 			urls = append(urls, u...)
 		}
 	}

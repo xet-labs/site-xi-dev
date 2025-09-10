@@ -4,8 +4,8 @@ package auth
 import (
 	"net/http"
 	"net/url"
-	"xi/internal/app/lib"
-	"xi/internal/app/lib/cfg"
+	"xi/pkg"
+	"xi/pkg/cfg"
 	model_db "xi/internal/app/model/db"
 
 	"github.com/gin-gonic/gin"

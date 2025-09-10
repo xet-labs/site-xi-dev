@@ -1,0 +1,17 @@
+{{ define "prtl/header.begin" }}
+<header>
+
+{{ template "prtl/nav" . }}
+
+{{ end }}
+
+
+{{ define "prtl/header.end" }}
+</header>
+{{ end }}
+
+
+{{ define "prtl/header" }}
+{{ template "prtl/header.begin" . }}
+{{ template "prtl/header.end" . }}
+{{ end }}

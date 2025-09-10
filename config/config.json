@@ -20,7 +20,6 @@
   "db": {
     "db_default": "${DB_DEFAULT:-db}",
     "rdb_default": "${RDB_DEFAULT:-rdb}",
-    "rdb_prefix": "${APP_ABBR:-redis}",
     "conn": {
       "db": {
         "enable": "${DB_ENABLE:-true}",
@@ -49,22 +48,13 @@
     }
   },
   "web": {
-    "css_base_dir": "web/partials",
-    "template_dirs": [
-      "web"
-    ],
     "default": {
-      "ctrl": {
-        "mode": "managed",
-        "layout": "layout/default"
-      },
       "org": {
         "name": "Xet Industries",
         "domain": "xetindustries.com",
         "url": "https://xetindustries.com",
         "img": {
-          "url": "/res/static/org/icon-wordmark-black-bg-2000x1500.svg",
-          "alt": "Xet Industries"
+          "url": "/res/static/org/icon-wordmark-black-bg-2000x1500.svg"
         }
       },
       "meta": {

@@ -9,7 +9,7 @@ import (
 	"sync"
 	"time"
 
-	"xi/internal/app/lib"
+	"xi/pkg"
 	model_db "xi/internal/app/model/db"
 
 	"github.com/gin-gonic/gin"

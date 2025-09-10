@@ -1,0 +1,24 @@
+{{ define "prtl/nav.brand" }}
+
+<div class="brand">
+    <a href="/" class="brand-icon" cntnt-src="/res/static/org/logo-wordmark-current-colr.svg"></a>
+    <a href="/" class="brand-wordmark" cntnt-src="/res/static/org/logo-current-colr.svg"></a>
+    <a href="/" class="brand-icon-wordmark" cntnt-src="/res/static/org/logo-current-colr.svg"></a>
+    <a href="/" class="brand-name"></a>
+
+    {{ if .P.Web.SubBrand }}
+    <div class="sub-brand-wrap">
+        <div class="line-y"></div>
+        <div class="sub-brand">
+            {{ range .P.NavMenu }}
+            {{ if eq .Label $.P.Web.SubBrand }}
+            <a href="{{ .Href }}">{{ .Label }}</a>
+            {{ end }}
+            {{ end }}
+        </div>
+    </div>
+    {{ end }}
+
+</div>
+
+{{ end }}

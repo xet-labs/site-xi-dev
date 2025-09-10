@@ -1,0 +1,10 @@
+{{ define "layout/prtlhead-body" }}
+
+{{ template "prtl/html.begin" . }}
+{{ template "prtl/head.begin" . }}
+
+	{{ .P.Rt.Content }}
+	
+{{ template "prtl/html.end" . }}
+
+{{ end }}
