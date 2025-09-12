@@ -1,0 +1,11 @@
+# Keep our version always during merges
+
+# Config files
+config/* merge=ours
+
+# GitHub workflow files
+.github/* merge=ours
+
+# Main documentation / release files
+README.md merge=ours
+goreleaser.yml merge=ours
