@@ -3,6 +3,9 @@
 # Config files
 config/* merge=ours
 
+# Asset
+web/*
+
 # GitHub workflow files
 .github/* merge=ours
 
