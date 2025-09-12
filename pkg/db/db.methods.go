@@ -29,7 +29,7 @@ func (d *DbLib) GetCli(name ...string) *gorm.DB {
 		return db
 	}
 
-	log.Warn().Msgf("DB '%s' not found", dbName)
+	log.Warn().Msgf("requested db '%s' not found", dbName)
 	return nil
 }
 

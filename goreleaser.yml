@@ -16,11 +16,11 @@ builds:
       - CGO_ENABLED=0
     ldflags:
       - -s -w
-      - -X 'xi/internal/app/lib/cfg/static.BuildDate={{.Date}}'
-      - -X 'xi/internal/app/lib/cfg/static.BuildRevision={{.ShortCommit}}'
-      - -X 'xi/internal/app/lib/cfg/static.BuildVersion={{ if index .Env "BuildVerPrepend" }}{{ .Env.BuildVerPrepend }}{{ else }}{{ .Branch }}{{ end }}-{{.Version}}'
-      - -X 'xi/internal/app/lib/cfg/static.BuildName={{ if index .Env "BuildName" }}{{ .Env.BuildName }}{{ else }}{{ .ProjectName  }}{{ end }}'
-      - -X 'xi/internal/app/lib/cfg/static.BuildMode=release'
+      - -X 'xi/pkg/cfg/static.BuildDate={{.Date}}'
+      - -X 'xi/pkg/cfg/static.BuildRevision={{.ShortCommit}}'
+      - -X 'xi/pkg/cfg/static.BuildVersion={{ if index .Env "BuildVerPrepend" }}{{ .Env.BuildVerPrepend }}{{ else }}{{ .Branch }}{{ end }}-{{.Version}}'
+      - -X 'xi/pkg/cfg/static.BuildName={{ if index .Env "BuildName" }}{{ .Env.BuildName }}{{ else }}{{ .ProjectName  }}{{ end }}'
+      - -X 'xi/pkg/cfg/static.BuildMode=release'
     goos:
       - linux
       # - darwin

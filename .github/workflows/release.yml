@@ -50,7 +50,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           BuildVerPrepend: ${{ steps.detect_branch.outputs.branch }}
 
-      - name: Find release artifacts
+      - name: Find Public Release Assets
         if: steps.detect_branch.outputs.branch != ''
         id: file_list
         run: |
