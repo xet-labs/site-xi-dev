@@ -53,7 +53,7 @@ function renderBlogsCard(blog) {
       <div class="card-meta">
         <a href="/@${user.username}" class="meta-author-img">
           <figure>
-            <img src="${user.profile_img}" alt="${user.name}" loading="lazy">
+            <img src="${user.avatar_url}" alt="${user.name}" loading="lazy">
           </figure>
         </a>
         <div class="meta-info">

@@ -5,8 +5,8 @@ import (
 	"time"
 
 	"xi/internal/app/ctrl/blog"
-	"xi/pkg"
-	"xi/pkg/cfg"
+	"xi/pkg/lib"
+	"xi/pkg/lib/cfg"
 	model_config "xi/internal/app/model/config"
 	model_ctrlBlog "xi/internal/app/model/ctrl/blog"
 
@@ -33,19 +33,19 @@ var Blog = &BlogCtrl{
 func (b *BlogCtrl) RoutesCore(r *gin.Engine) {
 	api := r.Group("api/blog") // route /api/blog
 	{
-		api.GET("", Blog.Api.Index)
-		api.GET("/:uid/:id", Blog.Api.Show)
-		api.POST("/:uid/:id", Blog.Api.Post)
-		api.PUT("/:uid/:id", Blog.Api.Put)
-		api.DELETE("/:uid/:id", Blog.Api.Delete)
+		api.GET("", b.Api.Index)
+		api.GET("/:uid/:id", b.Api.Show)
+		api.POST("/:uid/:id", b.Api.Post)
+		api.PUT("/:uid/:id", b.Api.Put)
+		api.DELETE("/:uid/:id", b.Api.Delete)
 	}
 
 	blogs := r.Group("/blog/:uid/:id") // route /blog/*
 	{
-		blogs.GET("", Blog.Http.Show)
-		blogs.POST("", Blog.Http.Post)
-		blogs.PUT("", Blog.Http.Put)
-		blogs.DELETE("", Blog.Http.Delete)
+		blogs.GET("", b.Http.Show)
+		blogs.POST("", b.Http.Post)
+		blogs.PUT("", b.Http.Put)
+		blogs.DELETE("", b.Http.Delete)
 	}
 }
 

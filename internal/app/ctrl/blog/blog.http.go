@@ -5,8 +5,8 @@ import (
 	"html/template"
 	"net/http"
 	"sync"
-	"xi/pkg"
-	"xi/pkg/cfg"
+	"xi/pkg/lib"
+	"xi/pkg/lib/cfg"
 	model_config "xi/internal/app/model/config"
 	model_db "xi/internal/app/model/db"
 
@@ -78,7 +78,7 @@ func (b *BlogHttpCtrl) PrepMeta(c *gin.Context, meta *model_config.WebMeta, raw 
 	meta.Img.URL = lib.Util.Url.Host(c) + raw.FeaturedImg
 	meta.Tags = raw.Tags
 	meta.Author.Name = raw.User.Name
-	meta.Author.Img = raw.User.ProfileImg
+	meta.Author.Img = raw.User.AvatarURL
 	meta.Author.URL = lib.Util.Url.Host(c) + "/@" + raw.User.Username
 	meta.CreatedAt = raw.CreatedAt
 	meta.UpdatedAt = raw.UpdatedAt

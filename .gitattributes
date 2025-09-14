@@ -1,14 +1,13 @@
 # Keep our version always during merges
 
-# Config files
+# Asset/config
 config/* merge=ours
+web/* merge=ours
 
-# Asset
-web/*
-
-# GitHub workflow files
+# Automation/workflow files
 .github/* merge=ours
-
-# Main documentation / release files
-README.md merge=ours
 goreleaser.yml merge=ours
+
+# Documents
+README.md merge=ours
+LICENSE merge=ours

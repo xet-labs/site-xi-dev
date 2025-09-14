@@ -9,7 +9,7 @@ import (
 	"sync"
 	"time"
 
-	"xi/pkg"
+	"xi/pkg/lib"
 	model_db "xi/internal/app/model/db"
 
 	"github.com/gin-gonic/gin"
@@ -131,7 +131,7 @@ func (b *BlogApiCtrl) ShowCore(dest *model_db.Blog, rawUID, rawID string) error 
 	if username, ok := strings.CutPrefix(rawUID, "@"); ok {
 		// DB fallback
 		err = b.db.Preload("User").
-			Joins("JOIN users ON users.uid = blogs.uid").
+			Joins("JOIN users ON users.id = blogs.uid").
 			Where("users.username = ? AND (blogs.slug = ? OR blogs.id = ?)", username, rawID, rawID).
 			First(dest).Error
 

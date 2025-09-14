@@ -5,5 +5,5 @@ type WebCache struct {
 }
 
 type CacheCss struct {
-	FilesList *bool `json:"files_list,omitempty"`
+	FilesList bool `json:"files_list,omitempty"`
 }
