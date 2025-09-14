@@ -18,7 +18,7 @@ check:
 	go vet ./...
 
 run:
-	@AppBin="${PWD}/stirage/tmp/bin"; \
+	@AppBin="${PWD}/storage/tmp/bin"; \
 	echo "Creating bin dir at $$AppBin"; \
 	mkdir -p "$$AppBin"; \
 	\
