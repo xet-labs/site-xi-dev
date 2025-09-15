@@ -8,4 +8,3 @@ import (
 var PostHooks = []hook.HookFn{
 	confHook.ViewPagesSetup,
 }
-

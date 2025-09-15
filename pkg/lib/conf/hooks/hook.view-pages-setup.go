@@ -4,12 +4,12 @@ import (
 	"errors"
 	"maps"
 
-	"xi/pkg/lib/cfg"
 	"github.com/rs/zerolog/log"
+	"xi/pkg/lib/cfg"
 )
 
 // In your ConfLib initialization:
-func ViewPagesSetup(args ...any) (any, error){
+func ViewPagesSetup(args ...any) (any, error) {
 
 	// Fetch defaults and pages
 	pageDefault := cfg.RGet("web.default").(map[string]any)
@@ -53,5 +53,5 @@ func ViewPagesSetup(args ...any) (any, error){
 		viewPages[page] = rawConf
 	}
 
-    return rawJson, nil
+	return rawJson, nil
 }

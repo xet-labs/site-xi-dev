@@ -5,17 +5,8 @@ import (
 	"gorm.io/gorm"
 )
 
-// Ensures lazyInit runs once
-func (d *DbLib) lazyFnOnce() {
-	d.once.Do(func() {
-		if d.lazyInit != nil {
-			d.lazyInit()
-		}
-	})
-}
-
 // Get returns the DB instance by name or default
-func (d *DbLib) GetCli(name ...string) *gorm.DB {
+func (d *DbStore) GetCli(name ...string) *gorm.DB {
 	d.Init()
 	d.mu.RLock()
 	defer d.mu.RUnlock()
@@ -34,14 +25,14 @@ func (d *DbLib) GetCli(name ...string) *gorm.DB {
 }
 
 // Set sets a DB by name
-func (d *DbLib) SetCli(name string, db *gorm.DB) {
+func (d *DbStore) SetCli(name string, db *gorm.DB) {
 	d.mu.Lock()
 	defer d.mu.Unlock()
 	d.clients[name] = db
 }
 
 // SetDefault sets the default DB name
-func (d *DbLib) SetDefault(name string) {
+func (d *DbStore) SetDefault(name string) {
 	d.defaultCli = name
 }
 

@@ -16,7 +16,8 @@ import (
 	"gorm.io/gorm"
 )
 
-type DbLib struct {
+type DbStore struct {
+	Cli *gorm.DB
 	clients    map[string]*gorm.DB
 	defaultCli string
 	mu         sync.RWMutex
@@ -24,15 +25,15 @@ type DbLib struct {
 	lazyInit   func()
 }
 
-var Db = &DbLib{
+var Db = &DbStore{
 	defaultCli: "database",
 	clients:    make(map[string]*gorm.DB),
 }
 
 // Init initializes DBs once
-func (d *DbLib) Init() { d.once.Do(d.InitForce) }
+func (d *DbStore) Init() { d.once.Do(d.InitForce) }
 
-func (d *DbLib) initPre() {
+func (d *DbStore) initPre() {
 	conf.Conf.Init()
 
 	// Set global Redis and DB defaults
@@ -40,13 +41,13 @@ func (d *DbLib) initPre() {
 	Rdb.SetCtx(context.Background())
 	Rdb.SetDefault(cfg.Db.RdbDefault)
 	cfg.Db.RdbPrefix = util.Str.Fallback(cfg.Db.RdbPrefix,
-		util.Str.IfNotEmptyElse(cfg.Org.Abbr, cfg.Org.Abbr + cfg.Build.Revision, cfg.Build.Revision))
+		util.Str.IfNotEmptyElse(cfg.Org.Abbr, cfg.Org.Abbr+cfg.Build.Revision, cfg.Build.Revision))
 	Rdb.SetPrefix(cfg.Db.RdbPrefix)
 }
-func (d *DbLib) initPost() {}
+func (d *DbStore) initPost() {}
 
 // Initializes all DBs and Redis clients (forced)
-func (d *DbLib) InitForce() {
+func (d *DbStore) InitForce() {
 	d.initPre()
 
 	if cfg.Db.Conn == nil {

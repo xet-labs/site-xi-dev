@@ -19,8 +19,8 @@ type MinifyLib struct {
 }
 
 var (
-	Minify   = &MinifyLib{}
-	
+	Minify = &MinifyLib{}
+
 	minifier = min3.New()
 
 	// CSS Regex

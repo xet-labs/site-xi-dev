@@ -1,17 +1,17 @@
-package route
+package router
 
 import (
 	"sync"
 
+	model_config "xi/internal/app/model/config"
 	"xi/pkg/lib/cfg"
 	"xi/pkg/lib/hook"
 	"xi/pkg/lib/web"
-	model_config "xi/internal/app/model/config"
 
 	"github.com/gin-gonic/gin"
 )
 
-type RouteLib struct {
+type RouterLib struct {
 	hooks *hook.Hook
 	r     *gin.Engine
 
@@ -20,7 +20,7 @@ type RouteLib struct {
 }
 
 var (
-	Route = &RouteLib{
+	Router = &RouterLib{
 		hooks: &hook.Hook{},
 		r:     &gin.Engine{},
 	}
@@ -35,16 +35,14 @@ type CoreRoutable interface{ RoutesCore(r *gin.Engine) }
 // Used for fallback routes, debug endpoints, catch-alls.
 type PostRoutable interface{ RoutesPost(r *gin.Engine) }
 
-
 // Initializes all routes and templates
-func (rh *RouteLib) Init(r *gin.Engine, ctrls any) {
+func (rh *RouterLib) Init(r *gin.Engine, ctrls any) {
 	// Store Gin Engine
 	rh.r = r
 
 	// Register controller routes for diffent satages
 	rh.RegisterController(r, ctrls)
 
-	
 	// Run Hooks
 	rh.hooks.RunPre(r, rh)
 	rh.hooks.RunCore(r, rh)
@@ -54,8 +52,8 @@ func (rh *RouteLib) Init(r *gin.Engine, ctrls any) {
 }
 
 // RegisterController controllers to route and sitemap
-func (rh *RouteLib) RegisterController(r *gin.Engine, ctrls any) {
-	
+func (rh *RouterLib) RegisterController(r *gin.Engine, ctrls any) {
+
 	// Normalize input: single controller or slice of controllers
 	var controllers []any
 	switch v := ctrls.(type) {

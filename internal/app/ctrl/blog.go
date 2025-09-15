@@ -5,10 +5,10 @@ import (
 	"time"
 
 	"xi/internal/app/ctrl/blog"
-	"xi/pkg/lib"
-	"xi/pkg/lib/cfg"
 	model_config "xi/internal/app/model/config"
 	model_ctrlBlog "xi/internal/app/model/ctrl/blog"
+	"xi/pkg/lib"
+	"xi/pkg/lib/cfg"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
@@ -61,7 +61,7 @@ func (b *BlogCtrl) SitemapCore(c *gin.Context) (any, error) {
 
 	// Try DB
 	var blogs []model_ctrlBlog.BlogSitemap
-	
+
 	b.mu.Lock()
 	err := b.db.
 		Table("blogs").

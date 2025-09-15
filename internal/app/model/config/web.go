@@ -1,7 +1,7 @@
 package config
 
 type WebConf struct {
-	Cache WebCache `json:"cache,omitempty"`
+	Cache       WebCache            `json:"cache,omitempty"`
 	CssDir      []string            `json:"css_dir,omitempty"`
 	CssBaseDir  string              `json:"css_base_dir,omitempty"`
 	TemplateDir []string            `json:"template_dir,omitempty"`

@@ -1,4 +1,4 @@
-package db
+package rdb
 
 import (
 	"encoding/json"
@@ -8,11 +8,11 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-func (r *RdbLib) key(k string) string {
+func (r *RdbStore) key(k string) string {
 	return r.prefix + ":" + k
 }
 
-func (r *RdbLib) Set(k string, v any, ttl time.Duration) error {
+func (r *RdbStore) Set(k string, v any, ttl time.Duration) error {
 	if r.client == nil {
 		return redis.ErrClosed
 	}
@@ -24,7 +24,7 @@ func (r *RdbLib) Set(k string, v any, ttl time.Duration) error {
 	return nil
 }
 
-func (r *RdbLib) Get(k string) (string, error) {
+func (r *RdbStore) Get(k string) (string, error) {
 	if r.client == nil {
 		return "", redis.ErrClosed
 	}
@@ -36,14 +36,14 @@ func (r *RdbLib) Get(k string) (string, error) {
 	return v, err
 }
 
-func (r *RdbLib) GetBytes(k string) ([]byte, error) {
+func (r *RdbStore) GetBytes(k string) ([]byte, error) {
 	if r.client == nil {
 		return nil, redis.ErrClosed
 	}
 	return r.client.Get(r.ctx, r.key(k)).Bytes()
 }
 
-func (r *RdbLib) SetJson(k string, v any, ttl time.Duration) error {
+func (r *RdbStore) SetJson(k string, v any, ttl time.Duration) error {
 	val, err := json.Marshal(v)
 	if err != nil {
 		log.Warn().Err(err).Str("key", k).Msg("rdb SetJson")
@@ -52,7 +52,7 @@ func (r *RdbLib) SetJson(k string, v any, ttl time.Duration) error {
 	return r.Set(k, val, ttl)
 }
 
-func (r *RdbLib) GetJson(k string, out any) error {
+func (r *RdbStore) GetJson(k string, out any) error {
 	v, err := r.GetBytes(k)
 	if err != nil {
 		return err
@@ -60,7 +60,7 @@ func (r *RdbLib) GetJson(k string, out any) error {
 	return json.Unmarshal(v, out)
 }
 
-func (r *RdbLib) Del(keys ...string) error {
+func (r *RdbStore) Del(keys ...string) error {
 	if r.client == nil {
 		return redis.ErrClosed
 	}
@@ -76,7 +76,7 @@ func (r *RdbLib) Del(keys ...string) error {
 	return r.client.Del(r.ctx, redisKeys...).Err()
 }
 
-func (r *RdbLib) Exists(k string) (bool, error) {
+func (r *RdbStore) Exists(k string) (bool, error) {
 	if r.client == nil {
 		return false, redis.ErrClosed
 	}
@@ -84,14 +84,14 @@ func (r *RdbLib) Exists(k string) (bool, error) {
 	return n > 0, err
 }
 
-func (r *RdbLib) Keys(pattern string) ([]string, error) {
+func (r *RdbStore) Keys(pattern string) ([]string, error) {
 	if r.client == nil {
 		return nil, redis.ErrClosed
 	}
 	return r.client.Keys(r.ctx, r.key(pattern)).Result()
 }
 
-func (r *RdbLib) FlushAll() error {
+func (r *RdbStore) FlushAll() error {
 	if r.client == nil {
 		return redis.ErrClosed
 	}

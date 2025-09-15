@@ -5,9 +5,9 @@ import (
 	"strings"
 	"time"
 
+	model_config "xi/internal/app/model/config"
 	"xi/pkg/lib"
 	"xi/pkg/lib/cfg"
-	model_config "xi/internal/app/model/config"
 
 	"github.com/gin-gonic/gin"
 )
@@ -95,7 +95,7 @@ func (m *ManagedCtrl) SitemapCore(c *gin.Context) (any, error) {
 
 		// If meta info available, override
 		urls = append(urls, model_config.MetaSitemap{
-			Loc:        lib.Util.Str.Fallback(p.Meta.Canonical, cfg.Org.URL + p.Route),
+			Loc:        lib.Util.Str.Fallback(p.Meta.Canonical, cfg.Org.URL+p.Route),
 			LastMod:    lib.Util.Str.Fallback(p.Meta.Sitemap.LastMod, lastMod),
 			ChangeFreq: lib.Util.Str.Fallback(p.Meta.Sitemap.ChangeFreq, changeFreq),
 			Priority:   lib.Util.Str.Fallback(p.Meta.Sitemap.Priority, priority),

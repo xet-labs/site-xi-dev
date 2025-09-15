@@ -12,7 +12,7 @@ type ResCtrl struct {
 	Sitemap *res.SitemapRes
 }
 
-var Res = &ResCtrl {
+var Res = &ResCtrl{
 	Css:     res.Css,
 	Sitemap: res.Sitemap,
 }
@@ -20,7 +20,7 @@ var Res = &ResCtrl {
 func (rc *ResCtrl) RoutesCore(r *gin.Engine) {
 	// css
 	r.GET("/res/css/*name", rc.Css.Index)
-	
+
 	// Sitemap
 	r.GET("/sitemap", rc.Sitemap.Index)
 	r.GET("/sitemap.xml", rc.Sitemap.Index)

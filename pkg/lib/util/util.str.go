@@ -14,4 +14,3 @@ func IfPtrNotNil[T any](val T, ptr *T) T {
 	}
 	return zero
 }
-

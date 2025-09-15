@@ -1,7 +1,7 @@
 package config
 
 type WebCache struct {
-	Css CacheCss  `json:"css,omitempty"`
+	Css CacheCss `json:"css,omitempty"`
 }
 
 type CacheCss struct {

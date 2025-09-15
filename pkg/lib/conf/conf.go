@@ -10,11 +10,11 @@ import (
 	"sync"
 	"time"
 
+	model_config "xi/internal/app/model/config"
 	"xi/pkg/lib/cfg"
 	"xi/pkg/lib/env"
 	"xi/pkg/lib/hook"
 	"xi/pkg/lib/util"
-	model_config "xi/internal/app/model/config"
 
 	"github.com/fsnotify/fsnotify"
 	koanfJson "github.com/knadh/koanf/parsers/json"

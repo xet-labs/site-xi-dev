@@ -9,9 +9,9 @@ import (
 	"strings"
 	"time"
 
+	model_config "xi/internal/app/model/config"
 	"xi/pkg/lib/cfg"
 	"xi/pkg/lib/util"
-	model_config "xi/internal/app/model/config"
 )
 
 type MetaHtml struct {

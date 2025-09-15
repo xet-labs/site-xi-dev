@@ -4,10 +4,10 @@ import (
 	"xi/internal/app/service/app"
 )
 
-type(
+type (
 	AppService app.AppService
 )
 
-var(
+var (
 	App = app.App
 )

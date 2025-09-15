@@ -1,4 +1,4 @@
-package	maps
+package maps
 
 type MapsLib struct{}
 

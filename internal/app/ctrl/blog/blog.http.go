@@ -5,10 +5,10 @@ import (
 	"html/template"
 	"net/http"
 	"sync"
-	"xi/pkg/lib"
-	"xi/pkg/lib/cfg"
 	model_config "xi/internal/app/model/config"
 	model_db "xi/internal/app/model/db"
+	"xi/pkg/lib"
+	"xi/pkg/lib/cfg"
 
 	"github.com/gin-gonic/gin"
 	"github.com/redis/go-redis/v9"
@@ -16,8 +16,8 @@ import (
 )
 
 type BlogHttpCtrl struct {
-	db    *gorm.DB
-	rdb   *redis.Client
+	db  *gorm.DB
+	rdb *redis.Client
 
 	mu   sync.RWMutex
 	once sync.Once

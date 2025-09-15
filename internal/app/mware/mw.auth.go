@@ -7,7 +7,7 @@ import (
 
 	model_db "xi/internal/app/model/db"
 	"xi/pkg/lib/cfg"
-	
+
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
 	"gorm.io/gorm"
@@ -29,7 +29,9 @@ func AuthMiddleware() gin.HandlerFunc {
 
 		// parse jwt
 		parsed, err := jwt.Parse(tok, func(t *jwt.Token) (interface{}, error) {
-			if t.Method != jwt.SigningMethodHS256 { return nil, fmt.Errorf("bad alg") }
+			if t.Method != jwt.SigningMethodHS256 {
+				return nil, fmt.Errorf("bad alg")
+			}
 			return []byte(cfg.Api.JwtSecret), nil
 		})
 		if err != nil || !parsed.Valid {

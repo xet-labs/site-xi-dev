@@ -20,8 +20,8 @@ func (s *StrLib) Unique(in []string) []string {
 }
 
 func (s *StrLib) UniqueSort(in []string) []string {
-	out := s.Unique(in)   // reuse unique logic
-	sort.Strings(out)     // sort in place
+	out := s.Unique(in) // reuse unique logic
+	sort.Strings(out)   // sort in place
 	return out
 }
 

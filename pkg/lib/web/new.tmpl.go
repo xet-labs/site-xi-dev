@@ -27,13 +27,15 @@ var HtmlFn = template.FuncMap{
 	"safeHtml": func(s string) template.HTML {
 		return template.HTML(s)
 	},
-	"htmlEscape":   html.EscapeString,
-	"join":         strings.Join,
-	"urlEscape":    url.QueryEscape,
+	"htmlEscape": html.EscapeString,
+	"join":       strings.Join,
+	"urlEscape":  url.QueryEscape,
 }
 
 func (v *WebLib) NewTmpl(name, ext string, dirs ...string) *template.Template {
-	if name == "" { name = "main"}
+	if name == "" {
+		name = "main"
+	}
 
 	files, err := util.File.GetWithExt(ext, dirs...)
 	if err != nil {
@@ -48,7 +50,7 @@ func (v *WebLib) NewTmpl(name, ext string, dirs ...string) *template.Template {
 
 	log.Info().Str("cli", name).Str("dir", strings.Join(dirs, ", ")).
 		Msg("web template")
-	
+
 	tcli := template.Must(template.New(name).
 		Funcs(HtmlFn).
 		// Funcs(HtmlFuncs).

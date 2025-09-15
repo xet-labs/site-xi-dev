@@ -1,15 +1,5 @@
 package ctrl
 
-type CtrlPkg struct {
-	Auth    *AuthCtrl
-	Debug   *DebugCtrl
-	Managed *ManagedCtrl
-	Res     *ResCtrl
-}
+type CtrlPkg struct{}
 
-var Ctrl = &CtrlPkg{
-	Auth:    Auth,
-	Debug:   Debug,
-	Managed: Managed,
-	Res:     Res,
-}
+var Ctrl = &CtrlPkg{}

@@ -2,17 +2,17 @@ package route
 
 import (
 	"xi/internal/app/ctrl"
-	"xi/pkg"
+	pkg_ctrl "xi/pkg/ctrl"
 
 	"github.com/gin-gonic/gin"
 )
 
 // Add global controllers instance to register its routes
 var Controllers = []any{
-	pkg.Ctrl.Auth,
-	pkg.Ctrl.Debug,
-	pkg.Ctrl.Managed,
-	pkg.Ctrl.Res,
+	pkg_ctrl.Auth,
+	pkg_ctrl.Debug,
+	pkg_ctrl.Managed,
+	pkg_ctrl.Res,
 	CustomRoutes,
 
 	ctrl.Blog,

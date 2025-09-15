@@ -2,26 +2,26 @@
 package ctrl
 
 import (
-	"xi/pkg/auth"
+	"xi/pkg/service/auth"
 
 	"github.com/gin-gonic/gin"
 )
 
 type AuthCtrl struct {
-	Api  *auth.AuthPkg
+	Api *auth.AuthService
 }
 
 var Auth = &AuthCtrl{
-	Api:  &auth.AuthPkg{},
+	Api: auth.Auth,
 }
 
 func (a *AuthCtrl) RoutesCore(r *gin.Engine) {
-	// authApi := r.Group("/api/auth")
-	// {
-	// 	authApi.POST("/refresh", a.Api.ShowLogin)
-	// 	authApi.POST("/login", a.Api.ShowLogin)
-	// 	authApi.POST("/logout", a.Api.Logout)
-	// 	authApi.POST("/signup", a.Api.Signup)
-	// 	authApi.POST("/signout", a.Api.Signout)
-	// }
+	authApi := r.Group("/api/auth")
+	{
+		authApi.POST("/refresh", a.Api.Log)
+		authApi.POST("/login", a.Api.ShowLogin)
+		authApi.POST("/logout", a.Api.Logout)
+		authApi.POST("/signup", a.Api.Signup)
+		authApi.POST("/signout", a.Api.Signout)
+	}
 }
