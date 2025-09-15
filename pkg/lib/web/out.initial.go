@@ -6,7 +6,7 @@ import (
 	"time"
 	model_config "xi/internal/app/model/config"
 	"xi/pkg/lib/cfg"
-	"xi/pkg/lib/db"
+	"xi/pkg/store"
 	"xi/pkg/lib/util"
 
 	"github.com/gin-gonic/gin"
@@ -34,7 +34,7 @@ func (v *WebLib) OutHtmlLyt(c *gin.Context, p *model_config.WebPage, args ...str
 
 		if p.Ctrl.Cache == nil || *p.Ctrl.Cache || cfg.App.ForceCachePage {
 			rdbKey := util.ArrFallback(args, 0, c.Request.URL.Path)
-			go func(data any) { db.Rdb.Set(rdbKey, data, 10*time.Minute) }(page)
+			go func(data any) { store.Rdb.Set(rdbKey, data, 10*time.Minute) }(page)
 		}
 		return true
 	}
@@ -43,7 +43,7 @@ func (v *WebLib) OutHtmlLyt(c *gin.Context, p *model_config.WebPage, args ...str
 	c.Data(http.StatusOK, "text/html; charset=utf-8", pageMin)
 	if p.Ctrl.Cache == nil || *p.Ctrl.Cache || cfg.App.ForceCachePage {
 		rdbKey := util.ArrFallback(args, 0, c.Request.URL.Path)
-		go func(data any) { db.Rdb.Set(rdbKey, data, 10*time.Minute) }(pageMin)
+		go func(data any) { store.Rdb.Set(rdbKey, data, 10*time.Minute) }(pageMin)
 	}
 	return true
 }
@@ -66,7 +66,7 @@ func (v *WebLib) OutCss(c *gin.Context, css []byte, args ...string) bool {
 	// Serve the response with optional cache if rdbKey is provided in args[0]
 	c.Data(http.StatusOK, "text/css; charset=utf-8", cssMin)
 	if len(args) > 0 && args[0] != "" {
-		go func(data any) { db.Rdb.Set(args[0], data, 10*time.Minute) }(cssMin)
+		go func(data any) { store.Rdb.Set(args[0], data, 10*time.Minute) }(cssMin)
 	}
 	return true
 }

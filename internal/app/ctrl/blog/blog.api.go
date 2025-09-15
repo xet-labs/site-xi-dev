@@ -11,25 +11,19 @@ import (
 
 	model_db "xi/internal/app/model/db"
 	"xi/pkg/lib"
+	"xi/pkg/store"
 
 	"github.com/gin-gonic/gin"
-	"github.com/redis/go-redis/v9"
-	"gorm.io/gorm"
 )
 
 type BlogApiCtrl struct {
-	db  *gorm.DB
-	rdb *redis.Client
-
 	mu   sync.RWMutex
 	once sync.Once
 }
 
 // Singleton controller
 var (
-	BlogApi = &BlogApiCtrl{
-		db: lib.Db.GetCli(),
-	}
+	BlogApi = &BlogApiCtrl{}
 
 	ErrInvalidUserName = errors.New("invalid username")
 	ErrInvalidUID      = errors.New("invalid UID")
@@ -52,7 +46,7 @@ func (b *BlogApiCtrl) Index(c *gin.Context) {
 	// Try cache
 	rdbKey := c.Request.URL.String()
 	blogs := []model_db.Blog{}
-	if err := lib.Rdb.GetJson(rdbKey, &blogs); err == nil {
+	if err := store.Rdb.GetJson(rdbKey, &blogs); err == nil {
 		c.JSON(http.StatusOK, gin.H{
 			"blogsExhausted": len(blogs) == 0,
 			"blogs":          blogs,
@@ -73,7 +67,7 @@ func (b *BlogApiCtrl) Index(c *gin.Context) {
 	})
 
 	// Async cache
-	go func(data any) { lib.Rdb.SetJson(rdbKey, data, 10*time.Minute) }(blogs)
+	go func(data any) { store.Rdb.SetJson(rdbKey, data, 10*time.Minute) }(blogs)
 }
 
 func (b *BlogApiCtrl) IndexCore(blogs *[]model_db.Blog, offset, limit int) error {
@@ -95,7 +89,7 @@ func (b *BlogApiCtrl) Show(c *gin.Context) {
 	// Try cache
 	blog := model_db.Blog{}
 	rdbKey := "/api/blog/" + rawUID + "/" + rawID
-	if err := lib.Rdb.GetJson(rdbKey, &blog); err == nil {
+	if err := store.Rdb.GetJson(rdbKey, &blog); err == nil {
 		c.JSON(http.StatusOK, blog)
 		return
 	}
@@ -119,7 +113,7 @@ func (b *BlogApiCtrl) Show(c *gin.Context) {
 	c.JSON(http.StatusOK, blog)
 
 	// Cache asynchronously
-	go func(data model_db.Blog) { lib.Rdb.SetJson(rdbKey, data, 10*time.Minute) }(blog)
+	go func(data model_db.Blog) { store.Rdb.SetJson(rdbKey, data, 10*time.Minute) }(blog)
 }
 
 // FetchBlog fetches a blog and stores it in the given pointer.
@@ -173,7 +167,7 @@ func (b *BlogApiCtrl) Post(c *gin.Context) {
 	c.JSON(http.StatusCreated, blog)
 
 	// Invalidate blog list cache
-	lib.Rdb.Del("blogs:all")
+	store.Rdb.Del("blogs:all")
 }
 
 // PUT api/blog/uid/id
@@ -201,7 +195,7 @@ func (b *BlogApiCtrl) Put(c *gin.Context) {
 	c.JSON(http.StatusOK, blog)
 
 	// Invalidate caches
-	lib.Rdb.Del("blogs:all", "blogs:id:"+id)
+	store.Rdb.Del("blogs:all", "blogs:id:"+id)
 }
 
 // DELETE api/blog/uid/id
@@ -214,7 +208,7 @@ func (b *BlogApiCtrl) Delete(c *gin.Context) {
 	}
 
 	// Invalidate caches
-	lib.Rdb.Del("blogs:all", "blogs:id:"+id)
+	store.Rdb.Del("blogs:all", "blogs:id:"+id)
 
 	c.JSON(http.StatusOK, gin.H{"message": "Blog deleted"})
 }

@@ -30,7 +30,7 @@ var Blog = &BlogCtrl{
 }
 
 // Blog Routes
-func (b *BlogCtrl) RoutesCore(r *gin.Engine) {
+func (b *BlogCtrl) RouterCore(r *gin.Engine) {
 	api := r.Group("api/blog") // route /api/blog
 	{
 		api.GET("", b.Api.Index)

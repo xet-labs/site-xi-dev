@@ -2,7 +2,7 @@ package web
 
 import (
 	"net/http"
-	"xi/pkg/lib/db"
+	"xi/pkg/store"
 
 	"github.com/gin-gonic/gin"
 )
@@ -16,7 +16,7 @@ type Render struct {
 
 // Render from Cache
 func (v *WebLib) OutCache(c *gin.Context, rdbKey string) Render {
-	cache, err := db.Rdb.GetBytes(rdbKey)
+	cache, err := store.Rdb.GetBytes(rdbKey)
 	return Render{c: c, data: cache, ok: err == nil, err: err}
 }
 

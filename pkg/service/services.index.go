@@ -5,9 +5,9 @@ import (
 )
 
 type (
-	AuthService = auth.AuthService
+	AuthService  = auth.AuthService
 )
 
 var (
-	Auth = auth.Auth
+	Auth  = auth.Auth
 )

@@ -24,6 +24,8 @@ type AuthService struct {
 	RefreshTTL   time.Duration
 	CookieDomain string
 	CookieSecure bool
+
+	Api *AuthApi
 }
 
 var Auth = &AuthService{
@@ -33,6 +35,8 @@ var Auth = &AuthService{
 	RefreshTTL:   7 * 24 * time.Hour,
 	CookieDomain: cfg.Api.CookieDomain,  // set this in config; "" works too
 	CookieSecure: cfg.Api.SecureCookies, // true in prod
+
+	Api: Api, 
 }
 
 func NewAuthService(db *gorm.DB) *AuthService {

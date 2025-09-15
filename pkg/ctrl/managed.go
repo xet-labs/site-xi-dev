@@ -7,6 +7,7 @@ import (
 
 	model_config "xi/internal/app/model/config"
 	"xi/pkg/lib"
+	"xi/pkg/store"
 	"xi/pkg/lib/cfg"
 
 	"github.com/gin-gonic/gin"
@@ -20,7 +21,7 @@ type ManagedCtrl struct {
 var Managed = &ManagedCtrl{}
 
 // All cfg.Web.Pages[@].Route are added automatically for mode={"", "managed"}
-func (m *ManagedCtrl) RoutesCore(r *gin.Engine) {
+func (m *ManagedCtrl) RouterCore(r *gin.Engine) {
 	for _, p := range cfg.Web.Pages {
 		if p != nil && (p.Ctrl.Mode == "" || strings.ToLower(p.Ctrl.Mode) == "managed") {
 
@@ -64,7 +65,7 @@ func (m *ManagedCtrl) SitemapCore(c *gin.Context) (any, error) {
 	urls := []model_config.MetaSitemap{}
 
 	// Try cache
-	if err := lib.Rdb.GetJson(rdbKey, &urls); err == nil {
+	if err := store.Rdb.GetJson(rdbKey, &urls); err == nil {
 		return urls, nil
 	}
 
@@ -103,6 +104,6 @@ func (m *ManagedCtrl) SitemapCore(c *gin.Context) (any, error) {
 	}
 
 	// Cache
-	go func() { lib.Rdb.SetJson(rdbKey, urls, 15*time.Minute) }()
+	go func() { store.Rdb.SetJson(rdbKey, urls, 15*time.Minute) }()
 	return urls, nil
 }

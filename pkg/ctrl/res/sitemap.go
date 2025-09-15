@@ -4,25 +4,25 @@ import (
 	"net/http"
 	"sync"
 	"time"
+	
+	"github.com/gin-gonic/gin"
 
 	model_config "xi/internal/app/model/config"
 	model_ctrlRes "xi/internal/app/model/ctrl/res"
-	"xi/pkg/lib"
-	"xi/pkg/lib/route"
-
-	"github.com/gin-gonic/gin"
+	"xi/pkg/store"
+	"xi/pkg/lib/router"
 )
 
 type SitemapRes struct {
-	route.SitemapLib
+	router.SitemapLib
 
 	mu   sync.RWMutex
 	once sync.Once
 }
 
 var Sitemap = &SitemapRes{
-	SitemapLib: route.SitemapLib{
-		Hooks: route.Sitemap.Hooks, // share the same hook instance from lib.route::Sitemap
+	SitemapLib: router.SitemapLib{
+		Hooks: router.Sitemap.Hooks, // share the same hook instance from lib.route::Sitemap
 	},
 }
 
@@ -31,7 +31,7 @@ func (s *SitemapRes) Index(c *gin.Context) {
 	var sitemapObj model_ctrlRes.Sitemap
 
 	// Try Cache
-	if err := lib.Rdb.GetJson(rdbKey, &sitemapObj); err == nil {
+	if err := store.Rdb.GetJson(rdbKey, &sitemapObj); err == nil {
 		c.XML(http.StatusOK, sitemapObj)
 		return
 	}
@@ -72,5 +72,5 @@ func (s *SitemapRes) Index(c *gin.Context) {
 	c.XML(http.StatusOK, sitemapObj)
 
 	// Cache
-	go func() { lib.Rdb.SetJson(rdbKey, sitemapObj, 15*time.Minute) }()
+	go func() { store.Rdb.SetJson(rdbKey, sitemapObj, 15*time.Minute) }()
 }

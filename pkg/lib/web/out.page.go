@@ -9,7 +9,7 @@ import (
 	"time"
 	model_config "xi/internal/app/model/config"
 	"xi/pkg/lib/cfg"
-	"xi/pkg/lib/db"
+	"xi/pkg/store"
 	"xi/pkg/lib/util"
 
 	"github.com/gin-gonic/gin"
@@ -86,7 +86,7 @@ func (v *WebLib) Page(c *gin.Context, p *model_config.WebPage) bool {
 		log.Error().Caller().Err(err).Str("page", c.Request.URL.Path).Msg("Web.OutHtmlLyt.minify")
 
 		if p.Ctrl.Cache == nil || *p.Ctrl.Cache || cfg.App.ForceCachePage {
-			go func(data any) { db.Rdb.Set(rdbKey, data, 10*time.Minute) }(page)
+			go func(data any) { store.Rdb.Set(rdbKey, data, 10*time.Minute) }(page)
 		}
 		return true
 	}
@@ -94,7 +94,7 @@ func (v *WebLib) Page(c *gin.Context, p *model_config.WebPage) bool {
 	// Serve the response with optional cache if rdbKey is provided in args[0]
 	c.Data(http.StatusOK, "text/html; charset=utf-8", pageMin)
 	if p.Ctrl.Cache == nil || *p.Ctrl.Cache || cfg.App.ForceCachePage {
-		go func(data any) { db.Rdb.Set(rdbKey, data, 10*time.Minute) }(pageMin)
+		go func(data any) { store.Rdb.Set(rdbKey, data, 10*time.Minute) }(pageMin)
 	}
 	return true
 }

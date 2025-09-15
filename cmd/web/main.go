@@ -1,7 +1,7 @@
 package main
 
 import (
-	"xi/cmd/web/route"
+	"xi/cmd/web/router"
 	"xi/internal/app/service"
 	"xi/pkg/lib"
 	"xi/pkg/lib/cfg"
@@ -16,6 +16,6 @@ func main() {
 	gin.SetMode(cfg.App.Mode) // Init Gin Engine
 	app := gin.Default()
 
-	lib.Router.Init(app, route.Controllers) // Init routes
-	service.App.Server.Init(app)           // Init server
+	lib.Router.Init(app, router.Controllers) // Init routes
+	service.App.Server.Init(app)             // Init server
 }

@@ -7,7 +7,6 @@ import (
 
 // Get returns the DB instance by name or default
 func (d *DbStore) GetCli(name ...string) *gorm.DB {
-	d.Init()
 	d.mu.RLock()
 	defer d.mu.RUnlock()
 

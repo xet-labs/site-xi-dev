@@ -13,7 +13,7 @@ type DebugCtrl struct{}
 
 var Debug = &DebugCtrl{}
 
-func (d *DebugCtrl) RoutesCore(r *gin.Engine) {
+func (d *DebugCtrl) RouterCore(r *gin.Engine) {
 	if cfg.App.Mode != "test" {
 		return
 	}

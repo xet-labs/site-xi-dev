@@ -11,7 +11,7 @@ import (
 	model_db "xi/internal/app/model/db"
 )
 
-func (h *AuthCtrl) Refresh(c *gin.Context) {
+func (a *AuthApi) Refresh(c *gin.Context) {
 	cookieName := "refresh"
 	raw, err := c.Cookie(cookieName)
 	if err != nil {
@@ -21,7 +21,7 @@ func (h *AuthCtrl) Refresh(c *gin.Context) {
 
 	hashed := HashToken(raw) // helper we expose; or reimplement here
 	var rec model_db.RefreshToken
-	if err := h.S.DB.Where("refresh_token = ?", hashed).First(&rec).Error; err != nil {
+	if err := Auth.DB.Where("refresh_token = ?", hashed).First(&rec).Error; err != nil {
 		if err == gorm.ErrRecordNotFound {
 			c.JSON(http.StatusUnauthorized, gin.H{"error": "invalid refresh token"})
 			return
@@ -42,7 +42,7 @@ func (h *AuthCtrl) Refresh(c *gin.Context) {
 	// rotation: create new refresh token and mark old as replaced & revoked
 	ua := c.GetHeader("User-Agent")
 	ip := c.ClientIP()
-	newRaw, newRec, err := h.S.GenRefreshTokenRecord(uint64(rec.UID), ua, ip)
+	newRaw, newRec, err := Auth.GenRefreshTokenRecord(uint64(rec.UID), ua, ip)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to rotate token"})
 		return
@@ -52,32 +52,32 @@ func (h *AuthCtrl) Refresh(c *gin.Context) {
 	rec.Revoked = true
 	rec.ReplacedById = newRec.ID
 	rec.UpdatedAt = time.Now()
-	if err := h.S.DB.Save(&rec).Error; err != nil {
+	if err := Auth.DB.Save(&rec).Error; err != nil {
 		// log but continue
 	}
 
 	// issue new access token for user
 	uid := fmt.Sprintf("%d", rec.UID)
-	access, err := h.S.GenAccessToken(uid, []string{"default"}, h.S.AccessTTL)
+	access, err := Auth.GenAccessToken(uid, []string{"default"}, Auth.AccessTTL)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to create token"})
 		return
 	}
 
 	// set new cookie (raw token)
-	maxAge := int(h.S.RefreshTTL.Seconds())
-	c.SetCookie(cookieName, newRaw, maxAge, "/", h.S.CookieDomain, h.S.CookieSecure, true)
+	maxAge := int(Auth.RefreshTTL.Seconds())
+	c.SetCookie(cookieName, newRaw, maxAge, "/", Auth.CookieDomain, Auth.CookieSecure, true)
 
 	// return access token and profile
 	var user model_db.User
-	if err := h.S.DB.First(&user, rec.UID).Error; err != nil {
+	if err := Auth.DB.First(&user, rec.UID).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "server error"})
 		return
 	}
 
 	c.JSON(http.StatusOK, gin.H{
 		"access_token": access,
-		"expires_in":   int(h.S.AccessTTL.Seconds()),
+		"expires_in":   int(Auth.AccessTTL.Seconds()),
 		"profile": gin.H{
 			"id":       user.ID,
 			"username": user.Username,

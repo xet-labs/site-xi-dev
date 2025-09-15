@@ -3,7 +3,6 @@ package store
 import (
 	"context"
 	"fmt"
-	"sync"
 	"xi/pkg/lib/cfg"
 	"xi/pkg/lib/conf"
 	"xi/pkg/lib/env"
@@ -16,24 +15,12 @@ import (
 	"gorm.io/gorm"
 )
 
-type StoreService struct {
-	Cli *gorm.DB
-	clients    map[string]*gorm.DB
-	defaultCli string
-	mu         sync.RWMutex
-	once       sync.Once
-	lazyInit   func()
-}
 
-var Store = &StoreService{
-	defaultCli: "database",
-	clients:    make(map[string]*gorm.DB),
-}
 
 // Init initializes DBs once
-func (d *StoreService) Init() { d.once.Do(d.InitForce) }
+func (s *StoreService) Init() { d.once.Do(d.InitForce) }
 
-func (d *StoreService) initPre() {
+func (s *StoreService) initPre() {
 	conf.Conf.Init()
 
 	// Set global Redis and DB defaults
@@ -44,10 +31,10 @@ func (d *StoreService) initPre() {
 		util.Str.IfNotEmptyElse(cfg.Org.Abbr, cfg.Org.Abbr+cfg.Build.Revision, cfg.Build.Revision))
 	Rdb.SetPrefix(cfg.Db.RdbPrefix)
 }
-func (d *StoreService) initPost() {}
+func (s *StoreService) initPost() {}
 
 // Initializes all DBs and Redis clients (forced)
-func (d *StoreService) InitForce() {
+func (s *StoreService) InitForce() {
 	d.initPre()
 
 	if cfg.Db.Conn == nil {
