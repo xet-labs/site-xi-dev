@@ -19,7 +19,6 @@ type RdbStore struct {
 	clients    map[string]*redis.Client
 	client     *redis.Client
 	ctx        context.Context
-	lazyInit   func()
 
 	mu   sync.RWMutex
 	once sync.Once
@@ -33,19 +32,15 @@ var Rdb = &RdbStore{
 	ctx:        context.Background(),
 }
 
-// // RegisterLazyFn allows deferred initialization
-// func (r *RdbStore) RegisterLazyFn(fn func()) {
-// 	r.lazyInit = fn
-// }
+func (d *DbStore) initPre() {
+	// Set global Redis and DB defaults
 
-// // Ensures lazyInit runs once
-// func (r *RdbStore) lazyFnOnce() {
-// 	r.once.Do(func() {
-// 		if r.lazyInit != nil {
-// 			r.lazyInit()
-// 		}
-// 	})
-// }
+	Rdb.SetCtx(context.Background())
+	Rdb.SetDefault(cfg.Db.RdbDefault)
+	cfg.Db.RdbPrefix = util.Str.Fallback(cfg.Db.RdbPrefix,
+		util.Str.IfNotEmptyElse(cfg.Org.Abbr, cfg.Org.Abbr+cfg.Build.Revision, cfg.Build.Revision))
+	Rdb.SetPrefix(cfg.Db.RdbPrefix)
+}
 
 // New returns a new RdbStore instance with optional prefix/context
 func (r *RdbStore) New(defaultCli string, opts ...any) *RdbStore {

@@ -3,6 +3,7 @@ package store
 import (
 	"context"
 	"fmt"
+	"strings"
 	"xi/pkg/lib/cfg"
 	"xi/pkg/lib/conf"
 	"xi/pkg/lib/env"
@@ -15,10 +16,8 @@ import (
 	"gorm.io/gorm"
 )
 
-
-
 // Init initializes DBs once
-func (s *StoreService) Init() { d.once.Do(d.InitForce) }
+func (s *StoreService) Init() { s.once.Do(s.InitCore) }
 
 func (s *StoreService) initPre() {
 	conf.Conf.Init()
@@ -31,11 +30,19 @@ func (s *StoreService) initPre() {
 		util.Str.IfNotEmptyElse(cfg.Org.Abbr, cfg.Org.Abbr+cfg.Build.Revision, cfg.Build.Revision))
 	Rdb.SetPrefix(cfg.Db.RdbPrefix)
 }
-func (s *StoreService) initPost() {}
+func (s *StoreService) logStat(err error, profile string) error {
+	if err != nil {
+		log.Error().Caller().Err(err).Str("profile", profile).Str("type", "MySQL").Msg("db connect")
+		return nil
+	}
+	log.Info().Str("profile", profile).Str("type", "MySQL").Msg("db connected")
+	return nil
+}
 
 // Initializes all DBs and Redis clients (forced)
-func (s *StoreService) InitForce() {
-	d.initPre()
+func (s *StoreService) InitCore() {
+	conf.Conf.Init()
+	s.Hooks.RunPre()
 
 	if cfg.Db.Conn == nil {
 		log.Warn().Msgf("DB WRN: No connections were configured")
@@ -53,7 +60,7 @@ func (s *StoreService) InitForce() {
 			c.Pass = env.Env.Get("DB_PASS")
 		}
 
-		switch c.Driver {
+		switch strings.ToLower(c.Driver) {
 		case "mysql", "mariadb":
 			dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=%s&parseTime=True&loc=Local",
 				c.User, c.Pass, c.Host, c.Port, c.Db, c.Charset)
@@ -92,5 +99,6 @@ func (s *StoreService) InitForce() {
 		}
 	}
 
-	d.initPost()
+	s.Hooks.RunPost()
+
 }
