@@ -8,6 +8,7 @@ import (
 
 	"xi/pkg/lib"
 	"xi/pkg/lib/cfg"
+	"xi/pkg/lib/util"
 
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog/log"
@@ -42,7 +43,7 @@ func (r *CssRes) Index(c *gin.Context) {
 			files []string
 			err   error
 		)
-		files, err = lib.Util.File.GetWithExt(".css", base)
+		files, err = util.File.GetWithExt(".css", base)
 		if err != nil {
 			log.Error().Caller().Err(err).Str("Dir", base).Msg("ctrl.css.index files")
 			return
@@ -53,7 +54,7 @@ func (r *CssRes) Index(c *gin.Context) {
 
 	// response and cache
 	if v, ok := r.Files.Load(base); ok {
-		lib.Web.OutCss(c, lib.Util.File.MergeByte(v.([]string)), rdbKey)
+		lib.Web.OutCss(c, util.File.MergeByte(v.([]string)), rdbKey)
 		return
 	}
 

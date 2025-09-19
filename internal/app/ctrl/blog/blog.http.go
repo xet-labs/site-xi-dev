@@ -2,12 +2,13 @@
 package blog
 
 import (
+	"errors"
 	"html/template"
 	"net/http"
 	"sync"
-	
-	"github.com/gin-gonic/gin"
 
+	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 
 	model_config "xi/internal/app/model/config"
 	model_store "xi/internal/app/model/store"
@@ -16,46 +17,38 @@ import (
 )
 
 type BlogHttpCtrl struct {
-	// dbCli  *gorm.DB
-	// rdbCli *redis.Client
 	mu   sync.RWMutex
 	once sync.Once
 }
 
-// Singleton controller
 var BlogHttp = &BlogHttpCtrl{}
 
-// GET /blog
-// func (b *BlogHttpCtrl) Index(c *gin.Context) {}
-
+// GET /blog/@<user>/<slug>
 func (b *BlogHttpCtrl) Show(c *gin.Context) {
 	rdbKey := c.Request.RequestURI
 
 	if lib.Web.OutCache(c, rdbKey).Html() {
 		return
-	} // Try cache
+	}
 
-	// On cache miss fetch data from DB
-	rawUID := c.Param("uid") // @username or UID
-	rawID := c.Param("id")   // blog ID or slug
+	rawUID := c.Param("uid")
+	rawID := c.Param("id")
 
-	blog := model_store.Blog{}
 	if err := BlogApi.Validate(rawUID, rawID); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		b.HandlePageError(c, err)
 		return
 	}
 
+	var blog model_store.Blog
 	b.mu.Lock()
-	if err := BlogApi.ShowCore(&blog, rawUID, rawID); err != nil { // Fallback to DB
-		status := http.StatusNotFound
-		if err == ErrInvalidUID {
-			status = http.StatusBadRequest
-		}
-		c.JSON(status, gin.H{"error": err.Error()})
+	err := BlogApi.ShowCore(&blog, rawUID, rawID)
+	b.mu.Unlock()
+	if err != nil {
+		b.HandlePageError(c, err)
 		return
 	}
-	b.mu.Unlock()
 
+	// Success → prepare response
 	p := *cfg.Web.Pages["blogs"]
 	b.PrepMeta(c, &p.Meta, &blog)
 	p.Rt = map[string]any{
@@ -90,3 +83,19 @@ func (b *BlogHttpCtrl) Put(c *gin.Context) {}
 
 // DELETE api/blog/uid/id
 func (b *BlogHttpCtrl) Delete(c *gin.Context) {}
+
+func (b *BlogHttpCtrl) HandlePageError(c *gin.Context, err error) {
+	switch {
+	case errors.Is(err, ErrDbUnavailable):
+		// Database temporarily unavailable
+		c.Status(http.StatusServiceUnavailable) // 503
+	case errors.Is(err, gorm.ErrRecordNotFound),
+		errors.Is(err, ErrInvalidUID),
+		errors.Is(err, ErrInvalidUserName):
+		// Any invalid or missing resource
+		c.Status(http.StatusNotFound) // 404
+	default:
+		// Unexpected internal error
+		c.Status(http.StatusInternalServerError) // 500
+	}
+}

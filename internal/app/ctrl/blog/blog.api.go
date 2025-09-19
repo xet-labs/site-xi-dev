@@ -17,8 +17,6 @@ import (
 )
 
 type BlogApiCtrl struct {
-	// dbCli  *gorm.DB
-	// rdbCli *redis.Client
 	mu   sync.RWMutex
 	once sync.Once
 }
@@ -28,126 +26,131 @@ var (
 	BlogApi = &BlogApiCtrl{}
 
 	ErrInvalidUserName = errors.New("invalid username")
-	ErrInvalidUID      = errors.New("invalid UID")
-	ErrInvalidSlug     = errors.New("invalid slug")
+	ErrInvalidUID      = errors.New("invalid UID format")
+	ErrInvalidSlug     = errors.New("invalid slug format")
 	ErrBlogNotFound    = errors.New("blog not found")
+	ErrDbUnavailable   = errors.New("database unavailable")
 )
 
 // GET /blog or /blog?Page=2&Limit=6
 func (b *BlogApiCtrl) Index(c *gin.Context) {
-	page := c.DefaultQuery("Page", "1")
-	limit := c.DefaultQuery("Limit", "6")
-	pageNum, err1 := strconv.Atoi(page)
-	limitNum, err2 := strconv.Atoi(limit)
-
-	if err1 != nil || err2 != nil || pageNum <= 0 || limitNum <= 0 {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid Page or Limit params"})
+	// Parse and validate query params
+	pageNum, limitNum, ok := parsePageLimit(c)
+	if !ok {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid Page or Limit parameters"})
 		return
 	}
 
-	// Try cache
 	rdbKey := c.Request.URL.String()
-	blogs := []model_store.Blog{}
+	var blogs []model_store.Blog
+
+	// Try cache
 	if err := store.Rdb.GetJson(rdbKey, &blogs); err == nil {
-		c.JSON(http.StatusOK, gin.H{
+		c.JSON(http.StatusOK, map[string]any{
 			"blogsExhausted": len(blogs) == 0,
 			"blogs":          blogs,
 		})
 		return
 	}
 
-	// Try DB
+	// Fetch from DB
 	offset := (pageNum - 1) * limitNum
 	if err := b.IndexCore(&blogs, offset, limitNum); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Could not fetch blogs"})
+		status := http.StatusInternalServerError
+		if errors.Is(err, ErrDbUnavailable) {
+			status = http.StatusServiceUnavailable
+		}
+		c.JSON(status, gin.H{"error": "Could not fetch blogs"})
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{
+	// Respond
+	c.JSON(http.StatusOK, map[string]any{
 		"blogsExhausted": len(blogs) == 0,
 		"blogs":          blogs,
 	})
 
-	// Async cache
-	go func(data any) { store.Rdb.SetJson(rdbKey, data, 10*time.Minute) }(blogs)
+	// Cache asynchronously
+	go store.Rdb.SetJson(rdbKey, blogs, 10*time.Minute)
 }
 
+func parsePageLimit(c *gin.Context) (page, limit int, ok bool) {
+	pageStr := c.DefaultQuery("Page", "1")
+	limitStr := c.DefaultQuery("Limit", "6")
+
+	p, err1 := strconv.Atoi(pageStr)
+	l, err2 := strconv.Atoi(limitStr)
+	if err1 != nil || err2 != nil || p <= 0 || l <= 0 {
+		return 0, 0, false
+	}
+	return p, l, true
+}
+
+
 func (b *BlogApiCtrl) IndexCore(blogs *[]model_store.Blog, offset, limit int) error {
-	return store.Db.Cli.
-		Preload("User").
+	db := store.Db.Cli()
+	if db == nil {
+		return ErrDbUnavailable
+	}
+
+	return db.Preload("User").
 		Where("status IN ?", []string{"published", "published_hidden"}).
 		Order("updated_at DESC").
 		Offset(offset).
 		Limit(limit).
-		Find(blogs).
-		Error
+		Find(blogs).Error
 }
+
 
 // GET api/blog/uid/id
 func (b *BlogApiCtrl) Show(c *gin.Context) {
-	rawUID := c.Param("uid") // @username or UID
-	rawID := c.Param("id")   // blog ID or slug
+	rawUID := c.Param("uid")
+	rawID := c.Param("id")
+
+	// Validate first
+	if err := b.Validate(rawUID, rawID); err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "blog not found"})
+		return
+	}
+
+	rdbKey := "/api/blog/" + rawUID + "/" + rawID
+	var blog model_store.Blog
 
 	// Try cache
-	blog := model_store.Blog{}
-	rdbKey := "/api/blog/" + rawUID + "/" + rawID
 	if err := store.Rdb.GetJson(rdbKey, &blog); err == nil {
 		c.JSON(http.StatusOK, blog)
 		return
 	}
 
-	// Validate parameters
-	if err := b.Validate(rawUID, rawID); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-
 	// Fallback to DB
 	if err := b.ShowCore(&blog, rawUID, rawID); err != nil {
-		status := http.StatusNotFound
-		if err == ErrInvalidUID {
-			status = http.StatusBadRequest
-		}
-		c.JSON(status, gin.H{"error": err.Error()})
+		// All invalid/missing resources return 404 for pages
+		c.JSON(http.StatusNotFound, gin.H{"error": "blog not found"})
 		return
 	}
 
 	c.JSON(http.StatusOK, blog)
 
 	// Cache asynchronously
-	go func(data model_store.Blog) { store.Rdb.SetJson(rdbKey, data, 10*time.Minute) }(blog)
+	go store.Rdb.SetJson(rdbKey, blog, 10*time.Minute)
 }
 
 // FetchBlog fetches a blog and stores it in the given pointer.
 // It returns the Redis key and any error.
 func (b *BlogApiCtrl) ShowCore(dest *model_store.Blog, rawUID, rawID string) error {
-	var err error
+	db := store.Db.Cli()
+	if db == nil {
+		return ErrDbUnavailable
+	}
 
-	// Case 1: @username format
+	db = store.Db.Cli().Preload("User") // single Preload
+
+	// Determine query based on UID type
 	if username, ok := strings.CutPrefix(rawUID, "@"); ok {
-		// DB fallback
-		err = store.Db.Cli.Preload("User").
-			Joins("JOIN users ON users.id = blogs.uid").
-			Where("users.username = ? AND (blogs.slug = ? OR blogs.id = ?)", username, rawID, rawID).
-			First(dest).Error
-
-		// Case 2: UID (numeric)
-	} else if isNumeric(rawUID) {
-
-		err = store.Db.Cli.Preload("User").
-			Where("uid = ? AND (slug = ? OR id = ?)", rawUID, rawID, rawID).
-			First(dest).Error
-
-		// Invalid UID format
-	} else {
-		return ErrInvalidUID
+		return db.Joins("JOIN users ON users.id = blogs.uid").Where("users.username = ? AND (blogs.slug = ? OR blogs.id = ?)", username, rawID, rawID).First(dest).Error
 	}
 
-	if err != nil {
-		return ErrBlogNotFound
-	}
-
-	return nil
+	return db.Where("uid = ? AND (slug = ? OR id = ?)", rawUID, rawID, rawID).First(dest).Error
 }
 
 // POST api/blog/uid/id
@@ -161,7 +164,7 @@ func (b *BlogApiCtrl) Post(c *gin.Context) {
 
 	blog.CreatedAt = ptrTime(time.Now())
 
-	if err := store.Db.Cli.Create(&blog).Error; err != nil {
+	if err := store.Db.Cli().Create(&blog).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Could not create blog"})
 		return
 	}
@@ -177,7 +180,7 @@ func (b *BlogApiCtrl) Put(c *gin.Context) {
 	id := c.Param("id")
 	var blog model_store.Blog
 
-	if err := store.Db.Cli.First(&blog, id).Error; err != nil {
+	if err := store.Db.Cli().First(&blog, id).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Blog not found"})
 		return
 	}
@@ -189,7 +192,7 @@ func (b *BlogApiCtrl) Put(c *gin.Context) {
 
 	blog.UpdatedAt = ptrTime(time.Now())
 
-	if err := store.Db.Cli.Save(&blog).Error; err != nil {
+	if err := store.Db.Cli().Save(&blog).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Could not update blog"})
 		return
 	}
@@ -204,7 +207,7 @@ func (b *BlogApiCtrl) Put(c *gin.Context) {
 func (b *BlogApiCtrl) Delete(c *gin.Context) {
 	id := c.Param("id")
 
-	if err := store.Db.Cli.Delete(&model_store.Blog{}, id).Error; err != nil {
+	if err := store.Db.Cli().Delete(&model_store.Blog{}, id).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Could not delete blog"})
 		return
 	}
@@ -238,3 +241,4 @@ func (b *BlogApiCtrl) Validate(rawUID, rawID string) error {
 	}
 	return nil
 }
+

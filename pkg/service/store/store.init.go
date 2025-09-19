@@ -65,7 +65,7 @@ func (s *StoreService) InitCore() {
             log.Warn().Caller().Str("profile", profile).Str("driver", c.Driver).Msg("db unsupported driver")
         }
     }
-	if Db.Cli == nil {
+	if Db.Cli() == nil {
 		log.Warn().Msg("no active database connections")
 	}
 

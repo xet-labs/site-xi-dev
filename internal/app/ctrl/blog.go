@@ -12,16 +12,12 @@ import (
 	"xi/pkg/service/store"
 
 	"github.com/gin-gonic/gin"
-	"github.com/redis/go-redis/v9"
-	"gorm.io/gorm"
 )
 
 type BlogCtrl struct {
 	Http *blog.BlogHttpCtrl
 	Api  *blog.BlogApiCtrl
 
-	dbCli   *gorm.DB
-	rdbCli  *redis.Client
 	mu   sync.RWMutex
 	once sync.Once
 }
@@ -29,9 +25,6 @@ type BlogCtrl struct {
 var Blog = &BlogCtrl{
 	Http: blog.BlogHttp,
 	Api:  blog.BlogApi,
-
-	dbCli:  store.Db.Cli,
-	rdbCli: store.Rdb.Cli,
 }
 
 // Blog Routes
@@ -68,7 +61,7 @@ func (b *BlogCtrl) SitemapCore(c *gin.Context) (any, error) {
 	var blogs []model_ctrlBlog.BlogSitemap
 
 	b.mu.Lock()
-	err := b.dbCli.
+	err := store.Db.Cli().
 		Table("blogs").
 		Select("users.username, blogs.slug, blogs.updated_at").
 		Joins("join users on users.uid = blogs.uid").

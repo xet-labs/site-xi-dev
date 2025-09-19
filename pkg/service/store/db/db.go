@@ -9,8 +9,8 @@ import (
 )
 
 type DbStore struct {
-	Cli        *gorm.DB
-	CliProfile string
+	cli        *gorm.DB
+	cliProfile string
 	clis       map[string]*gorm.DB
 	mu         sync.RWMutex
 }
@@ -31,9 +31,9 @@ func (d *DbStore) AddCli(cliProfile string, cli *gorm.DB) error {
 	d.clis[cliProfile] = cli
 
 	// Set as global if this is the default profile OR if global isn't set yet
-	if cfg.Store.Db.DefaultProfile == cliProfile || d.Cli == nil {
-		d.Cli = cli
-		d.CliProfile = cliProfile
+	if cfg.Store.Db.DefaultProfile == cliProfile || d.cli == nil {
+		d.cli = cli
+		d.cliProfile = cliProfile
 	}
 	return nil
 }
@@ -44,13 +44,17 @@ func (d *DbStore) SetCli(cliProfile string) {
 	defer d.mu.Unlock()
 
 	if cli, ok := d.clis[cliProfile]; ok {
-		d.Cli = cli
-		d.CliProfile = cliProfile
+		d.cli = cli
+		d.cliProfile = cliProfile
 	}
 }
 
-// GetCli returns the DB instance by profile(s) or falls back to global
-func (d *DbStore) GetCli(cliProfiles ...string) *gorm.DB {
+func (d *DbStore) Cli(cliProfiles ...string) *gorm.DB {	
+	// Fast path: no profile given, return default directly
+	if len(cliProfiles) == 0 {
+		return d.cli
+	}
+	
 	d.mu.RLock()
 	defer d.mu.RUnlock()
 
@@ -61,11 +65,10 @@ func (d *DbStore) GetCli(cliProfiles ...string) *gorm.DB {
 		}
 	}
 
-	// Fall back to global
-	if d.Cli != nil {
-		return d.Cli
-	}
-
-	// Nothing found
-	return nil
+	// Fallback to default
+	return d.cli
 }
+
+func (d *DbStore) ErrUnavailable() error {
+	return errors.New("database (client) unavailable")
+} 
