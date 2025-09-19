@@ -9,7 +9,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 
-	model_db "xi/internal/app/model/db"
+	model_store "xi/internal/app/model/store"
 )
 
 // LoginRequest shape
@@ -25,7 +25,7 @@ func (a *AuthApi) Login(c *gin.Context) {
 		return
 	}
 
-	var user model_db.User
+	var user model_store.User
 	if err := Auth.DB.Where("username = ? OR email = ?", req.Username, req.Username).First(&user).Error; err != nil {
 		if err == gorm.ErrRecordNotFound {
 			c.JSON(http.StatusUnauthorized, gin.H{"error": "invalid credentials"})

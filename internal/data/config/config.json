@@ -15,33 +15,39 @@
     "img": [],
     "logo": []
   },
-  "db": {
-    "db_default": "${DB_DEFAULT:-db}",
-    "rdb_default": "${RDB_DEFAULT:-rdb}",
-    "conn": {
-      "db": {
-        "enable": "${DB_ENABLE:-false}",
-        "db": "${DB:-XI}",
-        "user": "${DB_USER:-XI_u}",
-        "pass": "${DB_PASS:-5up3r5tr0n6p455}",
-        "driver": "${DB_DRIVER:-mysql}",
-        "host": "${DB_HOST:-127.0.0.1}",
-        "port": "${DB_PORT:-3306}",
-        "charset": "${DB_CHARSET:-utf8mb4}",
-        "engine": "${DB_ENGINE}",
-        "collation": "${DB_COLLATION:-utf8mb4_unicode_ci}",
-        "socket": "${DB_SOCKET}",
-        "prefix": "${DB_PREFIX}",
-        "prefixindexes": true,
-        "strict": true
-      },
-      "rdb": {
-        "enable": "${RDB_ENABLE:-true}",
-        "rdb": "${RDB:-0}.int",
-        "driver": "redis",
-        "host": "${RDB_HOST:-127.0.0.1}",
-        "port": "${RDB_PORT:-6379}",
-        "pass": ""
+  "store": {
+    "db": {
+      "default_profile": "${DB_DEFAULT:-db}",
+      "conn": {
+        "db": {
+          "enable": "${DB_ENABLE:-true}",
+          "db": "${DB:-XI}",
+          "user": "${DB_USER:-XI_u}",
+          "pass": "${DB_PASS}",
+          "driver": "${DB_DRIVER:-mysql}",
+          "host": "${DB_HOST:-127.0.0.1}",
+          "port": "${DB_PORT:-3306}",
+          "charset": "${DB_CHARSET:-utf8mb4}",
+          "engine": "${DB_ENGINE}",
+          "collation": "${DB_COLLATION:-utf8mb4_unicode_ci}",
+          "socket": "${DB_SOCKET}",
+          "prefix": "${DB_PREFIX}",
+          "prefixindexes": true,
+          "strict": true
+        }
+      }
+    },
+    "rdb": {
+      "default_profile": "${RDB_DEFAULT:-rdb}",
+      "conn": {
+        "rdb": {
+          "enable": "${RDB_ENABLE:-true}",
+          "rdb": "${RDB:-0}.int",
+          "driver": "redis",
+          "host": "${RDB_HOST:-127.0.0.1}",
+          "port": "${RDB_PORT:-6379}",
+          "pass": ""
+        }
       }
     }
   },

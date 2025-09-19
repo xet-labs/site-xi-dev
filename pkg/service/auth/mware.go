@@ -6,7 +6,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
-	model_db "xi/internal/app/model/db"
+	model_store "xi/internal/app/model/store"
 )
 
 const CtxUserKey = "authed_user"
@@ -31,7 +31,7 @@ func AuthRequired(s *AuthService, db *gorm.DB) gin.HandlerFunc {
 		}
 		uid := claims.UserID
 		// load user if needed
-		var user model_db.User
+		var user model_store.User
 		if err := db.First(&user, uid).Error; err != nil {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "user not found"})
 			return

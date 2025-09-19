@@ -9,14 +9,16 @@ import (
 	"sync"
 	"time"
 
-	model_db "xi/internal/app/model/db"
-	"xi/pkg/lib"
-	"xi/pkg/store"
-
 	"github.com/gin-gonic/gin"
+
+	model_store "xi/internal/app/model/store"
+	"xi/pkg/lib"
+	"xi/pkg/service/store"
 )
 
 type BlogApiCtrl struct {
+	// dbCli  *gorm.DB
+	// rdbCli *redis.Client
 	mu   sync.RWMutex
 	once sync.Once
 }
@@ -45,7 +47,7 @@ func (b *BlogApiCtrl) Index(c *gin.Context) {
 
 	// Try cache
 	rdbKey := c.Request.URL.String()
-	blogs := []model_db.Blog{}
+	blogs := []model_store.Blog{}
 	if err := store.Rdb.GetJson(rdbKey, &blogs); err == nil {
 		c.JSON(http.StatusOK, gin.H{
 			"blogsExhausted": len(blogs) == 0,
@@ -70,8 +72,8 @@ func (b *BlogApiCtrl) Index(c *gin.Context) {
 	go func(data any) { store.Rdb.SetJson(rdbKey, data, 10*time.Minute) }(blogs)
 }
 
-func (b *BlogApiCtrl) IndexCore(blogs *[]model_db.Blog, offset, limit int) error {
-	return b.db.
+func (b *BlogApiCtrl) IndexCore(blogs *[]model_store.Blog, offset, limit int) error {
+	return store.Db.Cli.
 		Preload("User").
 		Where("status IN ?", []string{"published", "published_hidden"}).
 		Order("updated_at DESC").
@@ -87,7 +89,7 @@ func (b *BlogApiCtrl) Show(c *gin.Context) {
 	rawID := c.Param("id")   // blog ID or slug
 
 	// Try cache
-	blog := model_db.Blog{}
+	blog := model_store.Blog{}
 	rdbKey := "/api/blog/" + rawUID + "/" + rawID
 	if err := store.Rdb.GetJson(rdbKey, &blog); err == nil {
 		c.JSON(http.StatusOK, blog)
@@ -113,18 +115,18 @@ func (b *BlogApiCtrl) Show(c *gin.Context) {
 	c.JSON(http.StatusOK, blog)
 
 	// Cache asynchronously
-	go func(data model_db.Blog) { store.Rdb.SetJson(rdbKey, data, 10*time.Minute) }(blog)
+	go func(data model_store.Blog) { store.Rdb.SetJson(rdbKey, data, 10*time.Minute) }(blog)
 }
 
 // FetchBlog fetches a blog and stores it in the given pointer.
 // It returns the Redis key and any error.
-func (b *BlogApiCtrl) ShowCore(dest *model_db.Blog, rawUID, rawID string) error {
+func (b *BlogApiCtrl) ShowCore(dest *model_store.Blog, rawUID, rawID string) error {
 	var err error
 
 	// Case 1: @username format
 	if username, ok := strings.CutPrefix(rawUID, "@"); ok {
 		// DB fallback
-		err = b.db.Preload("User").
+		err = store.Db.Cli.Preload("User").
 			Joins("JOIN users ON users.id = blogs.uid").
 			Where("users.username = ? AND (blogs.slug = ? OR blogs.id = ?)", username, rawID, rawID).
 			First(dest).Error
@@ -132,7 +134,7 @@ func (b *BlogApiCtrl) ShowCore(dest *model_db.Blog, rawUID, rawID string) error 
 		// Case 2: UID (numeric)
 	} else if isNumeric(rawUID) {
 
-		err = b.db.Preload("User").
+		err = store.Db.Cli.Preload("User").
 			Where("uid = ? AND (slug = ? OR id = ?)", rawUID, rawID, rawID).
 			First(dest).Error
 
@@ -150,7 +152,7 @@ func (b *BlogApiCtrl) ShowCore(dest *model_db.Blog, rawUID, rawID string) error 
 
 // POST api/blog/uid/id
 func (b *BlogApiCtrl) Post(c *gin.Context) {
-	var blog model_db.Blog
+	var blog model_store.Blog
 
 	if err := c.ShouldBindJSON(&blog); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid input"})
@@ -159,7 +161,7 @@ func (b *BlogApiCtrl) Post(c *gin.Context) {
 
 	blog.CreatedAt = ptrTime(time.Now())
 
-	if err := b.db.Create(&blog).Error; err != nil {
+	if err := store.Db.Cli.Create(&blog).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Could not create blog"})
 		return
 	}
@@ -173,9 +175,9 @@ func (b *BlogApiCtrl) Post(c *gin.Context) {
 // PUT api/blog/uid/id
 func (b *BlogApiCtrl) Put(c *gin.Context) {
 	id := c.Param("id")
-	var blog model_db.Blog
+	var blog model_store.Blog
 
-	if err := b.db.First(&blog, id).Error; err != nil {
+	if err := store.Db.Cli.First(&blog, id).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Blog not found"})
 		return
 	}
@@ -187,7 +189,7 @@ func (b *BlogApiCtrl) Put(c *gin.Context) {
 
 	blog.UpdatedAt = ptrTime(time.Now())
 
-	if err := b.db.Save(&blog).Error; err != nil {
+	if err := store.Db.Cli.Save(&blog).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Could not update blog"})
 		return
 	}
@@ -202,7 +204,7 @@ func (b *BlogApiCtrl) Put(c *gin.Context) {
 func (b *BlogApiCtrl) Delete(c *gin.Context) {
 	id := c.Param("id")
 
-	if err := b.db.Delete(&model_db.Blog{}, id).Error; err != nil {
+	if err := store.Db.Cli.Delete(&model_store.Blog{}, id).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Could not delete blog"})
 		return
 	}

@@ -2,7 +2,7 @@ package web
 
 import (
 	"net/http"
-	"xi/pkg/store"
+	"xi/pkg/service/store"
 
 	"github.com/gin-gonic/gin"
 )

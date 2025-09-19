@@ -7,7 +7,7 @@ import (
 	"encoding/hex"
 	"time"
 
-	model_db "xi/internal/app/model/db"
+	model_store "xi/internal/app/model/store"
 )
 
 // generateOpaqueToken generates a URL-safe random string
@@ -26,13 +26,13 @@ func HashToken(token string) string {
 }
 
 // Create & store refresh token record in DB, return raw token for client
-func (s *AuthService) GenRefreshTokenRecord(uid uint64, ua, ip string) (rawToken string, record model_db.RefreshToken, err error) {
+func (s *AuthService) GenRefreshTokenRecord(uid uint64, ua, ip string) (rawToken string, record model_store.RefreshToken, err error) {
 	raw, err := GenOpaqueToken(48)
 	if err != nil {
 		return "", record, err
 	}
 	now := time.Now()
-	rec := model_db.RefreshToken{
+	rec := model_store.RefreshToken{
 		UID:       uint(uid),
 		Revoked:   false,
 		TokenHash: HashToken(raw),

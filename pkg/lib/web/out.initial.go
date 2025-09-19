@@ -6,7 +6,7 @@ import (
 	"time"
 	model_config "xi/internal/app/model/config"
 	"xi/pkg/lib/cfg"
-	"xi/pkg/store"
+	"xi/pkg/service/store"
 	"xi/pkg/lib/util"
 
 	"github.com/gin-gonic/gin"

@@ -237,7 +237,7 @@ func (c *ConfLib) preProcess(rawJson []byte) ([]byte, model_config.Config, error
 	// resolve Json varsand cleanups
 	resolved, err := c.resolveJsonVars(c.cleanJson(c.resolveJsonEnv(string(rawJson))))
 	if err != nil {
-		log.Error().Caller().Err(fmt.Errorf("unable to resolve environment variables or sanitize JSON")).Msg("config preprocess failed")
+		log.Error().Err(fmt.Errorf("unable to resolve environment variables or sanitize JSON")).Msg("config preprocess failed")
 		return nil, model_config.Config{}, err
 	}
 

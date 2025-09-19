@@ -8,7 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 
-	model_db "xi/internal/app/model/db"
+	model_store "xi/internal/app/model/store"
 )
 
 func (a *AuthApi) Refresh(c *gin.Context) {
@@ -20,7 +20,7 @@ func (a *AuthApi) Refresh(c *gin.Context) {
 	}
 
 	hashed := HashToken(raw) // helper we expose; or reimplement here
-	var rec model_db.RefreshToken
+	var rec model_store.RefreshToken
 	if err := Auth.DB.Where("refresh_token = ?", hashed).First(&rec).Error; err != nil {
 		if err == gorm.ErrRecordNotFound {
 			c.JSON(http.StatusUnauthorized, gin.H{"error": "invalid refresh token"})
@@ -69,7 +69,7 @@ func (a *AuthApi) Refresh(c *gin.Context) {
 	c.SetCookie(cookieName, newRaw, maxAge, "/", Auth.CookieDomain, Auth.CookieSecure, true)
 
 	// return access token and profile
-	var user model_db.User
+	var user model_store.User
 	if err := Auth.DB.First(&user, rec.UID).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "server error"})
 		return

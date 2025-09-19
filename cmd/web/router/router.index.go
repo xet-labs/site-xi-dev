@@ -19,7 +19,7 @@ var Controllers = []any{
 	ctrl.Blog,
 }
 
-// 'CustomRoutes' allows adding simple/ad-hoc routes without creating a dedicated controller.
+// 'CustomRoutes' allows adding simple/ad-hoc routes without creating a dedicated controller
 type customRoutes struct{}
 
 var CustomRoutes = &customRoutes{}

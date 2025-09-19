@@ -3,8 +3,8 @@ package store
 import (
 	"sync"
 	"xi/pkg/lib/hook"
-	"xi/pkg/store/db"
-	"xi/pkg/store/rdb"
+	"xi/pkg/service/store/db"
+	"xi/pkg/service/store/rdb"
 )
 
 type StoreService struct {
@@ -13,7 +13,9 @@ type StoreService struct {
 	once  sync.Once
 }
 
-var Store = &StoreService{}
+var Store = &StoreService{
+	Hooks: &hook.Hook{},
+}
 
 type (
 	DbStore  = db.DbStore

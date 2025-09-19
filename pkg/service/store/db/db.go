@@ -9,8 +9,8 @@ import (
 )
 
 type DbStore struct {
-	CliProfile string
 	Cli        *gorm.DB
+	CliProfile string
 	clis       map[string]*gorm.DB
 	mu         sync.RWMutex
 }
@@ -20,19 +20,19 @@ var Db = &DbStore{
 }
 
 // AddCli stores a DB instance by its cliProfile
-func (d *DbStore) AddCli(cliProfile string, cliInstance *gorm.DB) error {
-	if cliInstance == nil {
-		return errors.New("db cliInstance is nil")
+func (d *DbStore) AddCli(cliProfile string, cli *gorm.DB) error {
+	if cli == nil {
+		return errors.New("db cli is nil for profile '" + cliProfile + "'")
 	}
 
 	d.mu.Lock()
 	defer d.mu.Unlock()
 
-	d.clis[cliProfile] = cliInstance
+	d.clis[cliProfile] = cli
 
 	// Set as global if this is the default profile OR if global isn't set yet
-	if cfg.Db.DbDefault == cliProfile || d.Cli == nil {
-		d.Cli = cliInstance
+	if cfg.Store.Db.DefaultProfile == cliProfile || d.Cli == nil {
+		d.Cli = cli
 		d.CliProfile = cliProfile
 	}
 	return nil

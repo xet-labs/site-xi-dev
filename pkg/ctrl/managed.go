@@ -7,7 +7,7 @@ import (
 
 	model_config "xi/internal/app/model/config"
 	"xi/pkg/lib"
-	"xi/pkg/store"
+	"xi/pkg/service/store"
 	"xi/pkg/lib/cfg"
 
 	"github.com/gin-gonic/gin"

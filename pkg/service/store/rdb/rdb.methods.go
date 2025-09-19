@@ -13,11 +13,11 @@ func (r *RdbStore) key(k string) string {
 }
 
 func (r *RdbStore) Set(k string, v any, ttl time.Duration) error {
-	if r.client == nil {
+	if r.Cli == nil {
 		return redis.ErrClosed
 	}
 
-	if err := r.client.Set(r.ctx, r.key(k), v, ttl).Err(); err != nil {
+	if err := r.Cli.Set(r.ctx, r.key(k), v, ttl).Err(); err != nil {
 		log.Warn().Err(err).Str("key", k).Msg("rdb SET")
 		return err
 	}
@@ -25,11 +25,11 @@ func (r *RdbStore) Set(k string, v any, ttl time.Duration) error {
 }
 
 func (r *RdbStore) Get(k string) (string, error) {
-	if r.client == nil {
+	if r.Cli == nil {
 		return "", redis.ErrClosed
 	}
 
-	v, err := r.client.Get(r.ctx, r.key(k)).Result()
+	v, err := r.Cli.Get(r.ctx, r.key(k)).Result()
 	if err != nil {
 		log.Warn().Err(err).Str("key", k).Msg("rdb GET")
 	}
@@ -37,10 +37,10 @@ func (r *RdbStore) Get(k string) (string, error) {
 }
 
 func (r *RdbStore) GetBytes(k string) ([]byte, error) {
-	if r.client == nil {
+	if r.Cli == nil {
 		return nil, redis.ErrClosed
 	}
-	return r.client.Get(r.ctx, r.key(k)).Bytes()
+	return r.Cli.Get(r.ctx, r.key(k)).Bytes()
 }
 
 func (r *RdbStore) SetJson(k string, v any, ttl time.Duration) error {
@@ -61,7 +61,7 @@ func (r *RdbStore) GetJson(k string, out any) error {
 }
 
 func (r *RdbStore) Del(keys ...string) error {
-	if r.client == nil {
+	if r.Cli == nil {
 		return redis.ErrClosed
 	}
 	if len(keys) == 0 {
@@ -73,27 +73,27 @@ func (r *RdbStore) Del(keys ...string) error {
 		redisKeys = append(redisKeys, r.key(k))
 	}
 
-	return r.client.Del(r.ctx, redisKeys...).Err()
+	return r.Cli.Del(r.ctx, redisKeys...).Err()
 }
 
 func (r *RdbStore) Exists(k string) (bool, error) {
-	if r.client == nil {
+	if r.Cli == nil {
 		return false, redis.ErrClosed
 	}
-	n, err := r.client.Exists(r.ctx, r.key(k)).Result()
+	n, err := r.Cli.Exists(r.ctx, r.key(k)).Result()
 	return n > 0, err
 }
 
 func (r *RdbStore) Keys(pattern string) ([]string, error) {
-	if r.client == nil {
+	if r.Cli == nil {
 		return nil, redis.ErrClosed
 	}
-	return r.client.Keys(r.ctx, r.key(pattern)).Result()
+	return r.Cli.Keys(r.ctx, r.key(pattern)).Result()
 }
 
 func (r *RdbStore) FlushAll() error {
-	if r.client == nil {
+	if r.Cli == nil {
 		return redis.ErrClosed
 	}
-	return r.client.FlushAll(r.ctx).Err()
+	return r.Cli.FlushAll(r.ctx).Err()
 }

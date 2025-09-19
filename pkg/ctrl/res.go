@@ -17,7 +17,7 @@ var Res = &ResCtrl{
 	Sitemap: res.Sitemap,
 }
 
-func (rc *ResCtrl) RoutesCore(r *gin.Engine) {
+func (rc *ResCtrl) RouterCore(r *gin.Engine) {
 	// css
 	r.GET("/res/css/*name", rc.Css.Index)
 
@@ -26,7 +26,7 @@ func (rc *ResCtrl) RoutesCore(r *gin.Engine) {
 	r.GET("/sitemap.xml", rc.Sitemap.Index)
 }
 
-func (rc *ResCtrl) RoutesPost(r *gin.Engine) {
+func (rc *ResCtrl) RouterPost(r *gin.Engine) {
 	// Static
 	r.NoRoute(func(c *gin.Context) { c.File("public" + c.Request.URL.Path) })
 }

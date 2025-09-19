@@ -5,28 +5,25 @@ import (
 	"html/template"
 	"net/http"
 	"sync"
+	
+	"github.com/gin-gonic/gin"
+
+
 	model_config "xi/internal/app/model/config"
-	model_db "xi/internal/app/model/db"
+	model_store "xi/internal/app/model/store"
 	"xi/pkg/lib"
 	"xi/pkg/lib/cfg"
-
-	"github.com/gin-gonic/gin"
-	"github.com/redis/go-redis/v9"
-	"gorm.io/gorm"
 )
 
 type BlogHttpCtrl struct {
-	db  *gorm.DB
-	rdb *redis.Client
-
+	// dbCli  *gorm.DB
+	// rdbCli *redis.Client
 	mu   sync.RWMutex
 	once sync.Once
 }
 
 // Singleton controller
-var BlogHttp = &BlogHttpCtrl{
-	db: lib.Db.GetCli(),
-}
+var BlogHttp = &BlogHttpCtrl{}
 
 // GET /blog
 // func (b *BlogHttpCtrl) Index(c *gin.Context) {}
@@ -42,7 +39,7 @@ func (b *BlogHttpCtrl) Show(c *gin.Context) {
 	rawUID := c.Param("uid") // @username or UID
 	rawID := c.Param("id")   // blog ID or slug
 
-	blog := model_db.Blog{}
+	blog := model_store.Blog{}
 	if err := BlogApi.Validate(rawUID, rawID); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -69,7 +66,7 @@ func (b *BlogHttpCtrl) Show(c *gin.Context) {
 	lib.Web.OutHtmlLyt(c, &p, rdbKey)
 }
 
-func (b *BlogHttpCtrl) PrepMeta(c *gin.Context, meta *model_config.WebMeta, raw *model_db.Blog) {
+func (b *BlogHttpCtrl) PrepMeta(c *gin.Context, meta *model_config.WebMeta, raw *model_store.Blog) {
 	meta.Type = "Article"
 	meta.Title = raw.Title
 	meta.URL = lib.Util.Url.Full(c)

@@ -24,7 +24,7 @@ func (l *LoggerLib) Init() { l.once.Do(l.InitCore) }
 
 func (l *LoggerLib) InitCore() {
 	// Decide log level based on build mode
-	switch cfg.Build.Mode {
+	switch cfg.App.Mode {
 	case "release":
 		zerolog.SetGlobalLevel(zerolog.InfoLevel) // show Info/Warn/Error but hide Debug
 	default:

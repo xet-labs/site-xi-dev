@@ -9,7 +9,7 @@ import (
 
 	model_config "xi/internal/app/model/config"
 	model_ctrlRes "xi/internal/app/model/ctrl/res"
-	"xi/pkg/store"
+	"xi/pkg/service/store"
 	"xi/pkg/lib/router"
 )
 

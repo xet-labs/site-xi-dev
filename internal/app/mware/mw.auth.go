@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"strconv"
 
-	model_db "xi/internal/app/model/db"
+	model_store "xi/internal/app/model/store"
 	"xi/pkg/lib/cfg"
 
 	"github.com/gin-gonic/gin"
@@ -54,7 +54,7 @@ func AuthMiddleware() gin.HandlerFunc {
 			return
 		}
 
-		var user model_db.User
+		var user model_store.User
 		if err := db.First(&user, uid).Error; err != nil {
 			if err == gorm.ErrRecordNotFound {
 				c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "user not found"})

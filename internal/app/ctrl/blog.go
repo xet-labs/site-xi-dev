@@ -9,16 +9,19 @@ import (
 	model_ctrlBlog "xi/internal/app/model/ctrl/blog"
 	"xi/pkg/lib"
 	"xi/pkg/lib/cfg"
+	"xi/pkg/service/store"
 
 	"github.com/gin-gonic/gin"
+	"github.com/redis/go-redis/v9"
 	"gorm.io/gorm"
 )
 
 type BlogCtrl struct {
 	Http *blog.BlogHttpCtrl
 	Api  *blog.BlogApiCtrl
-	db   *gorm.DB
 
+	dbCli   *gorm.DB
+	rdbCli  *redis.Client
 	mu   sync.RWMutex
 	once sync.Once
 }
@@ -26,7 +29,9 @@ type BlogCtrl struct {
 var Blog = &BlogCtrl{
 	Http: blog.BlogHttp,
 	Api:  blog.BlogApi,
-	db:   lib.Db.GetCli(),
+
+	dbCli:  store.Db.Cli,
+	rdbCli: store.Rdb.Cli,
 }
 
 // Blog Routes
@@ -55,7 +60,7 @@ func (b *BlogCtrl) SitemapCore(c *gin.Context) (any, error) {
 	urls := []model_config.MetaSitemap{}
 
 	// Try cache
-	if err := lib.Rdb.GetJson(rdbKey, &urls); err == nil {
+	if err := store.Rdb.GetJson(rdbKey, &urls); err == nil {
 		return urls, nil
 	}
 
@@ -63,7 +68,7 @@ func (b *BlogCtrl) SitemapCore(c *gin.Context) (any, error) {
 	var blogs []model_ctrlBlog.BlogSitemap
 
 	b.mu.Lock()
-	err := b.db.
+	err := b.dbCli.
 		Table("blogs").
 		Select("users.username, blogs.slug, blogs.updated_at").
 		Joins("join users on users.uid = blogs.uid").
@@ -87,6 +92,6 @@ func (b *BlogCtrl) SitemapCore(c *gin.Context) (any, error) {
 	}
 
 	// Cache
-	go func() { lib.Rdb.SetJson(rdbKey, urls, 15*time.Minute) }()
+	go func() { store.Rdb.SetJson(rdbKey, urls, 15*time.Minute) }()
 	return urls, nil
 }

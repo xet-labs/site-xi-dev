@@ -4,8 +4,7 @@ type Config struct {
 	Api   ApiConf   `json:"api"`
 	App   AppConf   `json:"app"`
 	Org   OrgConf   `json:"org"`
-	Build BuildConf `json:"build"`
-	Db    DbConf    `json:"db"`
+	Store StoreConf `json:"store"`
 	Web   WebConf   `json:"web"`
 }
 
@@ -17,12 +16,4 @@ type OrgConf struct {
 	Logo    []string `json:"logo"`
 	Img     []string `json:"img,omitempty"`
 	Tagline string   `json:"tagline,omitempty"`
-}
-
-type BuildConf struct {
-	Date     string `json:"date,omitempty"`
-	Name     string `json:"name,omitempty"`
-	Revision string `json:"revision,omitempty"`
-	Version  string `json:"version,omitempty"`
-	Mode     string `json:"mode,omitempty"`
 }

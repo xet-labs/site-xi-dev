@@ -6,7 +6,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	model_db "xi/internal/app/model/db"
+	model_store "xi/internal/app/model/store"
 )
 
 func (a *AuthApi) Logout(c *gin.Context) {
@@ -15,7 +15,7 @@ func (a *AuthApi) Logout(c *gin.Context) {
 	if err == nil {
 		hashed := HashToken(raw)
 		// revoke the token if present
-		var rec model_db.RefreshToken
+		var rec model_store.RefreshToken
 		if err := Auth.DB.Where("refresh_token = ?", hashed).First(&rec).Error; err == nil {
 			rec.Revoked = true
 			rec.UpdatedAt = time.Now()

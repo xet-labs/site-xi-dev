@@ -3,7 +3,7 @@ package cfg
 import model_config "xi/internal/app/model/config"
 
 func SetupRelease(cfg *model_config.Config) {
-	cfg.Build = Build
+	cfg.App.Build = Build
 
 	if Build.Mode == "release" {
 		if cfg.App.Mode == "test" {
