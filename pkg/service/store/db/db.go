@@ -15,9 +15,9 @@ type DbStore struct {
 	mu         sync.RWMutex
 }
 
-var Db = &DbStore{
-	clis: make(map[string]*gorm.DB),
-}
+var (
+	Db = &DbStore{clis: make(map[string]*gorm.DB)}
+)
 
 // AddCli stores a DB instance by its cliProfile
 func (d *DbStore) AddCli(cliProfile string, cli *gorm.DB) error {
@@ -49,12 +49,12 @@ func (d *DbStore) SetCli(cliProfile string) {
 	}
 }
 
-func (d *DbStore) Cli(cliProfiles ...string) *gorm.DB {	
+func (d *DbStore) Cli(cliProfiles ...string) *gorm.DB {
 	// Fast path: no profile given, return default directly
 	if len(cliProfiles) == 0 {
 		return d.cli
 	}
-	
+
 	d.mu.RLock()
 	defer d.mu.RUnlock()
 
@@ -68,7 +68,3 @@ func (d *DbStore) Cli(cliProfiles ...string) *gorm.DB {
 	// Fallback to default
 	return d.cli
 }
-
-func (d *DbStore) ErrUnavailable() error {
-	return errors.New("database (client) unavailable")
-} 

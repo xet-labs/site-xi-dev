@@ -2,7 +2,6 @@
 package blog
 
 import (
-	"errors"
 	"net/http"
 	"strconv"
 	"strings"
@@ -12,24 +11,18 @@ import (
 	"github.com/gin-gonic/gin"
 
 	model_store "xi/internal/app/model/store"
+	"xi/pkg/app"
 	"xi/pkg/lib"
 	"xi/pkg/service/store"
 )
 
 type BlogApiCtrl struct {
 	mu   sync.RWMutex
-	once sync.Once
 }
 
 // Singleton controller
 var (
 	BlogApi = &BlogApiCtrl{}
-
-	ErrInvalidUserName = errors.New("invalid username")
-	ErrInvalidUID      = errors.New("invalid UID format")
-	ErrInvalidSlug     = errors.New("invalid slug format")
-	ErrBlogNotFound    = errors.New("blog not found")
-	ErrDbUnavailable   = errors.New("database unavailable")
 )
 
 // GET /blog or /blog?Page=2&Limit=6
@@ -55,12 +48,8 @@ func (b *BlogApiCtrl) Index(c *gin.Context) {
 
 	// Fetch from DB
 	offset := (pageNum - 1) * limitNum
-	if err := b.IndexCore(&blogs, offset, limitNum); err != nil {
-		status := http.StatusInternalServerError
-		if errors.Is(err, ErrDbUnavailable) {
-			status = http.StatusServiceUnavailable
-		}
-		c.JSON(status, gin.H{"error": "Could not fetch blogs"})
+	if err:= b.IndexCore(&blogs, offset, limitNum); err != nil {
+		app.Err.Handle(c, err, true)
 		return
 	}
 
@@ -90,7 +79,7 @@ func parsePageLimit(c *gin.Context) (page, limit int, ok bool) {
 func (b *BlogApiCtrl) IndexCore(blogs *[]model_store.Blog, offset, limit int) error {
 	db := store.Db.Cli()
 	if db == nil {
-		return ErrDbUnavailable
+		return app.Err.DbUnavailable
 	}
 
 	return db.Preload("User").
@@ -140,10 +129,10 @@ func (b *BlogApiCtrl) Show(c *gin.Context) {
 func (b *BlogApiCtrl) ShowCore(dest *model_store.Blog, rawUID, rawID string) error {
 	db := store.Db.Cli()
 	if db == nil {
-		return ErrDbUnavailable
+		return app.Err.DbUnavailable
 	}
 
-	db = store.Db.Cli().Preload("User") // single Preload
+	db = db.Preload("User") // single Preload
 
 	// Determine query based on UID type
 	if username, ok := strings.CutPrefix(rawUID, "@"); ok {
@@ -231,13 +220,13 @@ func isNumeric(s string) bool {
 func (b *BlogApiCtrl) Validate(rawUID, rawID string) error {
 	if strings.HasPrefix(rawUID, "@") {
 		if !lib.Validate.Uname(rawUID) {
-			return ErrInvalidUserName
+			return app.Err.InvalidUserName
 		}
 	} else if !lib.Validate.UID(rawUID) {
-		return ErrInvalidUID
+		return app.Err.InvalidUID
 	}
 	if !lib.Validate.Slug(rawID) {
-		return ErrInvalidSlug
+		return app.Err.InvalidSlug
 	}
 	return nil
 }

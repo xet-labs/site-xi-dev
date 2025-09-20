@@ -10,3 +10,4 @@ func (c *CryptLib) Random(n int) ([]byte, error) {
 	_, err := rand.Read(b)
 	return b, err
 }
+

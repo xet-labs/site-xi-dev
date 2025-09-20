@@ -1,6 +1,7 @@
 package util
 
 import (
+	"xi/pkg/lib/util/crypt"
 	"xi/pkg/lib/util/file"
 	"xi/pkg/lib/util/maps"
 	"xi/pkg/lib/util/minify"
@@ -10,6 +11,7 @@ import (
 )
 
 type UtilLib struct {
+	Crypt  crypt.CryptLib
 	File   file.FileLib
 	Map    maps.MapsLib
 	Minify minify.MinifyLib
@@ -19,6 +21,7 @@ type UtilLib struct {
 }
 
 var Util = &UtilLib{
+	Crypt:  crypt.CryptLib{},
 	File:   file.FileLib{},
 	Map:    maps.MapsLib{},
 	Misc:   misc.MiscLib{},
@@ -29,6 +32,7 @@ var Util = &UtilLib{
 
 // expose shortcuts
 var (
+	Crypt   = &Util.Crypt
 	File   = &Util.File
 	Map    = &Util.Map
 	Minify = &Util.Minify

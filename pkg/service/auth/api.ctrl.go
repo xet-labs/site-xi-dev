@@ -6,7 +6,7 @@ type AuthApi struct {}
 
 var Api = &AuthApi{}
 
-func (a *AuthApi) RoutesrCore(r *gin.Engine) {
+func (a *AuthApi) RouterCore(r *gin.Engine) {
 	authApi := r.Group("/api/auth")
 	{
 		authApi.POST("/refresh", a.Refresh)
