@@ -12,7 +12,7 @@ import (
 
 // Expose structs
 type (
-	ConfigLib   = config.ConfigLib
+	ConfigLib = config.ConfigLib
 	EnvLib    = env.EnvLib
 	Hook      = hook.Hook // Only struct exposed
 	LoggerLib = logger.LoggerLib
@@ -23,7 +23,7 @@ type (
 
 // Expose Global instance
 var (
-	Config   = config.Config
+	Config = config.Config
 	Env    = env.Env
 	Log    = logger.Logger.Log
 	Logger = logger.Logger

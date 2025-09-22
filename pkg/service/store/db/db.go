@@ -53,29 +53,29 @@ func (d *DbStore) SetCli(cliProfile string) {
 func (d *DbStore) RawCli() *gorm.DB { return d.cli }
 
 func (d *DbStore) Cli(cliProfiles ...string) *gorm.DB {
-    // Fast path: return default if no profiles provided
-    if len(cliProfiles) == 0 {
-        if d.cli != nil {
-            return d.cli
-        }
-        return &gorm.DB{Error: fmt.Errorf("DbStore: no database connection available")}
-    }
+	// Fast path: return default if no profiles provided
+	if len(cliProfiles) == 0 {
+		if d.cli != nil {
+			return d.cli
+		}
+		return &gorm.DB{Error: fmt.Errorf("DbStore: no database connection available")}
+	}
 
-    // Check profiles under a single read lock
-    d.mu.RLock()
-    defer d.mu.RUnlock()
+	// Check profiles under a single read lock
+	d.mu.RLock()
+	defer d.mu.RUnlock()
 
-    for _, profile := range cliProfiles {
-        if cli, ok := d.clis[profile]; ok && cli != nil {
-            return cli
-        }
-    }
+	for _, profile := range cliProfiles {
+		if cli, ok := d.clis[profile]; ok && cli != nil {
+			return cli
+		}
+	}
 
-    // Fallback to default if profile not found
-    if d.cli != nil {
-        return d.cli
-    }
+	// Fallback to default if profile not found
+	if d.cli != nil {
+		return d.cli
+	}
 
-    // No DB found — return dummy
-    return &gorm.DB{Error: fmt.Errorf("DbStore: no database connection available")}
+	// No DB found — return dummy
+	return &gorm.DB{Error: fmt.Errorf("DbStore: no database connection available")}
 }

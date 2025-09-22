@@ -15,7 +15,7 @@ import (
 	"xi/pkg/service/store"
 )
 
-type BlogApiCtrl struct {}
+type BlogApiCtrl struct{}
 
 // Singleton controller
 var (
@@ -45,7 +45,7 @@ func (b *BlogApiCtrl) Index(c *gin.Context) {
 
 	// Fetch from DB
 	offset := (pageNum - 1) * limitNum
-	if err:= b.IndexCore(&blogs, offset, limitNum); err != nil {
+	if err := b.IndexCore(&blogs, offset, limitNum); err != nil {
 		app.Err.Handle(c, err, true)
 		return
 	}
@@ -72,7 +72,6 @@ func parsePageLimit(c *gin.Context) (page, limit int, ok bool) {
 	return p, l, true
 }
 
-
 func (b *BlogApiCtrl) IndexCore(blogs *[]model_store.Blog, offset, limit int) error {
 	db := store.Db.Cli()
 	if db.Error != nil {
@@ -86,7 +85,6 @@ func (b *BlogApiCtrl) IndexCore(blogs *[]model_store.Blog, offset, limit int) er
 		Limit(limit).
 		Find(blogs).Error
 }
-
 
 // GET api/blog/uid/id
 func (b *BlogApiCtrl) Show(c *gin.Context) {
@@ -220,4 +218,3 @@ func (b *BlogApiCtrl) Validate(rawUID, rawID string) error {
 	}
 	return nil
 }
-

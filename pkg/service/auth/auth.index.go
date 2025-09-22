@@ -8,8 +8,6 @@ import (
 	"gorm.io/gorm"
 )
 
-
-
 type AuthService struct {
 	JwtSecret    []byte // set from cfg.Api.JwtSecret
 	AccessTTL    time.Duration
@@ -27,7 +25,7 @@ var Auth = &AuthService{
 	CookieDomain: cfg.Api.CookieDomain,  // set this in config; "" works too
 	CookieSecure: cfg.Api.SecureCookies, // true in prod
 
-	Api: Api, 
+	Api: Api,
 }
 
 func NewAuthService(db *gorm.DB) *AuthService {

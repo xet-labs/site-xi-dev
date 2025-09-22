@@ -20,7 +20,6 @@ var Build = model_config.BuildConf{
 var Config = &model_config.Config{}
 var Raw *koanf.Koanf
 
-
 // Direct pointers for convenience
 var (
 	Api   = &Config.Api

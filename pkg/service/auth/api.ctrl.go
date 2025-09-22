@@ -2,7 +2,7 @@ package auth
 
 import "github.com/gin-gonic/gin"
 
-type AuthApi struct {}
+type AuthApi struct{}
 
 var Api = &AuthApi{}
 

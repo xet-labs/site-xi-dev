@@ -40,7 +40,7 @@ func (s *AuthService) GenRefreshTokenRecord(uid uint64, ua, ip string) (rawToken
 		IPAddress: &ip,
 		ExpiresAt: time.Now().Add(s.RefreshTTL),
 	}
-	
+
 	if err := store.Db.Cli().Create(&rt).Error; err != nil {
 		return "", record, err
 	}

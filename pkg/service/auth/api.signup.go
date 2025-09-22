@@ -51,9 +51,11 @@ func (a *AuthApi) Signup(c *gin.Context) {
 		case strings.Contains(err.Error(), "Duplicate entry"), strings.Contains(err.Error(), "unique constraint"):
 			switch {
 			case strings.Contains(err.Error(), "username"):
-				conflict("username"); return
+				conflict("username")
+				return
 			case strings.Contains(err.Error(), "email"):
-				conflict("email"); return
+				conflict("email")
+				return
 			}
 		}
 		app.Err.Handle(c, err, true)

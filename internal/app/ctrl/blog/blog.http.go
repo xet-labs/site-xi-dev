@@ -15,7 +15,7 @@ import (
 )
 
 type BlogHttpCtrl struct {
-	mu   sync.RWMutex
+	mu sync.RWMutex
 }
 
 var BlogHttp = &BlogHttpCtrl{}

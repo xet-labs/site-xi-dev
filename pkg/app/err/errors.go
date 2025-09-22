@@ -48,19 +48,19 @@ func (e *AppErr) Get(key string) *ErrParam {
 
 // All predefined errors
 func Init() {
-	Add("BlogNotFound",     "blog not found", "blog not found", http.StatusNotFound)
-	Add("DbUnavailable",    "database unavailable", "service unavailable", http.StatusServiceUnavailable, "err")
+	Add("BlogNotFound", "blog not found", "blog not found", http.StatusNotFound)
+	Add("DbUnavailable", "database unavailable", "service unavailable", http.StatusServiceUnavailable, "err")
 
-	Add("EmailExists",      "email already exists", "email already exists", http.StatusConflict)
-	Add("UserNameExists",   "username already exists", "username already exists", http.StatusConflict)
+	Add("EmailExists", "email already exists", "email already exists", http.StatusConflict)
+	Add("UserNameExists", "username already exists", "username already exists", http.StatusConflict)
 
-	Add("InvalidCredentials",   "invalid credentials", "invalid credentials", http.StatusUnauthorized)
-	Add("InvalidUID",           "invalid UID", "invalid UID", http.StatusBadRequest)
-	Add("InvalidUser",          "invalid user", "invalid user", http.StatusBadRequest)
-	Add("InvalidUserName",      "invalid username", "invalid username", http.StatusBadRequest)
-	Add("InvalidSlug",          "invalid slug", "invalid slug", http.StatusBadRequest)
+	Add("InvalidCredentials", "invalid credentials", "invalid credentials", http.StatusUnauthorized)
+	Add("InvalidUID", "invalid UID", "invalid UID", http.StatusBadRequest)
+	Add("InvalidUser", "invalid user", "invalid user", http.StatusBadRequest)
+	Add("InvalidUserName", "invalid username", "invalid username", http.StatusBadRequest)
+	Add("InvalidSlug", "invalid slug", "invalid slug", http.StatusBadRequest)
 
 	Add("RefreshTokenNotFound", "refresh token not found", "refresh token not found", http.StatusUnauthorized)
-	Add("RefreshTokenRevoked",  "refresh token revoked", "refresh token revoked", http.StatusUnauthorized)
-	Add("RefreshTokenExpired",  "refresh token expired", "refresh token expired", http.StatusUnauthorized)
+	Add("RefreshTokenRevoked", "refresh token revoked", "refresh token revoked", http.StatusUnauthorized)
+	Add("RefreshTokenExpired", "refresh token expired", "refresh token expired", http.StatusUnauthorized)
 }

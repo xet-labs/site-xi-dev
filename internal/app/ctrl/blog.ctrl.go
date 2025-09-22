@@ -18,7 +18,7 @@ type BlogCtrl struct {
 	Http *blog.BlogHttpCtrl
 	Api  *blog.BlogApiCtrl
 
-	mu   sync.RWMutex
+	mu sync.RWMutex
 }
 
 var Blog = &BlogCtrl{

@@ -32,7 +32,7 @@ var Util = &UtilLib{
 
 // expose shortcuts
 var (
-	Crypt   = &Util.Crypt
+	Crypt  = &Util.Crypt
 	File   = &Util.File
 	Map    = &Util.Map
 	Minify = &Util.Minify
