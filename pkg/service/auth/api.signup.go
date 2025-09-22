@@ -1,16 +1,18 @@
 package auth
 
 import (
+	"errors"
 	"net/http"
 	"strings"
+
 	model_store "xi/internal/app/model/store"
 	"xi/pkg/app"
 	"xi/pkg/lib/util"
 	"xi/pkg/service/store"
 
 	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 )
-
 
 func (a *AuthApi) Signup(c *gin.Context) {
 	var req struct {
@@ -20,7 +22,7 @@ func (a *AuthApi) Signup(c *gin.Context) {
 		Name     string `json:"name" binding:"required"`
 	}
 	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid input: " + err.Error()})
 		return
 	}
 
@@ -35,17 +37,36 @@ func (a *AuthApi) Signup(c *gin.Context) {
 		Email:        strings.ToLower(req.Email),
 		PasswordHash: string(pwHash),
 		Name:         req.Name,
+		Config:       nil, // or util.StringPtr("{}") if you want default config
 	}
 
-	db := store.Db.Cli()
-	if db == nil {
-		app.Err.Handle(c, app.Err.DbUnavailable, true)
-		return
-	}
-	if err := db.Create(&user).Error; err != nil {
+	if err := store.Db.Cli().Create(&user).Error; err != nil {
+		conflict := func(msg string) {
+			c.JSON(http.StatusConflict, gin.H{"error": msg})
+		}
+
+		switch {
+		case errors.Is(err, gorm.ErrRegistered):
+			conflict("resource")
+		case strings.Contains(err.Error(), "Duplicate entry"), strings.Contains(err.Error(), "unique constraint"):
+			switch {
+			case strings.Contains(err.Error(), "username"):
+				conflict("username"); return
+			case strings.Contains(err.Error(), "email"):
+				conflict("email"); return
+			}
+		}
 		app.Err.Handle(c, err, true)
 		return
 	}
 
-	c.JSON(http.StatusCreated, gin.H{"message": "user created successfully"})
+	c.JSON(http.StatusCreated, gin.H{
+		"message": "user created successfully",
+		"user": gin.H{
+			"id":       user.ID,
+			"username": user.Username,
+			"email":    user.Email,
+			"name":     user.Name,
+		},
+	})
 }

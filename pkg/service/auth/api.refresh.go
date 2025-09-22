@@ -5,10 +5,11 @@ import (
 	"net/http"
 	"time"
 
+	model_store "xi/internal/app/model/store"
+	"xi/pkg/service/store"
+
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
-
-	model_store "xi/internal/app/model/store"
 )
 
 func (a *AuthApi) Refresh(c *gin.Context) {
@@ -19,9 +20,9 @@ func (a *AuthApi) Refresh(c *gin.Context) {
 		return
 	}
 
-	hashed := HashToken(raw) // helper we expose; or reimplement here
-	var rec model_store.RefreshToken
-	if err := Auth.DB.Where("refresh_token = ?", hashed).First(&rec).Error; err != nil {
+	hashed := Auth.HashToken(raw)
+	var rt model_store.RefreshToken
+	if err := store.Db.Cli().Where("token_hash = ?", hashed).First(&rt).Error; err != nil {
 		if err == gorm.ErrRecordNotFound {
 			c.JSON(http.StatusUnauthorized, gin.H{"error": "invalid refresh token"})
 			return
@@ -30,34 +31,31 @@ func (a *AuthApi) Refresh(c *gin.Context) {
 		return
 	}
 
-	if rec.Revoked {
+	if rt.Revoked {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "token revoked"})
 		return
 	}
-	if time.Now().After(rec.ExpiresAt) {
+	if time.Now().After(rt.ExpiresAt) {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "refresh token expired"})
 		return
 	}
 
 	// rotation: create new refresh token and mark old as replaced & revoked
-	ua := c.GetHeader("User-Agent")
-	ip := c.ClientIP()
-	newRaw, newRec, err := Auth.GenRefreshTokenRecord(uint64(rec.UID), ua, ip)
+	newRaw, newRec, err := Auth.GenRefreshTokenRecord(uint64(rt.UID), c.GetHeader("User-Agent"), c.ClientIP())
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to rotate token"})
 		return
 	}
 
 	// mark old token as revoked and set ReplacedById
-	rec.Revoked = true
-	rec.ReplacedById = newRec.ID
-	rec.UpdatedAt = time.Now()
-	if err := Auth.DB.Save(&rec).Error; err != nil {
+	rt.Revoked = true
+	rt.ReplacedById = &newRec.ID
+	if err := store.Db.Cli().Save(&rt).Error; err != nil {
 		// log but continue
 	}
 
 	// issue new access token for user
-	uid := fmt.Sprintf("%d", rec.UID)
+	uid := fmt.Sprintf("%d", rt.UID)
 	access, err := Auth.GenAccessToken(uid, []string{"default"}, Auth.AccessTTL)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to create token"})
@@ -70,7 +68,7 @@ func (a *AuthApi) Refresh(c *gin.Context) {
 
 	// return access token and profile
 	var user model_store.User
-	if err := Auth.DB.First(&user, rec.UID).Error; err != nil {
+	if err := store.Db.Cli().First(&user, rt.UID).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "server error"})
 		return
 	}

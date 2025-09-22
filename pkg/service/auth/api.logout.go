@@ -4,22 +4,23 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/gin-gonic/gin"
-
 	model_store "xi/internal/app/model/store"
+	"xi/pkg/service/store"
+
+	"github.com/gin-gonic/gin"
 )
 
 func (a *AuthApi) Logout(c *gin.Context) {
 	cookieName := "refresh"
 	raw, err := c.Cookie(cookieName)
 	if err == nil {
-		hashed := HashToken(raw)
 		// revoke the token if present
-		var rec model_store.RefreshToken
-		if err := Auth.DB.Where("refresh_token = ?", hashed).First(&rec).Error; err == nil {
-			rec.Revoked = true
-			rec.UpdatedAt = time.Now()
-			_ = Auth.DB.Save(&rec)
+		var rt model_store.RefreshToken
+		db := store.Db.Cli()
+		if err := db.Where("token_hash = ?", Auth.HashToken(raw)).First(&rt).Error; err == nil {
+			rt.Revoked = true
+			rt.UpdatedAt = time.Now()
+			_ = db.Save(&rt)
 		}
 	}
 

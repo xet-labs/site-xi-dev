@@ -48,7 +48,7 @@ func (d *DebugCtrl) Index(r *gin.Engine) gin.HandlerFunc {
 				return routes
 			}(),
 			"conf": func() any {
-				cfg, err := lib.Conf.All()
+				cfg, err := lib.Config.All()
 				if err != nil {
 					return gin.H{"error": "failed to load config", "details": err.Error()}
 				}

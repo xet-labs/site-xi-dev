@@ -1,7 +1,7 @@
-package conf
+package config
 
 import (
-	confHook "xi/pkg/lib/conf/hooks"
+	confHook "xi/pkg/lib/config/hooks"
 	"xi/pkg/lib/hook"
 )
 

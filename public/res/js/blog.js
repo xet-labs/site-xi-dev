@@ -1,7 +1,5 @@
 function timeAgo(dateStr) {
-    
-  const diffInSeconds = Math.floor((new Date() - new Date(dateStr)) / 1000);
-
+  const diffInSeconds = Math.floor((Date.now() - new Date(dateStr)) / 1000);
   if (isNaN(diffInSeconds)) return "";
 
   const units = [
@@ -71,40 +69,49 @@ function renderBlogsCard(blog) {
 </article>`;
 }
 
-var blogCardsFetching = false;
-var Blogs_Page = 1;
-var Blogs_Limit = 6;
-var blogsExhausted = false;
+let blogCardsFetching = false;
+let Blogs_Page = 1;
+const Blogs_Limit = 6;
+let blogsExhausted = false;
 
-function BlogsCard_fetch() {
+async function BlogsCard_fetch() {
   if (blogsExhausted || blogCardsFetching) return;
-
   blogCardsFetching = true;
-  $("#blogCards_loading").show().css("opacity", 1);
 
-  $.get("/api/blog", { Page: Blogs_Page, Limit: Blogs_Limit }, (response) => {
-    // If server responds with plain JSON, skip JSON.parse()
+  const loader = document.getElementById("blogCards_loading");
+  loader.style.display = "block";
+  loader.style.opacity = 1;
+
+  try {
+    const res = await fetch(`/api/blog?Page=${Blogs_Page}&Limit=${Blogs_Limit}`);
+    const response = await res.json();
+
     const blogs = response.blogs || [];
-
     if (response.blogsExhausted || blogs.length === 0) {
       blogsExhausted = true;
-      $("#blogCards_loading").hide();
+      loader.style.display = "none";
     } else {
-      $("#BlogCards").append(blogs.map(renderBlogsCard).join(""));
+      document.getElementById("BlogCards").insertAdjacentHTML(
+        "beforeend",
+        blogs.map(renderBlogsCard).join("")
+      );
       Blogs_Page++;
     }
+  } catch (err) {
+    console.error("Failed to fetch blogs:", err);
+  }
 
-    $("#blogCards_loading").css("opacity", 0).hide();
-    blogCardsFetching = false;
-  });
+  loader.style.opacity = 0;
+  loader.style.display = "none";
+  blogCardsFetching = false;
 }
 
-// Call on page load
+// Initial fetch
 BlogsCard_fetch();
 
-// Infinite scroll
-$(window).scroll(function () {
-  if ($(window).scrollTop() + $(window).height() > $(document).height() - 1200) {
+// Infinite scroll with vanilla JS
+window.addEventListener("scroll", () => {
+  if (window.scrollY + window.innerHeight > document.documentElement.scrollHeight - 1200) {
     if (!blogCardsFetching) BlogsCard_fetch();
   }
 });

@@ -12,7 +12,7 @@ func (a *AuthApi) RouterCore(r *gin.Engine) {
 		authApi.POST("/refresh", a.Refresh)
 		authApi.POST("/login", a.Login)
 		authApi.POST("/logout", a.Logout)
-		// authApi.POST("/signup", a.Api.Signup)
-		// authApi.POST("/signout", a.Api.Signout)
+		authApi.POST("/signup", a.Signup)
+		// authApi.POST("/signout", a.Signout)
 	}
 }

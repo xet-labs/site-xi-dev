@@ -130,31 +130,31 @@ func (mh *MetaHtml) LdJSON(m *model_config.WebMeta) []byte {
 		"mainEntityOfPage": m.URL,
 	}
 
-	util.Map.AddIfNotEmpty(root, "description", m.Description)
-	util.Map.AddIfNotEmpty(root, "image", m.Author.Img)
-	util.Map.AddIfNotEmptySlice(root, "keywords", m.Tags)
+	util.Map.AddIfStrNotEmpty(root, "description", m.Description)
+	util.Map.AddIfStrPtrNotEmpty(root, "image", m.Author.Img)
+	util.Map.AddIfSliceNotEmpty(root, "keywords", m.Tags)
 
 	// Article-like specifics
 	if isArticle(m.Type) {
-		util.Map.AddIfNotEmpty(root, "headline", title)
-		util.Map.AddIfNotEmpty(root, "dateCreated", m.CreatedAt.UTC().Format(time.RFC3339Nano))
-		util.Map.AddIfNotEmpty(root, "datePublished", m.CreatedAt.UTC().Format(time.RFC3339Nano))
-		util.Map.AddIfNotEmpty(root, "dateModified", m.UpdatedAt.UTC().Format(time.RFC3339Nano))
-		util.Map.AddIfNotEmptySlice(root, "articleSection", m.Tags)
+		util.Map.AddIfStrNotEmpty(root, "headline", title)
+		util.Map.AddIfStrNotEmpty(root, "dateCreated", m.CreatedAt.UTC().Format(time.RFC3339Nano))
+		util.Map.AddIfStrNotEmpty(root, "datePublished", m.CreatedAt.UTC().Format(time.RFC3339Nano))
+		util.Map.AddIfStrNotEmpty(root, "dateModified", m.UpdatedAt.UTC().Format(time.RFC3339Nano))
+		util.Map.AddIfSliceNotEmpty(root, "articleSection", m.Tags)
 
 		root["author"] = map[string]any{} // create new map
 		authorMap := root["author"].(map[string]any)
 		authorMap["@type"] = "Person"
-		util.Map.AddIfNotEmpty(authorMap, "name", m.Author.Name)
-		util.Map.AddIfNotEmpty(authorMap, "description", m.Author.Description)
-		util.Map.AddIfNotEmpty(authorMap, "image", m.Author.Img)
-		util.Map.AddIfNotEmpty(authorMap, "jobTitle", m.Author.JobTitle)
-		util.Map.AddIfNotEmpty(authorMap, "sameAs", m.Author.SameAs)
-		util.Map.AddIfNotEmpty(authorMap, "url", m.Author.URL)
+		util.Map.AddIfStrNotEmpty(authorMap, "name", m.Author.Name)
+		util.Map.AddIfStrNotEmpty(authorMap, "description", m.Author.Description)
+		util.Map.AddIfStrPtrNotEmpty(authorMap, "image", m.Author.Img)
+		util.Map.AddIfStrNotEmpty(authorMap, "jobTitle", m.Author.JobTitle)
+		util.Map.AddIfStrNotEmpty(authorMap, "sameAs", m.Author.SameAs)
+		util.Map.AddIfStrNotEmpty(authorMap, "url", m.Author.URL)
 
 		// convenience mirrors
-		util.Map.AddIfNotEmpty(root, "creator", m.Author.Name)
-		util.Map.AddIfNotEmpty(root, "editor", m.Author.Name)
+		util.Map.AddIfStrNotEmpty(root, "creator", m.Author.Name)
+		util.Map.AddIfStrNotEmpty(root, "editor", m.Author.Name)
 	}
 
 	// Access
@@ -166,9 +166,9 @@ func (mh *MetaHtml) LdJSON(m *model_config.WebMeta) []byte {
 
 	// Publisher
 	pub := map[string]any{}
-	util.Map.AddIfNotEmpty(pub, "name", mh.p.Org.Name)
-	util.Map.AddIfNotEmpty(pub, "url", mh.p.Org.URL)
-	util.Map.AddIfNotEmpty(pub, "alternateName", mh.p.Org.AltName)
+	util.Map.AddIfStrNotEmpty(pub, "name", mh.p.Org.Name)
+	util.Map.AddIfStrNotEmpty(pub, "url", mh.p.Org.URL)
+	util.Map.AddIfStrNotEmpty(pub, "alternateName", mh.p.Org.AltName)
 
 	if mh.p.Org.Logo != "" {
 		pub["logo"] = map[string]any{"@type": "ImageObject", "url": mh.p.Org.Logo}

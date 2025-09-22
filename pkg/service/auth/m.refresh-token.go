@@ -8,6 +8,7 @@ import (
 	"time"
 
 	model_store "xi/internal/app/model/store"
+	"xi/pkg/service/store"
 )
 
 // generateOpaqueToken generates a URL-safe random string
@@ -20,7 +21,7 @@ func GenOpaqueToken(nBytes int) (string, error) {
 }
 
 // hashToken returns the SHA256 hex string of token
-func HashToken(token string) string {
+func (s *AuthService) HashToken(token string) string {
 	sum := sha256.Sum256([]byte(token))
 	return hex.EncodeToString(sum[:])
 }
@@ -31,19 +32,17 @@ func (s *AuthService) GenRefreshTokenRecord(uid uint64, ua, ip string) (rawToken
 	if err != nil {
 		return "", record, err
 	}
-	now := time.Now()
-	rec := model_store.RefreshToken{
+	rt := model_store.RefreshToken{
 		UID:       uint(uid),
 		Revoked:   false,
-		TokenHash: HashToken(raw),
-		ExpiresAt: now.Add(s.RefreshTTL),
-		UserAgent: ua,
-		IPAddress: ip,
-		CreatedAt: now,
-		UpdatedAt: now,
+		TokenHash: s.HashToken(raw),
+		UserAgent: &ua,
+		IPAddress: &ip,
+		ExpiresAt: time.Now().Add(s.RefreshTTL),
 	}
-	if err := s.DB.Create(&rec).Error; err != nil {
+	
+	if err := store.Db.Cli().Create(&rt).Error; err != nil {
 		return "", record, err
 	}
-	return raw, rec, nil
+	return raw, rt, nil
 }

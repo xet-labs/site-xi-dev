@@ -1,4 +1,4 @@
-package conf
+package config
 
 import (
 	"encoding/json"
@@ -23,7 +23,7 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-type ConfLib struct {
+type ConfigLib struct {
 	Dir          []string
 	DirDefault   []string
 	Files        []string
@@ -41,7 +41,7 @@ type ConfLib struct {
 }
 
 var (
-	Conf = &ConfLib{
+	Config = &ConfigLib{
 		DirDefault: []string{"internal/data/config", "internal/app/config", "config"},
 		Hooks:      &hook.Hook{},
 	}
@@ -54,19 +54,19 @@ var (
 	reJsonVar         = regexp.MustCompile(`\$\{([^}:]*)(:-([^}]*))?\}|\$\{\}`)
 )
 
-func (c *ConfLib) Init(filePath ...string) {
+func (c *ConfigLib) Init(filePath ...string) {
 	c.once.Do(func() {
 		c.Hooks.AddPost(PostHooks...)
 		c.LoadConfigs()
 		c.InitCore(filePath...)
 
-		if err := Conf.Daemon(); err != nil {
+		if err := Config.Daemon(); err != nil {
 			log.Warn().Caller().Err(err).Msgf("config Daemon: setup failed")
 		}
 	})
 }
 
-func (c *ConfLib) InitCore(files ...string) error {
+func (c *ConfigLib) InitCore(files ...string) error {
 	env.Env.Init()
 	c.mu.Lock()
 	defer c.mu.Unlock()
@@ -188,7 +188,7 @@ func (c *ConfLib) InitCore(files ...string) error {
 }
 
 // Load Config Files
-func (c *ConfLib) LoadConfigs() {
+func (c *ConfigLib) LoadConfigs() {
 	if c.LoadDefaults != nil && !*c.LoadDefaults {
 		return
 	}
@@ -203,7 +203,7 @@ func (c *ConfLib) LoadConfigs() {
 }
 
 // Process and store Config globally
-func (c *ConfLib) PostProcess() {
+func (c *ConfigLib) PostProcess() {
 	// Process PostHooks and their data
 	rawDat, errs := c.Hooks.RunPost()
 	for _, e := range errs {
@@ -229,11 +229,11 @@ func (c *ConfLib) PostProcess() {
 	cfg.Update(rawCfg)
 }
 
-func (c *ConfLib) Error(err error) {
+func (c *ConfigLib) Error(err error) {
 	panic("unimplemented")
 }
 
-func (c *ConfLib) preProcess(rawJson []byte) ([]byte, model_config.Config, error) {
+func (c *ConfigLib) preProcess(rawJson []byte) ([]byte, model_config.Config, error) {
 	// resolve Json varsand cleanups
 	resolved, err := c.resolveJsonVars(c.cleanJson(c.resolveJsonEnv(string(rawJson))))
 	if err != nil {
@@ -253,7 +253,7 @@ func (c *ConfLib) preProcess(rawJson []byte) ([]byte, model_config.Config, error
 }
 
 // resolveJsonEnv replaces ${ENV} or ${ENV:-fallback} with actual values
-func (c *ConfLib) resolveJsonEnv(input string) string {
+func (c *ConfigLib) resolveJsonEnv(input string) string {
 	out := reJsonEnv.ReplaceAllStringFunc(input, func(match string) string {
 		sub := reJsonEnv.FindStringSubmatch(match)
 		key, def := sub[1], sub[3] // ENV, fallback
@@ -274,7 +274,7 @@ func (c *ConfLib) resolveJsonEnv(input string) string {
 	return out
 }
 
-func (c *ConfLib) cleanJson(input string) string {
+func (c *ConfigLib) cleanJson(input string) string {
 	// Remove "__REMOVE__"
 	out := reJsonEnvPost.ReplaceAllString(input, "")
 
@@ -309,7 +309,7 @@ func (c *ConfLib) cleanJson(input string) string {
 }
 
 // resolveJsonVars walks entire koanf data and resolves {{key.path}} expressions
-func (c *ConfLib) resolveJsonVars(input string) (string, error) {
+func (c *ConfigLib) resolveJsonVars(input string) (string, error) {
 	var data any
 	if err := json.Unmarshal([]byte(input), &data); err != nil {
 		return "", err
@@ -385,7 +385,7 @@ func (c *ConfLib) resolveJsonVars(input string) (string, error) {
 }
 
 // sync json connfig with existing config
-func (c *ConfLib) MergeConf(rawConf *map[string]any) error {
+func (c *ConfigLib) MergeConf(rawConf *map[string]any) error {
 	// Convert map[string]any to proper []byte(json) for further processing
 	jsonConf, err := json.Marshal(rawConf)
 	if err != nil {
@@ -403,7 +403,7 @@ func (c *ConfLib) MergeConf(rawConf *map[string]any) error {
 }
 
 // Config Daemon to reload config file changes
-func (c *ConfLib) Daemon() error {
+func (c *ConfigLib) Daemon() error {
 	if c.watch != nil {
 		return nil // already watching
 	}

@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"strings"
 	"xi/pkg/lib/cfg"
-	"xi/pkg/lib/conf"
+	"xi/pkg/lib/config"
 	"xi/pkg/lib/env"
 
 	"github.com/redis/go-redis/v9"
@@ -20,7 +20,7 @@ func (s *StoreService) Init() { s.once.Do(s.InitCore) }
 
 // Initializes all DBs and Redis clients (forced)
 func (s *StoreService) InitCore() {
-    conf.Conf.Init()
+    config.Config.Init()
     s.Hooks.RunPre()
 
     // --- Initialize SQL DBs ---
@@ -65,7 +65,7 @@ func (s *StoreService) InitCore() {
             log.Warn().Caller().Str("profile", profile).Str("driver", c.Driver).Msg("db unsupported driver")
         }
     }
-	if Db.Cli() == nil {
+	if Db.RawCli() == nil {
 		log.Warn().Msg("no active database connections")
 	}
 

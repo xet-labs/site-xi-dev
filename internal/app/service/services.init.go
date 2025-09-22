@@ -11,7 +11,7 @@ func Init() {
 	// Init Core Libs
 	lib.Logger.Init()
 	lib.Env.Init()
-	lib.Conf.Init()
+	lib.Config.Init()
 	service.Store.Init()
 
 	// app.Debug.MemD(60 * 5)

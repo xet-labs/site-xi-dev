@@ -19,17 +19,16 @@ func (e *AppErr) Handle(c *gin.Context, err error, asJSON ...bool) bool {
 	l, status, msg := log.Warn(), http.StatusInternalServerError, "internal server error"
 
 	switch {
-	case errors.Is(err, e.DbUnavailable):
+	case errors.Is(err, e.Get("DbUnavailable").Err):
 		l, status, msg = log.Error(), http.StatusServiceUnavailable, "service unavailable"
 
-	case errors.Is(err, e.InvalidUID), errors.Is(err, e.InvalidSlug), errors.Is(err, e.InvalidUser):
+	case errors.Is(err, e.Get("InvalidUID").Err), errors.Is(err, e.Get("InvalidSlug").Err), errors.Is(err, e.Get("InvalidUser").Err):
 		status, msg = http.StatusBadRequest, "invalid parameters"
 
-	case errors.Is(err, e.UserExists):
-		status, msg = http.StatusConflict, "user already exists"
-
-	case errors.Is(err, e.EmailExists):
-		status, msg = http.StatusConflict, "email already registered"
+	case errors.Is(err, e.Get("UserNameExists").Err):
+		status, msg = http.StatusConflict, "username already exists"
+	case errors.Is(err, e.Get("EmailExists").Err):
+		status, msg = http.StatusConflict, "email already exists"
 
 	case errors.Is(err, gorm.ErrRecordNotFound):
 		status, msg = http.StatusNotFound, "resource not found"
