@@ -7,8 +7,8 @@ import (
 	"xi/internal/app/ctrl/blog"
 	model_config "xi/internal/app/model/config"
 	model_ctrlBlog "xi/internal/app/model/ctrl/blog"
-	"xi/pkg/lib"
 	"xi/pkg/lib/cfg"
+	"xi/pkg/lib/util"
 	"xi/pkg/service/store"
 
 	"github.com/gin-gonic/gin"
@@ -18,8 +18,7 @@ type BlogCtrl struct {
 	Http *blog.BlogHttpCtrl
 	Api  *blog.BlogApiCtrl
 
-	mu   sync.RWMutex
-	once sync.Once
+	mu sync.RWMutex
 }
 
 var Blog = &BlogCtrl{
@@ -60,8 +59,13 @@ func (b *BlogCtrl) SitemapCore(c *gin.Context) (any, error) {
 	// Try DB
 	var blogs []model_ctrlBlog.BlogSitemap
 
+	db := store.Db.Cli()
+	if db.Error != nil {
+		return nil, db.Error
+	}
+
 	b.mu.Lock()
-	err := store.Db.Cli().
+	err := db.
 		Table("blogs").
 		Select("users.username, blogs.slug, blogs.updated_at").
 		Joins("join users on users.uid = blogs.uid").
@@ -74,11 +78,9 @@ func (b *BlogCtrl) SitemapCore(c *gin.Context) (any, error) {
 	b.mu.Unlock()
 
 	for _, p := range blogs {
-
-		// If meta info available, override
 		urls = append(urls, model_config.MetaSitemap{
 			Loc:        cfg.Org.URL + "/blog/@" + p.Username + "/" + p.Slug,
-			LastMod:    lib.Util.Str.Fallback(p.UpdatedAt.Format("2006-01-02"), time.Now().Format("2006-01-02")),
+			LastMod:    util.Str.Fallback(p.UpdatedAt.Format("2006-01-02"), time.Now().Format("2006-01-02")),
 			ChangeFreq: "daily",
 			Priority:   "0.5",
 		})

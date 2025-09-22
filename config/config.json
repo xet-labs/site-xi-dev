@@ -98,7 +98,6 @@
         "/res/css/app.css"
       ],
       "js99": [
-        "/res/js/jquery/jquery.min.js",
         "/res/js/app.js",
         "/res/js/util/content-src.js"
       ]
@@ -142,7 +141,6 @@
           "/res/css/blog.css"
         ],
         "js99": [
-          "/res/js/jquery/jquery.min.js",
           "/res/js/app.js",
           "/res/js/util/content-src.js",
           "/res/js/util/data-href.js",
@@ -164,7 +162,6 @@
           "/res/css/blogs.css"
         ],
         "js99": [
-          "/res/js/jquery/jquery.min.js",
           "/res/js/app.js",
           "/res/js/util/content-src.js",
           "/res/js/util/code-copy.js",

@@ -5,11 +5,12 @@ import (
 	"net/http"
 	"time"
 
+	model_store "xi/internal/app/model/store"
+	"xi/pkg/service/store"
+
 	"github.com/gin-gonic/gin"
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
-
-	model_store "xi/internal/app/model/store"
 )
 
 // LoginRequest shape
@@ -26,7 +27,7 @@ func (a *AuthApi) Login(c *gin.Context) {
 	}
 
 	var user model_store.User
-	if err := Auth.DB.Where("username = ? OR email = ?", req.Username, req.Username).First(&user).Error; err != nil {
+	if err := store.Db.Cli().Where("username = ? OR email = ?", req.Username, req.Username).First(&user).Error; err != nil {
 		if err == gorm.ErrRecordNotFound {
 			c.JSON(http.StatusUnauthorized, gin.H{"error": "invalid credentials"})
 			return
@@ -41,7 +42,6 @@ func (a *AuthApi) Login(c *gin.Context) {
 	}
 
 	if err := bcrypt.CompareHashAndPassword([]byte(user.PasswordHash), []byte(req.Password)); err != nil {
-		// optionally increment failed login counter here for lockout
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "invalid credentials"})
 		return
 	}
@@ -71,8 +71,9 @@ func (a *AuthApi) Login(c *gin.Context) {
 	// http.SetCookie(c.Writer, cookie)
 
 	// update last_login time, optional
-	user.LastLogin = time.Now()
-	_ = Auth.DB.Save(&user)
+	now := time.Now()
+	user.LastLogin = &now
+	_ = store.Db.Cli().Save(&user)
 
 	// Return access token and a small profile object (client stores access in memory)
 	c.JSON(http.StatusOK, gin.H{

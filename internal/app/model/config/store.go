@@ -1,17 +1,17 @@
 package config
 
 type StoreConf struct {
-	Db  DbStore `json:"db,omitempty"`
+	Db  DbStore  `json:"db,omitempty"`
 	Rdb RdbStore `json:"rdb,omitempty"`
 }
 
 type DbStore struct {
-	DefaultProfile string `json:"default_profile,omitempty"`
+	DefaultProfile string                 `json:"default_profile,omitempty"`
 	Conn           map[string]ConnProfile `json:"conn,omitempty"`
 }
 type RdbStore struct {
-	DefaultProfile string `json:"default_profile,omitempty"`
-	Prefix         string `json:"prefix,omitempty"`
+	DefaultProfile string                 `json:"default_profile,omitempty"`
+	Prefix         string                 `json:"prefix,omitempty"`
 	Conn           map[string]ConnProfile `json:"conn,omitempty"`
 }
 

@@ -5,7 +5,6 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
-	"sync"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -16,9 +15,7 @@ import (
 	"xi/pkg/service/store"
 )
 
-type BlogApiCtrl struct {
-	mu   sync.RWMutex
-}
+type BlogApiCtrl struct{}
 
 // Singleton controller
 var (
@@ -48,7 +45,7 @@ func (b *BlogApiCtrl) Index(c *gin.Context) {
 
 	// Fetch from DB
 	offset := (pageNum - 1) * limitNum
-	if err:= b.IndexCore(&blogs, offset, limitNum); err != nil {
+	if err := b.IndexCore(&blogs, offset, limitNum); err != nil {
 		app.Err.Handle(c, err, true)
 		return
 	}
@@ -75,11 +72,10 @@ func parsePageLimit(c *gin.Context) (page, limit int, ok bool) {
 	return p, l, true
 }
 
-
 func (b *BlogApiCtrl) IndexCore(blogs *[]model_store.Blog, offset, limit int) error {
 	db := store.Db.Cli()
-	if db == nil {
-		return app.Err.DbUnavailable
+	if db.Error != nil {
+		return db.Error
 	}
 
 	return db.Preload("User").
@@ -89,7 +85,6 @@ func (b *BlogApiCtrl) IndexCore(blogs *[]model_store.Blog, offset, limit int) er
 		Limit(limit).
 		Find(blogs).Error
 }
-
 
 // GET api/blog/uid/id
 func (b *BlogApiCtrl) Show(c *gin.Context) {
@@ -128,18 +123,15 @@ func (b *BlogApiCtrl) Show(c *gin.Context) {
 // It returns the Redis key and any error.
 func (b *BlogApiCtrl) ShowCore(dest *model_store.Blog, rawUID, rawID string) error {
 	db := store.Db.Cli()
-	if db == nil {
-		return app.Err.DbUnavailable
+	if db.Error != nil {
+		return db.Error
 	}
 
-	db = db.Preload("User") // single Preload
-
-	// Determine query based on UID type
 	if username, ok := strings.CutPrefix(rawUID, "@"); ok {
-		return db.Joins("JOIN users ON users.id = blogs.uid").Where("users.username = ? AND (blogs.slug = ? OR blogs.id = ?)", username, rawID, rawID).First(dest).Error
+		return db.Preload("User").Joins("JOIN users ON users.id = blogs.uid").Where("users.username = ? AND (blogs.slug = ? OR blogs.id = ?)", username, rawID, rawID).First(dest).Error
 	}
 
-	return db.Where("uid = ? AND (slug = ? OR id = ?)", rawUID, rawID, rawID).First(dest).Error
+	return db.Preload("User").Where("uid = ? AND (slug = ? OR id = ?)", rawUID, rawID, rawID).First(dest).Error
 }
 
 // POST api/blog/uid/id
@@ -212,22 +204,17 @@ func (b *BlogApiCtrl) Delete(c *gin.Context) {
 func ptrTime(t time.Time) *time.Time {
 	return &t
 }
-func isNumeric(s string) bool {
-	_, err := strconv.Atoi(s)
-	return err == nil
-}
 
 func (b *BlogApiCtrl) Validate(rawUID, rawID string) error {
 	if strings.HasPrefix(rawUID, "@") {
 		if !lib.Validate.Uname(rawUID) {
-			return app.Err.InvalidUserName
+			return app.Err.Get("InvalidUserName").Err
 		}
 	} else if !lib.Validate.UID(rawUID) {
-		return app.Err.InvalidUID
+		return app.Err.Get("InvalidUID").Err
 	}
 	if !lib.Validate.Slug(rawID) {
-		return app.Err.InvalidSlug
+		return app.Err.Get("InvalidSlug").Err
 	}
 	return nil
 }
-

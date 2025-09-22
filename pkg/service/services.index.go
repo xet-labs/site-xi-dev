@@ -7,10 +7,10 @@ import (
 
 type (
 	AuthService  = auth.AuthService
-	StoreService  = store.StoreService
+	StoreService = store.StoreService
 )
 
 var (
 	Auth  = auth.Auth
-	Store  = store.Store
+	Store = store.Store
 )

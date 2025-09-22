@@ -1,4 +1,4 @@
-package conf
+package config
 
 import (
 	"encoding/json"
@@ -7,12 +7,12 @@ import (
 )
 
 // Alias to *koanf.Koanf.Get()
-func (c *ConfLib) RGet(path string) any {
+func (c *ConfigLib) RGet(path string) any {
 	return c.Raw.Get(path)
 }
 
 // Return all config as a map
-func (c *ConfLib) RAll() (map[string]any, error) {
+func (c *ConfigLib) RAll() (map[string]any, error) {
 	var cfgRaw map[string]any
 	if err := c.Raw.Unmarshal("", &cfgRaw); err != nil {
 		return nil, err
@@ -21,7 +21,7 @@ func (c *ConfLib) RAll() (map[string]any, error) {
 }
 
 // Return all config as JSON bytes
-func (c *ConfLib) RAllJson() ([]byte, error) {
+func (c *ConfigLib) RAllJson() ([]byte, error) {
 	cfg, err := c.RAll()
 	if err != nil {
 		return nil, err
@@ -30,7 +30,7 @@ func (c *ConfLib) RAllJson() ([]byte, error) {
 }
 
 // Return all config as pretty-printed JSON bytes
-func (c *ConfLib) RAllJsonPretty() ([]byte, error) {
+func (c *ConfigLib) RAllJsonPretty() ([]byte, error) {
 	cfg, err := c.RAll()
 	if err != nil {
 		return nil, err
@@ -39,7 +39,7 @@ func (c *ConfLib) RAllJsonPretty() ([]byte, error) {
 }
 
 // Return all config as strongly-typed model
-func (c *ConfLib) All() (model_config.Config, error) {
+func (c *ConfigLib) All() (model_config.Config, error) {
 	cfgBytes, err := c.RAllJson()
 	if err != nil {
 		return model_config.Config{}, err
@@ -54,7 +54,7 @@ func (c *ConfLib) All() (model_config.Config, error) {
 }
 
 // Return strongly-typed config as JSON bytes
-func (c *ConfLib) AllJson() ([]byte, error) {
+func (c *ConfigLib) AllJson() ([]byte, error) {
 	cfg, err := c.All()
 	if err != nil {
 		return nil, err
@@ -63,7 +63,7 @@ func (c *ConfLib) AllJson() ([]byte, error) {
 }
 
 // Return strongly-typed config as pretty-printed JSON bytes
-func (c *ConfLib) AllJsonPretty() ([]byte, error) {
+func (c *ConfigLib) AllJsonPretty() ([]byte, error) {
 	cfg, err := c.All()
 	if err != nil {
 		return nil, err

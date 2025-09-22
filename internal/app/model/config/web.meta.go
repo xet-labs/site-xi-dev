@@ -44,12 +44,12 @@ type WebMeta struct {
 }
 
 type MetaAuthor struct {
-	Name        string `json:"name,omitempty"`
-	URL         string `json:"url,omitempty"`
-	Img         string `json:"img,omitempty"`
-	JobTitle    string `json:"jobTitle,omitempty"`
-	Description string `json:"description,omitempty"`
-	SameAs      string `json:"sameAs,omitempty"` // single URL or CSV
+	Name        string  `json:"name,omitempty"`
+	URL         string  `json:"url,omitempty"`
+	Img         *string `json:"img,omitempty"`
+	JobTitle    string  `json:"jobTitle,omitempty"`
+	Description string  `json:"description,omitempty"`
+	SameAs      string  `json:"sameAs,omitempty"` // single URL or CSV
 }
 type MetaHrefLang struct {
 	Lang string `json:"lang,omitempty"` // e.g. en, en-IN, fr
