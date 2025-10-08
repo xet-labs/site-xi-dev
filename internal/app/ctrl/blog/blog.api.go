@@ -11,6 +11,7 @@ import (
 
 	model_store "xi/internal/app/model/store"
 	"xi/pkg/app"
+	appErr "xi/pkg/app/err"
 	"xi/pkg/lib"
 	"xi/pkg/service/store"
 )
@@ -208,13 +209,13 @@ func ptrTime(t time.Time) *time.Time {
 func (b *BlogApiCtrl) Validate(rawUID, rawID string) error {
 	if strings.HasPrefix(rawUID, "@") {
 		if !lib.Validate.Uname(rawUID) {
-			return app.Err.Get("InvalidUserName").Err
+			return appErr.InvalidUserName.Err
 		}
 	} else if !lib.Validate.UID(rawUID) {
-		return app.Err.Get("InvalidUID").Err
+		return appErr.InvalidUID.Err
 	}
 	if !lib.Validate.Slug(rawID) {
-		return app.Err.Get("InvalidSlug").Err
+		return appErr.InvalidSlug.Err
 	}
 	return nil
 }

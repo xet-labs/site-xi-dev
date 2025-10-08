@@ -2,9 +2,9 @@ package db
 
 import (
 	"errors"
-	"fmt"
 	"sync"
 	"xi/pkg/lib/cfg"
+	appErr "xi/pkg/app/err"
 
 	"gorm.io/gorm"
 )
@@ -58,7 +58,7 @@ func (d *DbStore) Cli(cliProfiles ...string) *gorm.DB {
 		if d.cli != nil {
 			return d.cli
 		}
-		return &gorm.DB{Error: fmt.Errorf("DbStore: no database connection available")}
+		return &gorm.DB{ Error: appErr.DbUnavailable.Err }
 	}
 
 	// Check profiles under a single read lock
@@ -77,5 +77,5 @@ func (d *DbStore) Cli(cliProfiles ...string) *gorm.DB {
 	}
 
 	// No DB found — return dummy
-	return &gorm.DB{Error: fmt.Errorf("DbStore: no database connection available")}
+	return &gorm.DB{ Error: appErr.DbUnavailable.Err }
 }

@@ -2,7 +2,7 @@
 package ctrl
 
 import (
-	"xi/pkg/ctrl/res"
+	"xi/pkg/app/ctrl/res"
 
 	"github.com/gin-gonic/gin"
 )

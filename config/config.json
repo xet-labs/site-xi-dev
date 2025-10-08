@@ -99,7 +99,7 @@
       ],
       "js99": [
         "/res/js/app.js",
-        "/res/js/util/content-src.js"
+        "/res/js/util/cnnsd.js"
       ]
     },
     "pages": {
@@ -142,8 +142,8 @@
         ],
         "js99": [
           "/res/js/app.js",
-          "/res/js/util/content-src.js",
-          "/res/js/util/data-href.js",
+          "/res/js/util/cnnsd.js",
+          "/res/js/util/navigateByDataHref.js",
           "/res/js/blog.js"
         ]
       },
@@ -163,7 +163,7 @@
         ],
         "js99": [
           "/res/js/app.js",
-          "/res/js/util/content-src.js",
+          "/res/js/util/cnnsd.js",
           "/res/js/util/code-copy.js",
           "/res/js/util/clickable-h2.js"
         ],

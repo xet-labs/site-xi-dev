@@ -2,7 +2,7 @@ package router
 
 import (
 	"xi/internal/app/ctrl"
-	pkg_ctrl "xi/pkg/ctrl"
+	pkg_ctrl "xi/pkg/app/ctrl"
 	pkg_srvc "xi/pkg/service"
 
 	"github.com/gin-gonic/gin"

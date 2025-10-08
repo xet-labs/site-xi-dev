@@ -2,6 +2,7 @@ nav {
     z-index: 2000;
     position: sticky;
     display: flex;
+    will-change: transform;
 
     top: 0;
     margin: 0 auto;
