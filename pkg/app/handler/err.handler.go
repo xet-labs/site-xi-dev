@@ -1,4 +1,4 @@
-package err
+package handler
 
 import (
 	"errors"
@@ -16,7 +16,7 @@ func (e *AppErr) Handle(c *gin.Context, err error, asJSON ...bool) bool {
 	}
 
 	l, status, msg := log.Error(), http.StatusInternalServerError, "internal server error"
-	_, file, line, _ := runtime.Caller(1);
+	_, file, line, _ := runtime.Caller(1)
 
 	errEntry, ok := e.E[err.Error()]
 	if !ok || !errors.Is(err, errEntry.Err) {
@@ -44,8 +44,10 @@ func (e *AppErr) Handle(c *gin.Context, err error, asJSON ...bool) bool {
 	default:
 		l = log.Warn() // fallback if unknown level
 	}
-	
-	if errEntry.HttpStatus != 0 {status = errEntry.HttpStatus}
+
+	if errEntry.HttpStatus != 0 {
+		status = errEntry.HttpStatus
+	}
 
 	l.Err(err).
 		Str("caller", fmt.Sprintf("%s:%d", file, line)).

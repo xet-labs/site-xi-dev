@@ -9,6 +9,7 @@ import (
 // xi/pkg/lib.* are designed so self init on method calls but adding them here ensures they are called once
 func Init() {
 	// Init Core Libs
+	lib.Util.Minify.Init()
 	lib.Logger.Init()
 	lib.Env.Init()
 	lib.Config.Init()

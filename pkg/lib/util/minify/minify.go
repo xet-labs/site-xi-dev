@@ -30,19 +30,19 @@ var (
 	reEmptyRule   = regexp.MustCompile(`[^{}]+\{\}`)
 )
 
-func init() {
+func (m *MinifyLib) Init() {
 	minifier.Add("text/css", &min3css.Minifier{
 		// KeepCSS2: false,
 	})
 
 	minifier.Add("text/html", &min3html.Minifier{
-		KeepWhitespace:          false, // collapse all whitespace
-		KeepComments:            false, // remove comments
-		KeepConditionalComments: false, // remove IE conditionals too
-		KeepDefaultAttrVals:     false, // remove default values (e.g., type="text")
-		KeepDocumentTags:        false, // remove <!DOCTYPE> if possible
-		KeepEndTags:             false, // remove optional closing tags (</li>, etc.)
-		KeepQuotes:              false, // remove attribute quotes where safe
+		KeepWhitespace: false, // collapse all whitespace
+		// KeepComments:            false, // remove comments
+		// KeepConditionalComments: false, // remove IE conditionals too
+		// KeepDefaultAttrVals:     false, // remove default values (e.g., type="text")
+		// KeepDocumentTags:        false, // remove <!DOCTYPE> if possible
+		// KeepEndTags:             false, // remove optional closing tags (</li>, etc.)
+		// KeepQuotes:              false, // remove attribute quotes where safe
 	})
 }
 
@@ -93,8 +93,8 @@ func (m *MinifyLib) CssRegex(css string) (string, error) {
 }
 
 // Minify HTML
-func (m *MinifyLib) Html(input []byte) ([]byte, error) {
+func (m *MinifyLib) Html(rawHtml []byte) ([]byte, error) {
 	var out bytes.Buffer
-	err := minifier.Minify("text/html", &out, bytes.NewReader(input))
+	err := minifier.Minify("text/html", &out, bytes.NewReader(rawHtml))
 	return out.Bytes(), err
 }

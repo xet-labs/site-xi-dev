@@ -91,10 +91,12 @@ img {
     font-size: var(--img-font-z, inherit);
     color: var(--colr-figure, var(--colr-txt-mute));
     background: var(--img-bg,var(--bg-05));
+    transition: background-color none
 }
 figure {
     color: var(--colr-figure, var(--colr-txt-mute));
     background: var(--figure-bg, var(--bg-05));
+    transition: background-color none
 }
 figure * {
     width: 100%;

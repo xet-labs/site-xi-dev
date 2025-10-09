@@ -54,7 +54,7 @@
   "web": {
     "css_base_dir": "web/partials",
     "template_dir": [
-      "internal/data/web",
+      "pkg/web",
       "web"
     ],
     "default": {

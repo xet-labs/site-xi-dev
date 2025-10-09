@@ -20,8 +20,8 @@ func (v *WebLib) PageHandler(pageName string) gin.HandlerFunc {
 	return func(c *gin.Context) { v.Page(c, cfg.Web.Pages[pageName]) }
 }
 
-func (v *WebLib) Page(c *gin.Context, p *model_config.WebPage) bool {
-	rdbKey := c.Request.URL.Path
+func (v *WebLib) Page(c *gin.Context, p *model_config.WebPage, args ...string) bool {
+	rdbKey := util.ArrFallback(args, 0, c.Request.URL.Path)
 
 	// Try cache
 	if v.OutCache(c, rdbKey).Html() {
@@ -78,23 +78,22 @@ func (v *WebLib) Page(c *gin.Context, p *model_config.WebPage) bool {
 		page = buf.Bytes()
 	}
 
-	// Minify HTML
-	pageMin, err := util.Minify.Html(page)
-	if err != nil {
-		// Serve the response with optional cache if rdbKey is provided in args[0]
-		c.Data(http.StatusOK, "text/html; charset=utf-8", page)
-		log.Error().Caller().Err(err).Str("page", c.Request.URL.Path).Msg("Web.OutHtmlLyt.minify")
+	// // Minify HTML, Response and optional Cache
+	// if pageMin, err := util.Minify.Html(page); err == nil {
+	// 	c.Data(http.StatusOK, "text/html; charset=utf-8", pageMin)
 
-		if p.Ctrl.Cache == nil || *p.Ctrl.Cache || cfg.App.ForceCachePage {
-			go func(data any) { store.Rdb.Set(rdbKey, data, 10*time.Minute) }(page)
-		}
-		return true
-	}
+	// 	if p.Ctrl.Cache == nil || *p.Ctrl.Cache || cfg.App.ForceCachePage {
+	// 		go func(data any) { store.Rdb.Set(rdbKey, data, 10*time.Minute) }(pageMin)
+	// 	}
+	// 	return true
+	// } else {
+	// 	log.Error().Caller().Err(err).Str("page", c.Request.URL.Path).Msg("Web.OutHtmlLyt.minify")
+	// }
 
-	// Serve the response with optional cache if rdbKey is provided in args[0]
-	c.Data(http.StatusOK, "text/html; charset=utf-8", pageMin)
+	// Response with optional cache if rdbKey is provided in args[0]
+	c.Data(http.StatusOK, "text/html; charset=utf-8", page)
 	if p.Ctrl.Cache == nil || *p.Ctrl.Cache || cfg.App.ForceCachePage {
-		go func(data any) { store.Rdb.Set(rdbKey, data, 10*time.Minute) }(pageMin)
+		go func(data any) { store.Rdb.Set(rdbKey, data, 10*time.Minute) }(page)
 	}
 	return true
 }

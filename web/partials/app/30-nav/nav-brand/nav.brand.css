@@ -15,18 +15,19 @@ nav .brand a {
 }
 
 nav .brand img,
-nav .brand svg  {    
+nav .brand svg,
+nav .brand object  {    
     width: unset;
     height: var(--icon-z);
     color: var(--brand-colr, var(--colr));
     opacity: 1;
 }
 
-nav .brand a.b-logo {
+nav .brand a.brand-icon {
     display: none;
     /* display: flex; */
 }
-nav .brand a.b-brand {
+nav .brand a.brand-icon-wordmark {
     /* display: none; */
 }
 
@@ -48,10 +49,10 @@ nav .sub-brand a:hover {
         --nav-sub-brand-display: flex;
     }
 
-    nav .brand a.b-logo {
+    nav .brand a.brand-icon {
         display: none;
     }
-    nav .brand a.b-brand {
+    nav .brand a.brand-icon-wordmark {
         display: flex;
     }
 }

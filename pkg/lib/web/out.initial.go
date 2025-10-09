@@ -15,35 +15,33 @@ import (
 
 // Render and Cache Minified HTML
 func (v *WebLib) OutHtmlLyt(c *gin.Context, p *model_config.WebPage, args ...string) bool {
+	rdbKey := util.ArrFallback(args, 0, c.Request.URL.Path)
 
 	// Render html via template
-	page := bytes.Buffer{}
-	if err := v.Tcli.ExecuteTemplate(&page, util.Str.Fallback(p.Ctrl.Layout, "layout/default"), gin.H{"P": p}); err != nil {
+	buf := bytes.Buffer{}
+	if err := v.Tcli.ExecuteTemplate(&buf, util.Str.Fallback(p.Ctrl.Layout, "layout/default"), gin.H{"P": p}); err != nil {
+		log.Error().Caller().Err(err).Str("page", c.Request.URL.Path).Msg("web Page, ExecTemplate")
 		c.Status(http.StatusInternalServerError)
-		log.Error().Caller().Err(err).Str("page", c.Request.URL.Path).Msg("web OutHtmlLyt, ExecTemplate")
 		return false
 	}
-	// page := buf.Bytes()
+	page := buf.Bytes()
 
-	// Minify HTML
-	pageMin, err := util.Minify.Html(page.Bytes())
-	if err != nil {
-		// Serve the response with optional cache if rdbKey is provided in args[0]
-		c.Data(http.StatusOK, "text/html; charset=utf-8", page.Bytes())
-		log.Error().Caller().Err(err).Str("page", c.Request.URL.Path).Msg("web OutHtmlLyt, minify")
+	// // Minify HTML, Response and optional Cache
+	// if pageMin, err := util.Minify.Html(page); err == nil {
+	// 	c.Data(http.StatusOK, "text/html; charset=utf-8", pageMin)
 
-		if p.Ctrl.Cache == nil || *p.Ctrl.Cache || cfg.App.ForceCachePage {
-			rdbKey := util.ArrFallback(args, 0, c.Request.URL.Path)
-			go func(data any) { store.Rdb.Set(rdbKey, data, 10*time.Minute) }(page)
-		}
-		return true
-	}
+	// 	if p.Ctrl.Cache == nil || *p.Ctrl.Cache || cfg.App.ForceCachePage {
+	// 		go func(data any) { store.Rdb.Set(rdbKey, data, 10*time.Minute) }(pageMin)
+	// 	}
+	// 	return true
+	// } else {
+	// 	log.Error().Caller().Err(err).Str("page", c.Request.URL.Path).Msg("Web.OutHtmlLyt.minify")
+	// }
 
-	// Serve the response with optional cache if rdbKey is provided in args[0]
-	c.Data(http.StatusOK, "text/html; charset=utf-8", pageMin)
+	// Response with optional cache if rdbKey is provided in args[0]
+	c.Data(http.StatusOK, "text/html; charset=utf-8", page)
 	if p.Ctrl.Cache == nil || *p.Ctrl.Cache || cfg.App.ForceCachePage {
-		rdbKey := util.ArrFallback(args, 0, c.Request.URL.Path)
-		go func(data any) { store.Rdb.Set(rdbKey, data, 10*time.Minute) }(pageMin)
+		go func(data any) { store.Rdb.Set(rdbKey, data, 10*time.Minute) }(page)
 	}
 	return true
 }

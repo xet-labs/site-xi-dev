@@ -1,4 +1,4 @@
-package err
+package handler
 
 import (
 	"errors"
@@ -8,10 +8,10 @@ import (
 )
 
 type ErrParam struct {
-	Err      error
-	Msg      string
-	HttpStatus   int
-	LogLevel string
+	Err        error
+	Msg        string
+	HttpStatus int
+	LogLevel   string
 }
 
 type AppErr struct {
@@ -30,12 +30,12 @@ func (e *AppErr) Add(key, err, msg string, HttpStatus int, logLevel ...string) *
 		level = logLevel[0]
 	}
 	param := &ErrParam{
-		Err:      errors.New(err),
-		Msg:      msg,
-		HttpStatus:   HttpStatus,
-		LogLevel: level,
+		Err:        errors.New(err),
+		Msg:        msg,
+		HttpStatus: HttpStatus,
+		LogLevel:   level,
 	}
-	// store err param to 
+	// store err param to
 	e.E[err] = param
 	return param
 }
@@ -62,9 +62,9 @@ var (
 	RefreshTokenNotFound = Add("RefreshTokenNotFound", "refresh token not found", "refresh token not found", 401)
 	RefreshTokenRevoked  = Add("RefreshTokenRevoked", "refresh token revoked", "refresh token revoked", 401)
 	RefreshTokenExpired  = Add("RefreshTokenExpired", "refresh token expired", "refresh token expired", 401)
-	
-	DbUnavailable = Add("DbUnavailable", "database unavailable", "service unavailable", http.StatusServiceUnavailable)
+
+	DbUnavailable    = Add("DbUnavailable", "database unavailable", "service unavailable", http.StatusServiceUnavailable)
 	DbRecordNotFound = Add(gorm.ErrRecordNotFound.Error(), gorm.ErrRecordNotFound.Error(), "resource not found", 404)
 
-	BlogNotFound  = Add("BlogNotFound", "blog not found", "blog not found", http.StatusNotFound)
+	BlogNotFound = Add("BlogNotFound", "blog not found", "blog not found", http.StatusNotFound)
 )

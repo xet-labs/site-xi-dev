@@ -15,8 +15,8 @@ type WebLib struct {
 	RawTcli   *template.Template // Clean Template Cli
 	templates []string
 
-	once sync.Once
-	mu   sync.RWMutex
+	// once sync.Once
+	mu sync.RWMutex
 }
 
 var Web = &WebLib{

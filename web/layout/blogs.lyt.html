@@ -1,12 +1,12 @@
 {{ define "layout/blogs" }}
 
+{{ template "prtl/html.begin" . }}
 {{ template "prtl/head" . }}
-
 <body class="blog">
 
 	{{ linkJsSlice "preload" .P.Js }}
 	{{ linkLibSlice .P.Lib }}
-	{{ template "prtl/nav" . }}
+	{{ template "prtl/header" . }}
 
 	<main>
 
@@ -32,7 +32,8 @@
 	{{ linkJsSlice "preload" .P.Js99 }}
 	{{ linkLibSlice .P.Lib99 }}
 
-</body>
-</html>
+{{ template "prtl/body.end" . }}
+{{ template "prtl/html.end" . }}
 
 {{ end }}
+

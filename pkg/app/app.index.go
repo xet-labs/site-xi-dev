@@ -1,13 +1,13 @@
 package app
 
-import "xi/pkg/app/err"
+import "xi/pkg/app/handler"
 
 type AppPkg struct {
-	Err *err.AppErr
+	Err *handler.AppErr
 }
 
 var App = &AppPkg{
-	Err: err.Err,
+	Err: handler.Err,
 }
 
 // shortcuts

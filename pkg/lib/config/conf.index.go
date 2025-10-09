@@ -42,7 +42,7 @@ type ConfigLib struct {
 
 var (
 	Config = &ConfigLib{
-		DirDefault: []string{"internal/data/config", "internal/app/config", "config"},
+		DirDefault: []string{"pkg/config", "internal/app/config", "config"},
 		Hooks:      &hook.Hook{},
 	}
 
