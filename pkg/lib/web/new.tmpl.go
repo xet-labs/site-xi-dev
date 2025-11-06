@@ -32,21 +32,21 @@ var HtmlFn = template.FuncMap{
 	"urlEscape":  url.QueryEscape,
 }
 
-func (v *WebLib) NewTmpl(name, ext string, dirs ...string) *template.Template {
+func (v *WebLib) NewTmpl(name, ext string, dirs ...string) (*template.Template, error) {
 	if name == "" {
 		name = "main"
 	}
 
 	files, err := util.File.GetWithExt(ext, dirs...)
 	if err != nil {
-		log.Error().Caller().Err(err).Str("cli", name).Str("template-dir", strings.Join(dirs, ", ")).
-			Msg("web.NewTmpl: couldnt get template files")
+		errDetail := errors.New("couldnt get template files" + strings.Join(dirs, ", ") + " template-dir" + " : " + err.Error())
+		return nil, errDetail
 	}
-	if len(files) == 0 {
-		log.Fatal().Caller().Err(errors.New("web.NewTmpl: no template files found")).
-			Str("cli", name).Str("dir", strings.Join(dirs, ", ")).
-			Msg("web.NewTmpl: couldnt get template files")
-	}
+	// if len(files) == 0 {
+	// 	log.Fatal().Caller().Err(errors.New("web.NewTmpl: no template files found")).
+	// 		Str("cli", name).Str("dir", strings.Join(dirs, ", ")).
+	// 		Msg("web.NewTmpl: couldnt get template files")
+	// }
 
 	log.Info().Str("cli", name).Str("dir", strings.Join(dirs, ", ")).
 		Msg("web template")
@@ -67,5 +67,5 @@ func (v *WebLib) NewTmpl(name, ext string, dirs ...string) *template.Template {
 		}
 		v.RawTcli = rawTcli
 	}
-	return tcli
+	return tcli, nil
 }

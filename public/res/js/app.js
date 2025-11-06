@@ -1,3 +1,17 @@
+function toggleUnderlay(name, state) {
+  const underlay = document.querySelector(`.underlay[data-name="${name}"]`);
+  if (!underlay) return console.warn(`Underlay '${name}' not found`);
+
+  // No state provided → toggle current
+  if (state === undefined) {
+    underlay.classList.toggle('active');
+    return;
+  }
+
+  // Force show/hide
+  underlay.classList.toggle('active', !!state);
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   // === Theme toggle (light/dark) ===
   document.documentElement.classList.add(localStorage.getItem('theme') || 'light');
@@ -13,15 +27,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Nav hide|reveal on scroll
   let lastScrollTop = 0;
-  const nav = document.querySelector('nav');
-  const navHeight = nav.offsetHeight;
+  const header = document.querySelector('header');
+  const headerHeight = header.offsetHeight;
 
   window.addEventListener('scroll', function () {
     const currentScroll = window.pageYOffset || document.documentElement.scrollTop;
 
     if (currentScroll > lastScrollTop) {
-      nav.style.top = `-${navHeight}px`;
-    } else { nav.style.top = '0'; }
+      header.style.top = `-${headerHeight}px`;
+    } else { header.style.top = '0'; }
 
     lastScrollTop = currentScroll <= 0 ? 0 : currentScroll;
   });

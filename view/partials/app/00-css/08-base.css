@@ -1,0 +1,112 @@
+*,
+::after,
+::before {
+    box-sizing: border-box;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-tap-highlight-color: transparent;
+
+    margin: 0;
+    padding: 0;
+    border: 0 solid;
+    text-underline-offset: 0.1em !important;
+}
+
+html,
+body {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+
+    font-family: var(--font);
+    font-size: var(--rem);
+    line-height: var(--body-lineh, var(--lineh-m));
+
+    tab-size: 4;
+    -moz-tab-size: 4;
+}
+
+html {
+    color-scheme: light dark;
+}
+
+/* === Form Controls === */
+input,
+button,
+select,
+textarea,
+optgroup {
+    font: inherit;
+    color: inherit;
+    line-height: inherit;
+    margin: 0;
+    padding: 0;
+    background: none;
+    border: none;
+    outline: none;
+}
+
+/* Normalize button appearance across browsers */
+button,
+[type=button],
+[type=submit],
+[type=reset] {
+    -webkit-appearance: button;
+    appearance: button;
+    background: inherit;
+    cursor: pointer;
+}
+
+[role=button] {
+    cursor: pointer;
+}
+
+/* === Embedded Media === */
+embed,
+object,
+canvas,
+iframe,
+img,
+svg,
+audio,
+video {
+    display: block;
+    vertical-align: middle;
+    background: transparent;
+}
+
+/* === Image & Figure Styling === */
+img {
+    text-align: center;
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+    font-size: var(--img-font-z, inherit);
+    color: var(--colr-figure, var(--colr-txt-mute));
+    background: var(--img-bg, var(--bg-05));
+}
+
+figure {
+    color: var(--colr-figure, var(--colr-txt-mute));
+    background: var(--figure-bg, var(--bg-05));
+}
+
+figure * {
+    width: 100%;
+}
+
+figure img {
+    --img-bg: transparent;
+    object-fit: cover;
+    width: 100%;
+}
+
+/* === Links === */
+a {
+    text-decoration: none;
+    font: inherit;
+    color: inherit;
+    fill: inherit;
+}
+
+/* a:hover { color: var(--colr-a-hov); } */

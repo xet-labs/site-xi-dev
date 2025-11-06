@@ -1,0 +1,38 @@
+nav {
+    /* --menu-gap: 8px; */
+    --menu-item-font-z: .875rem;
+    --menu-item-font-wght: 450;
+    --menu-subitem-font-z: .9em;
+    
+    display: var(--nav-menu-display, none);
+    /* align-items: center; */
+    /* min-width: fit-content; */
+
+    /* left: 50%;
+    transform: translateX(-50%); */
+}
+
+nav label[for="id-login-btn"].icon {
+    display: var(--nav-login-btn-display, flex);
+}
+
+nav label[for="id-signup-btn"].icon {
+    display: var(--nav-signup-btn-display, flex);
+}
+
+:root {
+    --nav-icons-gap: 1.25em;
+    --nav-signup-btn-display: none;
+}
+
+@media screen and (min-width: 480px) {
+    :root {
+        --nav-signup-btn-display: unset;
+    }
+}
+
+@media screen and (min-width: 1024px) {
+    :root {
+        --nav-menu-display: flex;
+    }
+}

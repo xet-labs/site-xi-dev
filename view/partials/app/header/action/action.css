@@ -1,0 +1,7 @@
+header .header-action {
+    display: flex;
+    align-items: center;
+
+    margin-left: auto;
+    gap: var(--nav-icons-gap, 1.25em);
+}

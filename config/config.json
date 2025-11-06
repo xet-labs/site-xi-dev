@@ -109,7 +109,7 @@
           "render": "file"
         },
         "content": {
-          "file": "web/partials/home/home.part.html"
+          "file": "view/partials/home/home.part.html"
         },
         "meta": {
           "title": "Xet Industries",
@@ -125,7 +125,7 @@
           "render": "file"
         },
         "content": {
-          "file": "web/partials/blog/blog.part.html"
+          "file": "view/partials/blog/blog.part.html"
         },
         "meta": {
           "title": "Blog",

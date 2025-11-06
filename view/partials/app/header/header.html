@@ -1,0 +1,22 @@
+{{ define "prtl/header.begin" }}
+    <header>
+        <div class="header-con">
+
+		{{ template "prtl/header.brand" . }}
+		{{ template "prtl/header.nav" . }}
+		{{ template "prtl/header.action" . }}
+
+{{ end }}
+
+
+{{ define "prtl/header.end" }}
+    </header>
+    {{ template "prtl/header.widget" . }}
+
+{{ end }}
+
+
+{{ define "prtl/header" }}
+    {{ template "prtl/header.begin" . }}
+    {{ template "prtl/header.end" . }}
+{{ end }}

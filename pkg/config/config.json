@@ -52,11 +52,11 @@
     }
   },
   "web": {
-    "css_base_dir": "web/partials",
     "template_dir": [
-      "pkg/web",
-      "web"
+      "pkg/view",
+      "view"
     ],
+    "css_base_dir": "view/partials",
     "default": {
       "ctrl": {
         "mode": "managed",

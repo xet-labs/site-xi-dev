@@ -1,0 +1,58 @@
+.brand {
+    --icon-z: 1.7em;
+    --icon-y: 1.9em;
+    --icon-svg-x: unset;
+
+    --liney-mr: 0 .5em;
+    --liney-colr: var(--bg-1);
+
+    display: flex;
+    align-items: center;
+    margin-right: 1.5em;
+}
+.brand a {
+    align-items: center;
+}
+
+.brand img,
+.brand svg,
+.brand object  {    
+    width: unset;
+    height: var(--icon-z);
+    color: var(--brand-colr, var(--colr));
+    opacity: 1;
+}
+
+.brand a.brand-icon {
+    display: none;
+    /* display: flex; */
+}
+.brand a.brand-icon-wordmark {
+    /* display: none; */
+}
+
+header .sub-brand-wrap {    
+    display: var(--nav-sub-brand-display, none);
+    flex-direction: row;
+}
+header .sub-brand {
+    font-size: .875em;
+    color: var(--colr-txt-mute);
+}
+header .sub-brand a:hover {
+    color: var(--colr-txt);
+    opacity: 1;
+}
+
+@media screen and (min-width: 460px) {
+    :root {
+        --nav-sub-brand-display: flex;
+    }
+
+    .brand a.brand-icon {
+        display: none;
+    }
+    .brand a.brand-icon-wordmark {
+        display: flex;
+    }
+}

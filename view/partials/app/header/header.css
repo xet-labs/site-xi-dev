@@ -1,0 +1,39 @@
+body>header {
+    z-index: 1000;
+    position: sticky;
+    display: flex;
+    will-change: transform;
+
+    top: 0;
+    width: min(var(--header-x, 100%), 100%);
+
+    background: var(--header-bg, inherit);
+    color: var(--colr-nav, inherit);
+    border-bottom: var(--header-brdr-yb, 1px solid var(--header-brdr-colr, var(--colr-divider)));
+
+    transition: top .22s;
+}
+
+body>header .header-con {
+    --icon-z: 1.6em;
+    /* --icon-svg-z: 1.2em; */
+    --icon-pd: 0 .25em;
+
+    overflow-x: auto;
+    scrollbar-width: none;
+    display: flex;
+    align-items: center;
+
+    width: 100%;
+    height: var(--header-y, fit-content);
+    padding: var(--header-pd);
+}
+
+:root {
+    --header-pd-x: 1em;
+    --header-pd-yt: .75em;
+    --header-pd-yb: .5em;
+    --header-inner-y: 2.125em;
+    --header-pd: var(--header-pd-yt, var(--header-pd-y)) var(--header-pd-x) var(--header-pd-yb, var(--header-pd-y));
+    --header-y: calc(var(--header-inner-y) + var(--header-pd-yt, var(--header-pd-y)) + var(--header-pd-yb, var(--header-pd-y)));
+}

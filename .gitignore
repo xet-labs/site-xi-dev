@@ -1,14 +1,16 @@
-# Build
-/build/
-/dist/
-*.log
+# Dependency files
+bin
+vendor/bin
 
-# Config
-config/*.tmp.json
-.env
+# Configs | keys
 *.local
+*.env
+*.pem
+*private.key
+*.priv
+secrets.*
 
-# Binaries and plugins
+# Binaries | plugins
 *.out
 *.test
 *.exe
@@ -18,18 +20,25 @@ config/*.tmp.json
 *.dylib
 *.db
 
-# Dependency files
+# Temp
 *.tmp
 *.tmp.*
-tmp
-/bin/
-/vendor/bin
+*/tmp
+
+# Build
+/build/
+/dist/
+*.log
+
+# Residue
+*/__pycache__/
+*.pyc
 
 # OS/IDE's
-Thumbs.db
-.clj-kondo/
-.idea/
-.lsp/
-.vscode/
-.DS_Store
+*Thumbs.db
+*.clj-kondo/
+*.idea/
+*.lsp/
+*.vscode/
+*.DS_Store
 *.swp

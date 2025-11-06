@@ -9,6 +9,7 @@ import (
 	"xi/pkg/lib/web"
 
 	"github.com/gin-gonic/gin"
+	"github.com/rs/zerolog/log"
 )
 
 type RouterLib struct {
@@ -47,8 +48,13 @@ func (rh *RouterLib) Init(r *gin.Engine, ctrls any) {
 	rh.hooks.RunPre(r, rh)
 	rh.hooks.RunCore(r, rh)
 	rh.hooks.RunPost(r, rh)
+
 	// Register templates
-	r.SetHTMLTemplate(web.Web.NewTmpl("main", ".html", cfg.Web.TemplateDir...))
+	tmpl, err := web.Web.NewTmpl("main", ".html", cfg.Web.TemplateDir...)
+	if err != nil {
+		log.Error().Caller().Err(err).Msg("couldnt create new template instance")
+	}
+	r.SetHTMLTemplate(tmpl)
 }
 
 // RegisterController controllers to route and sitemap
