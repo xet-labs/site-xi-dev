@@ -15,21 +15,21 @@ import (
 
 // LoginRequest shape
 type LoginRequest struct {
-	Username string `json:"username" binding:"required"`
-	Password string `json:"password" binding:"required"`
+	Email    string `json:"email" binding:"required,max=254"`
+	Password string `json:"password" binding:"required,max=254"`
 }
 
 func (a *AuthApi) Login(c *gin.Context) {
 	var req LoginRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid request"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid request, " + err.Error()})
 		return
 	}
 
 	var user model_store.User
-	if err := store.Db.Cli().Where("username = ? OR email = ?", req.Username, req.Username).First(&user).Error; err != nil {
+	if err := store.Db.Cli().Where("username = ? OR email = ?", req.Email, req.Email).First(&user).Error; err != nil {
 		if err == gorm.ErrRecordNotFound {
-			c.JSON(http.StatusUnauthorized, gin.H{"error": "invalid credentials"})
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "email or username doesnt exist"})
 			return
 		}
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "server error"})
@@ -37,19 +37,19 @@ func (a *AuthApi) Login(c *gin.Context) {
 	}
 
 	if user.Status != "active" {
-		c.JSON(http.StatusForbidden, gin.H{"error": "account not active"})
+		c.JSON(http.StatusForbidden, gin.H{"error": "account inactive"})
 		return
 	}
 
 	if err := bcrypt.CompareHashAndPassword([]byte(user.PasswordHash), []byte(req.Password)); err != nil {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "invalid credentials"})
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "invalid credential"})
 		return
 	}
 
 	// issue access token (string)
 	access, err := Auth.GenAccessToken(fmt.Sprint(user.ID), []string{"default"}, Auth.AccessTTL)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to create token"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "server error, failed to create token"})
 		return
 	}
 
@@ -58,7 +58,7 @@ func (a *AuthApi) Login(c *gin.Context) {
 	ip := c.ClientIP()
 	rawRefresh, _, err := Auth.GenRefreshTokenRecord(user.ID, ua, ip)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to create refresh token"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "server error, failed to create refresh token"})
 		return
 	}
 

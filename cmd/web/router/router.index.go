@@ -4,26 +4,16 @@ import (
 	"xi/internal/app/ctrl"
 	pkg_ctrl "xi/pkg/app/ctrl"
 	pkg_srvc "xi/pkg/service"
-
-	"github.com/gin-gonic/gin"
 )
 
-// Add global controllers instance to register its routes
+// Add controller's global instance to register its routes,
+// Global instance must have methods 'RouterPre', 'RouterCore', 'RouterPost'
 var Controllers = []any{
-	pkg_srvc.Auth.Api,
+	ctrl.Blog,
+	ctrl.Custom,
+	
 	pkg_ctrl.Debug,
 	pkg_ctrl.Managed,
 	pkg_ctrl.Res,
-	CustomRoutes,
-
-	ctrl.Blog,
+	pkg_srvc.Auth.Api,
 }
-
-// 'CustomRoutes' allows adding simple/ad-hoc routes without creating a dedicated controller
-type customRoutes struct{}
-
-var CustomRoutes = &customRoutes{}
-
-func (u *customRoutes) RouterPre(r *gin.Engine)  {}
-func (u *customRoutes) RouterCore(r *gin.Engine) {}
-func (u *customRoutes) RouterPost(r *gin.Engine) {}

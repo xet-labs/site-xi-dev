@@ -38,33 +38,27 @@
 
             <div class="login-wrap">
                 <span class="title">Log in</span>
-                <form class="signuplogin-form" method="post" action="/login">
-
+                <form class="signuplogin-form" id="loginForm" method="post" action="/api/auth/login">
                     <div class="field">
                         <div class="label-wrap">
                             <span>Email</span>
                         </div>
-
-                        <input type="text" name="login_id" id="login_id" autocomplete="email" aria-label="Email Address"
-                            required placeholder="email or username">
+                        <input type="text" name="email" id="loginEmail" autocomplete="username email" maxlength="254"
+                            spellcheck="false" autocorrect="off" autocapitalize="off" required
+                            placeholder="email or username">
                     </div>
 
                     <div class="field">
-                        <div class="label-wrap">
-                            <span>Password</span>
-                            <a href="">Forgot password?</a>
-                        </div>
-
-                        <input type="password" name="login_pass" id="login-pass" autocomplete="current-password"
-                            aria-label="Email Password" required placeholder="password">
+                        <div class="label-wrap"> <span>Password</span> <a href="#">Forgot password?</a> </div>
+                        <input type="password" name="password" id="loginPassword" autocomplete="current-password"
+                            spellcheck="false" autocorrect="off" autocapitalize="off" required placeholder="password">
                     </div>
 
                     <div>
-                        <button type="submit" name="submit_login" class="submit-login-btn" tabindex="0"
-                            aria-label="Submit Login">Log In</button>
+                        <button type="submit" name="login_submit" class="submit-login-btn" tabindex="0">Log In</button>
                         <div class="label-wrap tosignuplogin">
-                            <span>Don't have an account? <label for="id-signup-btn" aria-label="Sign Up">Sign up</label>
-                            </span>
+                            <span>Don't have an account? <label for="id-signup-btn" aria-label="Sign Up">Sign
+                                    up</label></span>
                         </div>
                     </div>
                 </form>
@@ -73,15 +67,14 @@
 
             <div class="signup-wrap">
                 <span class="title">Sign up</span>
-                <form class="signuplogin-form" method="post" action="/signup">
+                <form class="signuplogin-form" id="signupForm" method="post" action="/api/auth/signup">
 
                     <div class="field">
                         <div class="label-wrap">
-                            <span>Full name</span>
+                            <span>Username</span>
                         </div>
 
-                        <input type="text" name="signup_name" id="user-name" autocomplete="username" aria-label="Name"
-                            required placeholder="full name">
+                        <input type="text" name="username" id="signupUsername" autocomplete="username" maxlength="254" spellcheck="false" autocorrect="off" autocapitalize="off" required placeholder="username">
                     </div>
 
                     <div class="field">
@@ -89,20 +82,31 @@
                             <span>Email</span>
                         </div>
 
-                        <input type="email" name="signup_email" id="signup-email" autocomplete="new-email"
-                            aria-label="Email Address" required placeholder="email@gmail.com">
+                        <input type="email" name="email" id="signupEmail" autocomplete="email" maxlength="254"
+                            spellcheck="false" autocorrect="off" autocapitalize="off" required
+                            placeholder="email@gmail.com">
                     </div>
 
                     <div class="field">
                         <div class="label-wrap">
                             <span>Password</span>
                         </div>
-                        <input type="password" name="signup_pass" id="signup-pass" autocomplete="new-username"
-                            aria-label="Email Password" required placeholder="password">
+                        <input type="password" name="password" id="signupPassword" autocomplete="new-password"
+                            spellcheck="false" autocorrect="off" autocapitalize="off" aria-autocomplete="list" required
+                            placeholder="password">
+                    </div>
+
+                    <div class="field">
+                        <div class="label-wrap">
+                            <span>Confirm Password</span>
+                        </div>
+                        <input type="password" name="confirm_password" id="signupConfirmPassword"
+                            autocomplete="new-password" spellcheck="false" autocorrect="off" autocapitalize="off"
+                            required placeholder="confirm password">
                     </div>
 
                     <div>
-                        <button type="submit" name="submit_signup" class="submit-signup-btn" tabindex="0"
+                        <button type="submit" name="signupSubmit" class="submit-signup-btn" tabindex="0"
                             aria-label="Submit Signup">Sign Up</button>
                         <div class="label-wrap tosignuplogin">
                             <span>Already have an account? <label for="id-login-btn" aria-label="Log In">Log in</label>

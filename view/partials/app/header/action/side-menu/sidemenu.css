@@ -73,7 +73,7 @@ body:has(#id-header-sidemenuOpen-btn:checked) .header-sidemenu-widget {
     --header-sidemenu-mr-yt: 2px;
     --header-sidemenu-x: 17.25em;
     --header-sidemenu-y: fit-content;
-    --header-sidemenu-transform: translate(.25em, -.25em) scale(.97);
+    --header-sidemenu-transform: translate(.25em, -.25em) scale(.98);
     --header-sidemenu-brdr-rad: var(--radius-l);
     --header-sidemenu-shadow: inset 0 0 0 1px var(--header-sidemenu-shadow-colr, var(--colr-outln, transparent));
 }}

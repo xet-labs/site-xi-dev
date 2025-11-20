@@ -59,6 +59,87 @@ document.addEventListener("DOMContentLoaded", () => {
   if (loginBtn) loginBtn.addEventListener('click', toggleAuthForm);
   if (signupBtn) signupBtn.addEventListener('click', toggleAuthForm);
 
-  // === Optional: Add fix for scrollbar shift if needed ===
+
+  // handle login
+  document.getElementById('loginForm').addEventListener('submit', function (event) {
+    event.preventDefault(); // Prevent default form submission
+
+    // Create a JSON object with the form data
+    var formData = {
+      email: document.getElementById('loginEmail').value,
+      password: document.getElementById('loginPassword').value
+    };
+
+    // Send a POST request with JSON data
+    fetch('/api/auth/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(formData)
+    })
+      .then(response => response.json())
+      .then(data => {
+        if (data.access_token) {
+          alert('Login successful!');
+          // Do something with the token, e.g., save it or redirect
+        } else {
+          alert('Login failed: ' + data.error);
+        }
+      })
+      .catch(error => {
+        alert('Error: ' + error.message);
+      });
+  });
+
+
+
+});
+
+document.addEventListener("DOMContentLoaded", () => {
+    const signupForm = document.getElementById("signupForm");
+
+    signupForm.addEventListener("submit", async (event) => {
+        event.preventDefault(); // stop normal form submission
+
+        // Collect form values
+        const formData = {
+            username: document.getElementById("signupUsername")?.value || "",
+            name: document.getElementById("signupName")?.value || "",
+            email: document.getElementById("signupEmail").value,
+            password: document.getElementById("signupPassword").value,
+            confirm_password: document.getElementById("signupConfirmPassword").value,
+        };
+
+        // Basic client-side validation
+        if (formData.password !== formData.confirm_password) {
+            alert("Passwords do not match!");
+            return;
+        }
+
+        try {
+            // Send JSON POST request to your backend
+            const response = await fetch("/api/auth/signup", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(formData),
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                alert("Signup successful! You can now log in.");
+                // Optional: redirect to login page
+                // window.location.href = "/login";
+            } else {
+                // Backend returned an error
+                alert("Signup failed: " + (data.error || "Unknown error"));
+            }
+        } catch (error) {
+            alert("Network error: " + error.message);
+        }
+    });
 });
 
