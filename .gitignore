@@ -21,9 +21,9 @@ secrets.*
 *.db
 
 # Temp
+*/tmp
 *.tmp
 *.tmp.*
-*/tmp
 
 # Build
 /build/
