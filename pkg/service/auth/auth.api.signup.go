@@ -43,7 +43,7 @@ func (a *AuthApi) Signup(c *gin.Context) {
 		Email:        strings.ToLower(req.Email),
 		PasswordHash: string(pwHash),
 		// Name:         req.Name,
-		Config:       nil, // or util.StringPtr("{}") if you want default config
+		Config: nil, // or util.StringPtr("{}") if you want default config
 	}
 
 	if err := store.Db.Cli().Create(&user).Error; err != nil {

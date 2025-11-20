@@ -11,7 +11,7 @@ import (
 var Controllers = []any{
 	ctrl.Blog,
 	ctrl.Custom,
-	
+
 	pkg_ctrl.Debug,
 	pkg_ctrl.Managed,
 	pkg_ctrl.Res,
