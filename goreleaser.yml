@@ -34,11 +34,11 @@ archives:
     formats: ["tar.gz"]
     files:
       - config/**
-      - internal/app/config/**
-      - internal/data/**
+      - pkg/config/**
+      - pkg/data/**
       - public/**
       - storage/**
-      - web/**
+      - view/**
       - LICENSE
       - README.md
     format_overrides:
