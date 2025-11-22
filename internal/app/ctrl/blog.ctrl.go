@@ -68,7 +68,7 @@ func (b *BlogCtrl) SitemapCore(c *gin.Context) (any, error) {
 	err := db.
 		Table("blogs").
 		Select("users.username, blogs.slug, blogs.updated_at").
-		Joins("join users on users.uid = blogs.uid").
+		Joins("join users on users.id = blogs.uid").
 		Where("blogs.status = ?", "published").
 		Find(&blogs).Error
 	if err != nil {
