@@ -32,6 +32,12 @@ type WebCtrl struct {
 	Mode   string `json:"mode,omitempty"`   // if {true || null} route will be handled by routes.managed
 	Method string `json:"method,omitempty"` // GET, POST, PUT, PATCH, DELETE, HEAD, OPTIONS || fallback to GET
 	Render string `json:"render,omitempty"`
+	StatusCode int `json:"status_code,omitempty"`
+	Header []WebCtrlHeader `json:"header,omitempty"`
+}
+type WebCtrlHeader struct {
+    Key   string
+    Value string
 }
 type Content struct {
 	Raw  string `json:"raw,omitempty"`

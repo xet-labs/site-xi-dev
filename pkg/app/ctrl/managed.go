@@ -44,10 +44,10 @@ func (m *ManagedCtrl) RouterCore(r *gin.Engine) {
 				r.PATCH(p.Route, func(c *gin.Context) { lib.Web.Page(c, p) })
 			case "DELETE":
 				r.DELETE(p.Route, func(c *gin.Context) { lib.Web.Page(c, p) })
-			case "HEAD":
-				r.HEAD(p.Route, func(c *gin.Context) { lib.Web.Page(c, p) })
 			case "OPTIONS":
 				r.OPTIONS(p.Route, func(c *gin.Context) { lib.Web.Page(c, p) })
+			case "HEAD":
+				r.HEAD(p.Route, func(c *gin.Context) { routeMethodHead(c, p) })
 			case "PURGE":
 				// Gin doesn't have built-in PURGE, use Handle
 				r.Handle("PURGE", p.Route, func(c *gin.Context) { lib.Web.Page(c, p) })
@@ -58,6 +58,26 @@ func (m *ManagedCtrl) RouterCore(r *gin.Engine) {
 		}
 	}
 
+}
+func routeMethodHead(c *gin.Context, p *model_config.WebPage) {
+
+	if len(p.Ctrl.Header) == 0 {
+		// Add default headers to the slice if empty
+		p.Ctrl.Header = append(
+			p.Ctrl.Header,
+			[]model_config.WebCtrlHeader{
+				{Key: "Location", Value: cfg.Org.URL},
+				{Key: "X-Endpoint-Status", Value: "Available"},
+			}...
+		)
+	}
+	for _, header := range p.Ctrl.Header {
+		c.Header(header.Key, header.Value)
+	}
+	if p.Ctrl.StatusCode == 0 {
+		p.Ctrl.StatusCode = 200 // Default to 200 OK if not set
+	}
+	c.Status(p.Ctrl.StatusCode)
 }
 
 // Sitemap

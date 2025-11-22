@@ -98,19 +98,11 @@
       ]
     },
     "pages": {
-      "home": {
+      "root-head": {
         "route": "/",
         "ctrl": {
-          "render": "file"
-        },
-        "content": {
-          "file": "resource/partials/home/home.part.html"
-        },
-        "meta": {
-          "title": "XetLabs"
-        },
-        "web": {
-          "menu": "Home"
+          "method": "head",
+          "status_code": 200
         }
       }
     }
