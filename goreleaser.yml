@@ -36,6 +36,7 @@ archives:
       - config/**
       - pkg/config/**
       - pkg/data/**
+      - pkg/view/**
       - public/**
       - storage/**
       - view/**

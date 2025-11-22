@@ -1,4 +1,0 @@
-.post .post-title,
-.post .post-title a 
-{ transition: color 0s; }
-.post .post-title a { transition: color 0s ease; }
