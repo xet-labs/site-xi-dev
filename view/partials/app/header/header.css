@@ -1,5 +1,6 @@
 body>header {
     z-index: 1000;
+    user-select: none;
     position: sticky;
     display: flex;
     will-change: transform;

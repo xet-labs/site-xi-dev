@@ -19,7 +19,7 @@ func LinkLib(libs ...string) template.HTML {
 			b.WriteString(string(LinkCss("preload", "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css")))
 		case "hljs":
 			b.WriteString(string(LinkCss("preload", "/res/lib/hljs/styles/atom-one-dark.css")))
-			b.WriteString(string(LinkJs("simple", "/res/lib/hljs/hl.min.js")))
+			b.WriteString(string(LinkJs("simple", "/res/lib/hljs/highlight.min.js")))
 			b.WriteString(`<script>hljs.highlightAll();</script>`)
 
 		case "prism":

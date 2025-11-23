@@ -17,6 +17,7 @@
 
 footer {
     z-index: 1500;
+    user-select: none;
     overflow: hidden;
     width: 100%;
     background: var(--footer-wrapper-bg);
