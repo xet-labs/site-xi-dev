@@ -3,7 +3,7 @@ package db
 import (
 	"errors"
 	"sync"
-	"xi/pkg/app/handler"
+	"xi/pkg/service/handler"
 	"xi/pkg/lib/cfg"
 
 	"gorm.io/gorm"

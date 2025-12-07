@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"strings"
 	"xi/pkg/lib/cfg"
-	"xi/pkg/lib/config"
+	"xi/pkg/service/config"
 	"xi/pkg/lib/env"
 
 	"github.com/redis/go-redis/v9"

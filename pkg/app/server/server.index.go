@@ -1,0 +1,11 @@
+package server
+
+import "xi/pkg/app/server/ctrl"
+
+type ServerApp struct{
+	Ctrl *ctrl.CtrlPkg 
+}
+
+var Server = &ServerApp{
+	Ctrl: &ctrl.CtrlPkg{},
+}

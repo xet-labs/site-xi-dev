@@ -10,7 +10,7 @@ before:
     - go mod tidy
 
 builds:
-  - main: ./cmd/web
+  - main: ./cmd/server
     binary: app
     env:
       - CGO_ENABLED=0

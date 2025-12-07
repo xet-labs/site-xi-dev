@@ -1,7 +1,7 @@
 package cfg
 
 import (
-	model_config "xi/internal/app/model/config"
+	model_config "xi/internal/model/config"
 	"xi/pkg/lib/cfg/static"
 
 	"github.com/knadh/koanf/v2"

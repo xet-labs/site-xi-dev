@@ -6,7 +6,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
-	model_store "xi/internal/app/model/store"
+	model_store "xi/internal/model/store"
 )
 
 const CtxUserKey = "authed_user"

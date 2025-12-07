@@ -8,7 +8,7 @@ cmd = "go build -o storage/tmp/app \
              -X 'xi/pkg/lib/cfg/static.BuildRevision=$(git rev-parse --short HEAD)' \
              -X 'xi/pkg/lib/cfg/static.BuildMode=test' \
              -X 'xi/pkg/lib/cfg/static.BuildVersion=$(git describe --tags --match v*.*.* --abbrev=0 2>/dev/null || echo vx.x.x)'\" \
-  ./cmd/web"
+  ./cmd/server"
 delay = 1000
 
 [log]

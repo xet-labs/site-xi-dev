@@ -1,6 +1,6 @@
 package cfg
 
-import model_config "xi/internal/app/model/config"
+import model_config "xi/internal/model/config"
 
 func SetupRelease(cfg *model_config.Config) {
 	cfg.App.Build = Build

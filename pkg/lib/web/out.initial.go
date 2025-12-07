@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"net/http"
 	"time"
-	model_config "xi/internal/app/model/config"
+	model_config "xi/internal/model/config"
 	"xi/pkg/lib/cfg"
 	"xi/pkg/lib/util"
 	"xi/pkg/service/store"

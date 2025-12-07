@@ -1,5 +1,6 @@
 .blog {
     /* --bg: #151515; */
+
 }
 .blog .wrap {
     --linex-colr:  var(--bg-075);
@@ -14,7 +15,6 @@
     transition: unset;
 }
 
-.blog article>* {transition: background-color 0.5s ease, border-color 0.5s ease, color 0.5s ease;}
 .blog article {
     --con-brdr: none;
     max-width: min(calc(var(--blog-x-max, 750) + (2*var(--con-pd-xv))), 100%);

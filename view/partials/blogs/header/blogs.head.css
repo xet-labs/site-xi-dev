@@ -96,7 +96,6 @@
 
 .blog-head-meta .meta-follow {
     color: var(--colr-a);
-    transition: color var(--trns-theme);
     padding-right: .25em;
 }
 
@@ -114,7 +113,6 @@
 }
 
 .blog-head-meta .meta-time {
-    transition: color var(--trns-theme);
     color: var(--colr-txt-1);
     font-size: 13.5px;
     font-weight: 450;

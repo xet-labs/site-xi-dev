@@ -7,22 +7,20 @@ import (
 	"xi/pkg/service/store/rdb"
 )
 
-type StoreService struct {
-	Hooks *hook.Hook
-	mu    sync.RWMutex
-	once  sync.Once
-}
-
-var Store = &StoreService{
-	Hooks: &hook.Hook{},
-}
-
 type (
+	StoreService struct {
+		Hooks *hook.Hook
+		once  sync.Once
+	}
+
 	DbStore  = db.DbStore
 	RdbStore = rdb.RdbStore
 )
 
 var (
+	Store = &StoreService{
+		Hooks: &hook.Hook{},
+	}
 	Db  = db.Db
 	Rdb = rdb.Rdb
 )

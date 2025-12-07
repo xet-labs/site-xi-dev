@@ -2,7 +2,7 @@ package auth
 
 import (
 	"time"
-	model_auth "xi/internal/app/model/auth"
+	model_auth "xi/internal/model/auth"
 	"xi/pkg/lib/cfg"
 
 	"github.com/golang-jwt/jwt/v5"
