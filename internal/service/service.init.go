@@ -6,14 +6,21 @@ import (
 	"xi/pkg/service"
 )
 
+// Init Core Libs
 // xi/pkg/lib.* are designed so self init on method calls but adding them here ensures they are called once
-func Init() {
-	// Init Core Libs
-	lib.Util.Minify.Init()
+func InitPre() {
 	lib.Logger.Init()
 	lib.Env.Init()
 	service.Config.Init()
+}
+func InitCore() {
 	service.Store.Init()
+}
+func InitPost() {
+}
 
-	// app.Debug.MemD(60 * 5)
+func Init() {
+	InitPre()
+	InitCore()
+	InitPost()
 }

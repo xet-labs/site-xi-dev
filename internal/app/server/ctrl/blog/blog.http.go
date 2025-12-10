@@ -45,10 +45,12 @@ func (b *BlogHttpCtrl) Show(c *gin.Context) {
 		return
 	}
 
-	// Success → prepare response
+	// on success prepare response
 	p := *cfg.Web.Pages["blogs"]
-	b.PrepMeta(c, &p.Meta, &blog)
-	p.Rt = map[string]any{
+	// page meta data 
+	b.PrepPageMeta(c, &p.Meta, &blog)
+	// page render data
+	p.R = map[string]any{   
 		"B":       &blog,
 		"Content": template.HTML(blog.Content),
 	}
@@ -56,7 +58,7 @@ func (b *BlogHttpCtrl) Show(c *gin.Context) {
 	lib.Web.OutHtmlLyt(c, &p, rdbKey)
 }
 
-func (b *BlogHttpCtrl) PrepMeta(c *gin.Context, meta *model_config.WebMeta, raw *model_store.Blog) {
+func (b *BlogHttpCtrl) PrepPageMeta(c *gin.Context, meta *model_config.WebMeta, raw *model_store.Blog) {
 	meta.Type = "Article"
 	meta.Title = raw.Title
 	meta.URL = lib.Util.Url.Full(c)

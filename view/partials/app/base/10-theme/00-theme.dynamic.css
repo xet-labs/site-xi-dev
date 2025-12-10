@@ -1,0 +1,45 @@
+/* Dynamic vars */
+:root {
+    /* Base-Static */
+    --mono-rgb-0: 0, 0, 0;
+    --mono-rgb-100: 255, 255, 255;
+    --colr-black: rgba(var(--mono-rgb-0), 1);
+    --colr-white: rgba(var(--mono-rgb-100), 1);
+
+    /* Base-dynamic */
+    --mono: rgba(var(--mono-rgb), 1);
+    --mono-inv: rgba(var(--mono-rgb-inv), 1);
+    --colr: var(--mono);
+    --colr-inv: var(--mono-inv);
+
+    --bg-0: rgba(var(--mono-rgb), 0);
+    --bg-025: rgba(var(--mono-rgb), 0.025);
+    --bg-05: rgba(var(--mono-rgb), 0.05);
+    --bg-075: rgba(var(--mono-rgb), 0.075);
+    --bg-1: rgba(var(--mono-rgb), 0.1);
+    --bg-15: rgba(var(--mono-rgb), 0.15);
+    --bg-2: rgba(var(--mono-rgb), 0.2);
+    --bg-25: rgba(var(--mono-rgb), 0.25);
+    --bg-mod: var(--colr-30);
+    --bg-mod: rgba(var(--mono-rgb), 0.075);
+    --bg-mod-hov: rgba(var(--mono-rgb), 0.075);
+
+
+
+    --colr-txt-faint: var(--text-faint);
+    --colr-txt-mute: var(--text-muted);
+    --colr-txt-normal: var(--text-normal);
+
+    --colr-divider: rgba(var(--mono-rgb), 0.075);
+    --colr-outln: rgba(var(--mono-rgb), 0.125);
+    --colr-brdr: rgba(var(--mono-rgb), 0.09);
+    
+    --icon-brdr: none;
+    --icon-colr: var(--text-muted);
+    --icon-focus-colr: var(--colr-txt);
+    
+    --underlay-bg: var(--bg-mod-cover);
+}
+
+
+

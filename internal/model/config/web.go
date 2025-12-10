@@ -24,7 +24,8 @@ type WebPage struct {
 	LibHead []string       `json:"lib_head,omitempty"`
 	Lib     []string       `json:"lib,omitempty"`
 	Lib99   []string       `json:"lib99,omitempty"`
-	Rt      map[string]any `json:"-"` // Runtime data
+	
+	R      map[string]any `json:"-"` // runtime render data
 }
 type WebCtrl struct {
 	Cache      *bool           `json:"cache,omitempty"`

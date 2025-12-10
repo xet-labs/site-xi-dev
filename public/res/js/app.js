@@ -1,3 +1,4 @@
+// toggle underlay
 function toggleUnderlay(name, state) {
   const underlay = document.querySelector(`.underlay[data-name="${name}"]`);
   if (!underlay) return console.warn(`Underlay '${name}' not found`);
@@ -12,8 +13,23 @@ function toggleUnderlay(name, state) {
   underlay.classList.toggle('active', !!state);
 }
 
+// hide show password-field
+document.querySelectorAll(".pw-toggle").forEach(btn => {
+  btn.onclick = function () {
+    const wrapper = this.closest(".input-field");
+    const input = wrapper.querySelector(".pw-input");
+
+    const isHidden = input.type === "password";
+
+    input.type = isHidden ? "text" : "password";
+
+    // Toggle active state to switch icons
+    this.classList.toggle("active", isHidden);
+  };
+});
+
 document.addEventListener("DOMContentLoaded", () => {
-  // === Theme toggle (light/dark) ===
+  // Theme toggle (light/dark) ===
   document.documentElement.classList.add(localStorage.getItem('theme') || 'light');
 
   const themeSwitch = document.getElementById("id-themeswitch");
@@ -24,6 +40,7 @@ document.addEventListener("DOMContentLoaded", () => {
       localStorage.setItem("theme", theme);
     });
   }
+
 
   // Nav hide|reveal on scroll
   let lastScrollTop = 0;
@@ -97,49 +114,49 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 document.addEventListener("DOMContentLoaded", () => {
-    const signupForm = document.getElementById("signupForm");
+  const signupForm = document.getElementById("signupForm");
 
-    signupForm.addEventListener("submit", async (event) => {
-        event.preventDefault(); // stop normal form submission
+  signupForm.addEventListener("submit", async (event) => {
+    event.preventDefault(); // stop normal form submission
 
-        // Collect form values
-        const formData = {
-            username: document.getElementById("signupUsername")?.value || "",
-            name: document.getElementById("signupName")?.value || "",
-            email: document.getElementById("signupEmail").value,
-            password: document.getElementById("signupPassword").value,
-            confirm_password: document.getElementById("signupConfirmPassword").value,
-        };
+    // Collect form values
+    const formData = {
+      username: document.getElementById("signupUsername")?.value || "",
+      name: document.getElementById("signupName")?.value || "",
+      email: document.getElementById("signupEmail").value,
+      password: document.getElementById("signupPassword").value,
+      confirm_password: document.getElementById("signupConfirmPassword").value,
+    };
 
-        // Basic client-side validation
-        if (formData.password !== formData.confirm_password) {
-            alert("Passwords do not match!");
-            return;
-        }
+    // Basic client-side validation
+    if (formData.password !== formData.confirm_password) {
+      alert("Passwords do not match!");
+      return;
+    }
 
-        try {
-            // Send JSON POST request to your backend
-            const response = await fetch("/api/auth/signup", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(formData),
-            });
+    try {
+      // Send JSON POST request to your backend
+      const response = await fetch("/api/auth/signup", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
 
-            const data = await response.json();
+      const data = await response.json();
 
-            if (response.ok) {
-                alert("Signup successful! You can now log in.");
-                // Optional: redirect to login page
-                // window.location.href = "/login";
-            } else {
-                // Backend returned an error
-                alert("Signup failed: " + (data.error || "Unknown error"));
-            }
-        } catch (error) {
-            alert("Network error: " + error.message);
-        }
-    });
+      if (response.ok) {
+        alert("Signup successful! You can now log in.");
+        // Optional: redirect to login page
+        // window.location.href = "/login";
+      } else {
+        // Backend returned an error
+        alert("Signup failed: " + (data.error || "Unknown error"));
+      }
+    } catch (error) {
+      alert("Network error: " + error.message);
+    }
+  });
 });
 

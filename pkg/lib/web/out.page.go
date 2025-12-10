@@ -41,12 +41,12 @@ func (v *WebLib) Page(c *gin.Context, p *model_config.WebPage, args ...string) b
 			c.Status(http.StatusInternalServerError)
 			return false
 		}
-		p.Rt = map[string]any{
+		p.R = map[string]any{
 			"Content": template.HTML(contentBytes),
 		}
 
 	case "raw":
-		p.Rt = map[string]any{
+		p.R = map[string]any{
 			"Content": template.HTML(p.Content.Raw),
 		}
 	}
@@ -55,7 +55,7 @@ func (v *WebLib) Page(c *gin.Context, p *model_config.WebPage, args ...string) b
 	var page []byte
 	switch p.Ctrl.Layout {
 	case "raw":
-		switch v := p.Rt["Content"].(type) {
+		switch v := p.R["Content"].(type) {
 		case []byte:
 			page = v
 		case string:
@@ -64,7 +64,7 @@ func (v *WebLib) Page(c *gin.Context, p *model_config.WebPage, args ...string) b
 			page = []byte(v)
 		default:
 			c.Status(http.StatusInternalServerError)
-			log.Warn().Caller().Str("type", fmt.Sprintf("%T", v)).Str("Page", c.Request.URL.Path).Msg("web Page, Unsupported content type in p.Rt[\"content\"]")
+			log.Warn().Caller().Str("type", fmt.Sprintf("%T", v)).Str("Page", c.Request.URL.Path).Msg("web Page, Unsupported content type in p.R[\"content\"]")
 			return false
 		}
 

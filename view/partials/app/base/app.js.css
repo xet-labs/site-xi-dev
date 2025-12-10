@@ -1,0 +1,9 @@
+.pw-toggle .pw-show-icon,
+.pw-toggle.active .pw-hide-icon {
+    display: block;
+}
+
+.pw-toggle .pw-hide-icon,
+.pw-toggle.active .pw-show-icon {
+    display: none;
+}

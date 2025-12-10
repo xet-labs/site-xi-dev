@@ -23,12 +23,17 @@ var Logger = &LoggerLib{}
 func (l *LoggerLib) Init() { l.once.Do(l.InitCore) }
 
 func (l *LoggerLib) InitCore() {
-	// Decide log level based on build mode
-	switch cfg.App.Mode {
-	case "release":
-		zerolog.SetGlobalLevel(zerolog.InfoLevel) // show Info/Warn/Error but hide Debug
-	default:
-		zerolog.SetGlobalLevel(zerolog.DebugLevel) // show everything in dev/test
+	// Decide log level based on build mode and app state
+
+	zerolog.SetGlobalLevel(zerolog.Disabled)
+
+	if cfg.App.Verbose || cfg.App.Initialized {
+		switch cfg.App.Mode {
+		case "release":
+			zerolog.SetGlobalLevel(zerolog.InfoLevel) // show Info/Warn/Error but hide Debug
+		default:
+			zerolog.SetGlobalLevel(zerolog.DebugLevel) // show everything in dev/test
+		}
 	}
 
 	// Set timestamp behavior globally
@@ -61,20 +66,22 @@ func (l *LoggerLib) InitCore() {
 	log.Logger = zerolog.New(writer).With().Timestamp().Logger()
 	l.Log = &log.Logger // Sotre a local pointer
 
-	if cfg.Build.Mode == "release" {
-		log.Info().
-			Str("date", cfg.Build.Date).
-			Str("mode", cfg.Build.Mode).
-			Str("name", cfg.Build.Name).
-			Str("revision", cfg.Build.Revision).
-			Str("version", cfg.Build.Version).
-			Msg("app build")
-	} else {
-		log.Info().
-			Str("date", cfg.Build.Date).
-			Str("name", cfg.Build.Name).
-			Str("revision", cfg.Build.Revision).
-			Str("version", cfg.Build.Version).
-			Msg("app build")
+	if !cfg.App.Initialized {
+		if cfg.Build.Mode == "release" {
+			log.Info().
+				Str("date", cfg.Build.Date).
+				Str("mode", cfg.Build.Mode).
+				Str("name", cfg.Build.Name).
+				Str("revision", cfg.Build.Revision).
+				Str("version", cfg.Build.Version).
+				Msg("app build")
+		} else {
+			log.Info().
+				Str("date", cfg.Build.Date).
+				Str("name", cfg.Build.Name).
+				Str("revision", cfg.Build.Revision).
+				Str("version", cfg.Build.Version).
+				Msg("app build")
+		}
 	}
 }

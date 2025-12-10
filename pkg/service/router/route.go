@@ -37,7 +37,7 @@ type CoreRouter interface{ RouterCore(r *gin.Engine) }
 type PostRouter interface{ RouterPost(r *gin.Engine) }
 
 // Initializes all routes and templates
-func (rh *RouterService) Init(r *gin.Engine, ctrls any) {
+func (rh *RouterService) Init(r *gin.Engine, ctrls any) error {
 	// Store Gin Engine
 	rh.r = r
 
@@ -53,8 +53,10 @@ func (rh *RouterService) Init(r *gin.Engine, ctrls any) {
 	tmpl, err := web.Web.NewTmpl("main", ".html", cfg.Web.TemplateDir...)
 	if err != nil {
 		log.Error().Caller().Err(err).Msg("couldnt create new template instance")
+		return err
 	}
 	r.SetHTMLTemplate(tmpl)
+	return nil
 }
 
 // RegisterController controllers to route and sitemap

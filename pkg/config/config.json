@@ -17,10 +17,11 @@
   },
   "store": {
     "db": {
+      "enable": "${DB_ENABLE:-true}",
       "default_profile": "${DB_DEFAULT:-db}",
       "conn": {
         "db": {
-          "enable": "${DB_ENABLE:-true}",
+          "enable": "${DB0_ENABLE:-true}",
           "db": "${DB:-XI}",
           "user": "${DB_USER:-XI_u}",
           "pass": "${DB_PASS}",
@@ -38,10 +39,11 @@
       }
     },
     "rdb": {
+      "enable": "${RDB0_ENABLE:-true}",
       "default_profile": "${RDB_DEFAULT:-rdb}",
       "conn": {
         "rdb": {
-          "enable": "${RDB_ENABLE:-true}",
+          "enable": "${RDB0_ENABLE:-true}",
           "rdb": "${RDB:-0}.int",
           "driver": "redis",
           "host": "${RDB_HOST:-127.0.0.1}",

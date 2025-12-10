@@ -6,10 +6,12 @@ type StoreConf struct {
 }
 
 type DbStore struct {
+	Enable         bool                   `json:"enable,omitempty"`
 	DefaultProfile string                 `json:"default_profile,omitempty"`
 	Conn           map[string]ConnProfile `json:"conn,omitempty"`
 }
 type RdbStore struct {
+	Enable         bool                   `json:"enable,omitempty"`
 	DefaultProfile string                 `json:"default_profile,omitempty"`
 	Prefix         string                 `json:"prefix,omitempty"`
 	Conn           map[string]ConnProfile `json:"conn,omitempty"`
