@@ -13,38 +13,40 @@
     margin: var(--icon-mr, var(--icon-mr-y, 0) var(--icon-mr-x, 0));
     padding: var(--icon-pd, var(--icon-pd-y, 0) var(--icon-pd-x, 0));
     font-size: var(--icon-font-z, inherit);
-    
+
     color: var(--icon-colr, var(--colr-txt));
     background: transparent;
     border-radius: var(--icon-brdr-rad);
     transition: var(--icon-trns);
 }
+
 /* .icon i, */
-.icon svg,
-.icon img,
-.icon i>* {
+.icon :is(svg, img, i>*) {
     display: block;
     position: var(--icon-svg-position, absolute);
-    
+
     z-index: 10;
     opacity: var(--icon-i-opacity, 1);
     width: var(--icon-svg-x, var(--icon-svg-z, unset));
     height: var(--icon-svg-y, var(--icon-svg-z, unset));
-    
+
     fill: var(--icon-fill, currentColor);
     transform: translate(0, 0) scale(var(--icon-scale));
 }
 
 .icon::after,
 .icon::before {
-    z-index: 1; content: '';
+    z-index: 1;
+    content: '';
     position: absolute;
     width: calc(var(--icon-x, var(--icon-z)) * var(--icon-bg-z));
     height: calc(var(--icon-y, var(--icon-z)) * var(--icon-bg-z));
-    
-    top: 50%; left: 50%; 
+
+    top: 50%;
+    left: 50%;
     transition: transform var(--icon-bg-trns, 0s ease), background-color var(--icon-bg-trns, 0s ease);
 }
+
 .icon::before {
     opacity: var(--icon-bg-opacity, 1);
     background: var(--icon-bg, transparent);
@@ -52,6 +54,7 @@
     transform: translate(-50%, -50%) scale(var(--icon-bg-scale));
     transition: color, background .16s ease;
 }
+
 .icon::after {
     opacity: var(--icon-brdr-opacity, 0);
     border-radius: var(--icon-brdr-rad, var(--icon-bg-brdr-rad));
@@ -59,8 +62,8 @@
     transform: translate(-50%, -50%) scale(var(--icon-brdr-scale, var(--icon-bg-scale)));
     transition: transform var(--icon-brdr-trns, 0.08s ease);
 }
-.icon.hover,
-.icon:hover {
+
+.icon:is(.hover, :hover) {
     opacity: var(--icon-hov-opacity, 1);
     --icon-brdr-opacity: var(--icon-hov-brdr-opacity, var(--icon-brdr-opacity, 0));
     --icon-scale: var(--icon-hov-scale, 1);
@@ -72,10 +75,12 @@
     --icon-brdr-colr: var(--icon-hov-brdr-colr, --icon-brdr-colr);
     transition: transform var(--icon-hov-bg-scale-durn, 0.08s)
 }
-.icon.hover::before,
-.icon:hover::before { background: var(--icon-hov-bg, var(--icon-bg)); }
-.icon.active, 
-.icon:active {
+
+.icon:is(.hover::before, :hover::before) {
+    background: var(--icon-hov-bg, var(--icon-bg));
+}
+
+.icon:is(.active, :active) {
     opacity: var(--icon-active-opacity, var(--icon-hov-opacity, 1));
     --icon-brdr-opacity: var(--icon-active-brdr-opacity, .34);
     --icon-scale: var(--icon-active-scale, 1);
@@ -87,9 +92,11 @@
     --icon-brdr-colr: var(--icon-active-brdr-colr, var(--icon-hov-brdr-colr, var(--icon-brdr-colr)));
 }
 
-.icon.active::before,
-.icon:active::before { background: var(--icon-active-bg, var(--icon-hov-bg, var(--icon-bg))); }
-:root{
+.icon:is(.active::before, :active::before) {
+    background: var(--icon-active-bg, var(--icon-hov-bg, var(--icon-bg)));
+}
+
+:root {
     --icon-z: 1em;
     --icon-bg-z: 1.35;
     --icon-bg-scale: 1;

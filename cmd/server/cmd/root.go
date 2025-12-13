@@ -13,9 +13,9 @@ import (
 )
 
 var rootCmd = &cobra.Command{
-	Use:   "xi-server",
-	Short: "XI HTTP server",
-	Long:  "XI HTTP server — the main backend for the XI",
+	Use:   "xlvini [global options] [command] [command options]",
+	Short: "xlvini",
+	Long:  "xlvini — " + cfg.Org.Abbr + "'s command-line tool and agent",
 	Run: func(cmd *cobra.Command, args []string) {
 	 	cfg.App.Initialized = true
 

@@ -49,8 +49,7 @@ body:has(#id-login-btn:checked, #id-signup-btn:checked) .signuplogin-widget,
     padding: 2em 1.75em;
 }
 
-.signuplogin .login-wrap,
-.signuplogin .signup-wrap {
+.signuplogin :is(.login-wrap, .signup-wrap) {
     display: none;
     pointer-events: none;
     flex-direction: column;
@@ -59,9 +58,8 @@ body:has(#id-login-btn:checked, #id-signup-btn:checked) .signuplogin-widget,
 }
 
 body:has(#id-signup-btn:checked) .signuplogin-widget .signup-wrap,
-.signuplogin-widget .signup-wrap.active,
 body:has(#id-login-btn:checked) .signuplogin-widget .login-wrap,
-.signuplogin-widget .login-wrap.active {
+.signuplogin-widget :is(.login-wrap.active, .signup-wrap.active) {
     display: flex;
     pointer-events: initial;
 }
@@ -75,8 +73,7 @@ body:has(#id-login-btn:checked) .signuplogin-widget .login-wrap,
     color: unset;
 }
 
-.signuplogin-brand img,
-.signuplogin-brand svg {
+.signuplogin-brand :is(img, svg) {
     object-fit: cover;
     width: 100%;
     height: 2.2em;
@@ -128,9 +125,7 @@ body:has(#id-login-btn:checked) .signuplogin-widget .login-wrap,
     font: 550 14px / 1em var(--font);
 }
 
-.signuplogin .input-title a,
-.signuplogin .input-title label,
-.signuplogin .input-title button {
+.signuplogin .input-title :is(a, label, button){
     font-weight: 450;
     color: var(--colr-a);
     cursor: pointer;
@@ -145,9 +140,7 @@ body:has(#id-login-btn:checked) .signuplogin-widget .login-wrap,
     font-weight: 450;
 }
 
-.signuplogin .tosignuplogin a,
-.signuplogin .tosignuplogin label,
-.signuplogin .tosignuplogin button {
+.signuplogin .tosignuplogin :is(a, label, button) {
     font-weight: 500;
 }
 
@@ -172,29 +165,14 @@ body:has(#id-login-btn:checked) .signuplogin-widget .login-wrap,
     font-size: .9375em;
 }
 
-.signuplogin input:not(:placeholder-shown) {
-    /* background: none; */
-}
+.signuplogin input:is(:not(:placeholder-shown)) {}
 
-.signuplogin input:-webkit-autofill {
-    background: rgba(70, 90, 126, 0.4);
+.signuplogin input:is(:-webkit-autofill, :autofill) {
+    background-color: rgba(70, 90, 126, 0.4);
     filter: none;
 }
 
-.signuplogin input:autofill {
-    background: rgba(70, 90, 126, 0.4);
-    filter: none;
-}
-
-.signuplogin input:-moz-autofill,
-.signuplogin input:-moz-autofill-preview {
-    background: rgba(70, 90, 126, 0.4);
-
-    filter: none;
-}
-
-.signuplogin form input,
-.signuplogin form button {
+.signuplogin form :is(input, button) {
     border-radius: 0.75em;
 }
 
@@ -209,8 +187,7 @@ body:has(#id-login-btn:checked) .signuplogin-widget .login-wrap,
     transition: box-shadow .20s;
 }
 
-.signuplogin .signuplogin-submit-btn:focus,
-.signuplogin .signuplogin-submit-btn:hover {
+.signuplogin .signuplogin-submit-btn:is(:focus, :hover){
     box-shadow: 0 4px 24px hsla(230, 75%, 40%, .4);
     transition: box-shadow .08s;
 }
