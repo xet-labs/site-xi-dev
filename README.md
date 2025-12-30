@@ -35,13 +35,13 @@ This project is packed with features designed for scalability, performance, and 
 ### Core Systems
 *   [**Modular Architecture:**](docs/features/architecture.md) Clean separation of concerns with a custom plugin-based router.
 *   [**Authentication:**](docs/features/auth.md) Secure, stateless JWT-based authentication with auto-login on signup.
-*   [**Configuration:**](docs/features/config.md) Hot-reloadable configuration via JSON and environment variables.
+*   [**Configuration:**](docs/features/config.md) Hot-reloadable configuration via JSON and environment variable injection.
 *   [**Hooks System:**](docs/features/hooks.md) Event-driven hooks (`pkg/hook`) for decoupled feature integration.
 *   [**Database:**](docs/features/database.md) GORM-backed storage with support for MySQL/SQLite and connection pooling.
 
 ### Additional Features
 *   **Asset Management:** Automatic minification and serving of static assets.
-*   **Blog System:** Full-featured blog module.
+*   **Blog System:** Full-featured blog module (inprogress).
 
 See [docs/](docs/) for detailed documentation on all features.
 
@@ -52,20 +52,19 @@ See [docs/](docs/) for detailed documentation on all features.
 ```graphql
 .
 ├── cmd                 # Application entry points
-│   └── web             # Main web server application
 ├── config              # Configuration files (config.json)
 ├── docs                # Project documentation
 │   └── features        # Detailed feature guides
 ├── internal            # Private application code
-│   ├── app             # Core app components
+│   ├── app             # Core app components and wiring logic
 │   ├── config          # Configuration logic
-│   ├── handlers        # HTTP handlers (Controllers)
-│   ├── infra           # Infrastructure (Logger, Store)
+│   ├── handlers        # HTTP handlers (Controllers), error handlers etc
+│   ├── infra           # Infrastructure (Logger, Store, etc.)
 │   ├── models          # Data models and structs
-│   └── services        # Business logic services (Auth, etc.)
+│   └── services        # Business logic services (Auth, Mail, etc.)
 ├── pkg                 # Public shared libraries
 │   ├── hook            # Event hook system
-│   ├── lib             # Core libraries (Config, Router)
+│   ├── lib             # Core libraries *will be removed in future*
 │   └── util            # Utility functions
 ├── public              # Static assets (CSS, JS, Images)
 ├── ui                  # Frontend resources
@@ -85,6 +84,8 @@ See [docs/](docs/) for detailed documentation on all features.
 
 ---
 
+If this project saved you time or helped you learn, consider supporting the development! ☕
+<br/>
 <a href="https://buymeacoffee.com/rishikeshprasad" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" ></a>
 
 **Licensed under the [Apache License](LICENSE).**
