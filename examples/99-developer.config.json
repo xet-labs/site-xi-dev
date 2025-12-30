@@ -1,0 +1,17 @@
+{
+    "app": {
+        "mode": "${APP_MODE:-test}"
+    },
+    "store": {
+        "rdb": {
+            "enable": false
+        }
+    },
+    "web": {
+        "cache": {
+            "css": {
+                "files_list": false
+            }
+        }
+    }
+}

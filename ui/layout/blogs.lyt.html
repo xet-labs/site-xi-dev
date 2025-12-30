@@ -1,0 +1,39 @@
+{{ define "layout/blogs" }}
+
+{{ template "prtl/html.begin" . }}
+{{ template "prtl/head" . }}
+<body class="blog">
+
+	{{ linkJsSlice "preload" .P.Js }}
+	{{ linkLibSlice .P.Lib }}
+	{{ template "prtl/header" . }}
+
+	<main>
+
+		<div class="wrap">
+			<article class="blog-con con">
+				<header class="blog-head">
+					{{ template "prtl/blog.header" . }}
+				</header>
+
+				<section class="blog-content">
+					{{ .P.R.Content }}
+				</section>
+
+				<div class="blog-foot">
+					<hr class="line-x">
+				</div>
+			</article>
+		</div>
+		
+	</main>
+
+	{{ template "prtl/footer" . }}
+	{{ linkJsSlice "preload" .P.Js99 }}
+	{{ linkLibSlice .P.Lib99 }}
+
+{{ template "prtl/body.end" . }}
+{{ template "prtl/html.end" . }}
+
+{{ end }}
+
