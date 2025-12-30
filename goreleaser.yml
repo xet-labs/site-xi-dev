@@ -10,17 +10,17 @@ before:
     - go mod tidy
 
 builds:
-  - main: ./cmd/server
+  - main: ./cmd/web
     binary: app
     env:
       - CGO_ENABLED=0
     ldflags:
       - -s -w
-      - -X 'xi/pkg/lib/cfg/static.BuildDate={{.Date}}'
-      - -X 'xi/pkg/lib/cfg/static.BuildRevision={{.ShortCommit}}'
-      - -X 'xi/pkg/lib/cfg/static.BuildVersion={{ if index .Env "BuildVerPrepend" }}{{ .Env.BuildVerPrepend }}{{ else }}{{ .Branch }}{{ end }}-{{.Version}}'
-      - -X 'xi/pkg/lib/cfg/static.BuildName={{ if index .Env "BuildName" }}{{ .Env.BuildName }}{{ else }}{{ .ProjectName  }}{{ end }}'
-      - -X 'xi/pkg/lib/cfg/static.BuildMode=release'
+      - -X 'xi/internal/config/cfg/static.BuildDate={{.Date}}'
+      - -X 'xi/internal/config/cfg/static.BuildRevision={{.ShortCommit}}'
+      - -X 'xi/internal/config/cfg/static.BuildVersion={{ if index .Env "BuildVerPrepend" }}{{ .Env.BuildVerPrepend }}{{ else }}{{ .Branch }}{{ end }}-{{.Version}}'
+      - -X 'xi/internal/config/cfg/static.BuildName={{ if index .Env "BuildName" }}{{ .Env.BuildName }}{{ else }}{{ .ProjectName  }}{{ end }}'
+      - -X 'xi/internal/config/cfg/static.BuildMode=release'
     goos:
       - linux
       # - darwin
@@ -34,12 +34,10 @@ archives:
     formats: ["tar.gz"]
     files:
       - config/**
-      - pkg/config/**
-      - pkg/data/**
-      - pkg/view/**
+      - data/**
       - public/**
       - storage/**
-      - view/**
+      - ui/**
       - LICENSE
       - README.md
     format_overrides:

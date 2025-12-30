@@ -1,9 +1,8 @@
 {
-  "api": {
+  "auth": {
     "jwt_secret": "${JWT_SECRET:-5up3r5tr0n6p455}"
   },
   "app": {
-    "mode": "${APP_MODE:-release}",
     "port": "${APP_PORT:-5000}",
     "env_files": []
   },
@@ -109,7 +108,7 @@
           "render": "file"
         },
         "content": {
-          "file": "view/partials/home/home.part.html"
+          "file": "ui/components/home/home.part.html"
         },
         "meta": {
           "title": "Xet Industries",
@@ -125,7 +124,7 @@
           "render": "file"
         },
         "content": {
-          "file": "view/partials/blog/blog.part.html"
+          "file": "ui/components/blog/blog.part.html"
         },
         "meta": {
           "title": "Blog",
