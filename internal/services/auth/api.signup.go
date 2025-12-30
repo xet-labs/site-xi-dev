@@ -5,10 +5,10 @@ import (
 	"net/http"
 	"strings"
 
-	model_store "xi/internal/models/store"
-	"xi/pkg/util"
-	"xi/internal/services/handler"
 	"xi/internal/infra/store"
+	model_store "xi/internal/models/store"
+	"xi/internal/services/handler"
+	"xi/pkg/util"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"

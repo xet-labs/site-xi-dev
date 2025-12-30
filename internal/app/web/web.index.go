@@ -1,7 +1,9 @@
 package web
 
-type WebApp struct{
+import "sync"
+
+type WebApp struct {
+	once sync.Once
 }
 
-var App = &WebApp{
-}
+var App = &WebApp{}

@@ -1,8 +1,8 @@
 package config
 
 import (
-	"xi/pkg/hook"
 	confHook "xi/internal/config/hooks"
+	"xi/pkg/hook"
 )
 
 var PostHooks = []hook.HookFn{

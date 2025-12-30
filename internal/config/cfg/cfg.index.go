@@ -1,8 +1,8 @@
 package cfg
 
 import (
-	model_config "xi/internal/models/config"
 	"xi/internal/config/cfg/static"
+	model_config "xi/internal/models/config"
 
 	"github.com/knadh/koanf/v2"
 )
@@ -23,7 +23,7 @@ var Raw *koanf.Koanf
 // Direct pointers for convenience
 var (
 	Api   = &Config.Api
-	Auth   = &Config.Auth
+	Auth  = &Config.Auth
 	App   = &Config.App
 	Org   = &Config.Org
 	Store = &Config.Store

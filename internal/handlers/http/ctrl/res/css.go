@@ -6,8 +6,8 @@ import (
 	"sync"
 	"time"
 
-	"xi/internal/web"
 	"xi/internal/config/cfg"
+	"xi/internal/web"
 	"xi/pkg/util"
 
 	"github.com/gin-gonic/gin"

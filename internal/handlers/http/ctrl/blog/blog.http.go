@@ -7,12 +7,12 @@ import (
 
 	"github.com/gin-gonic/gin"
 
+	"xi/internal/config/cfg"
 	model_config "xi/internal/models/config"
 	model_store "xi/internal/models/store"
+	"xi/internal/services/handler"
 	"xi/internal/web"
 	"xi/pkg/util"
-	"xi/internal/config/cfg"
-	"xi/internal/services/handler"
 )
 
 type BlogHttpCtrl struct {
@@ -48,10 +48,10 @@ func (b *BlogHttpCtrl) Show(c *gin.Context) {
 
 	// on success prepare response
 	p := *cfg.Web.Pages["blogs"]
-	// page meta data 
+	// page meta data
 	b.PrepPageMeta(c, &p.Meta, &blog)
 	// page render data
-	p.R = map[string]any{   
+	p.R = map[string]any{
 		"B":       &blog,
 		"Content": template.HTML(blog.Content),
 	}

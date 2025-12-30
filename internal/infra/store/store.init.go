@@ -4,9 +4,9 @@ import (
 	"context"
 	"fmt"
 	"strings"
+	"xi/internal/config"
 	"xi/internal/config/cfg"
 	"xi/internal/config/env"
-	"xi/internal/config"
 
 	"github.com/redis/go-redis/v9"
 	"github.com/rs/zerolog/log"

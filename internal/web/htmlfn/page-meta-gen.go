@@ -9,8 +9,8 @@ import (
 	"strings"
 	"time"
 
-	model_config "xi/internal/models/config"
 	"xi/internal/config/cfg"
+	model_config "xi/internal/models/config"
 	"xi/pkg/util"
 )
 

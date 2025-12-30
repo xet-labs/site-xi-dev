@@ -7,10 +7,10 @@ import (
 	"net/http"
 	"os"
 	"time"
-	model_config "xi/internal/models/config"
 	"xi/internal/config/cfg"
-	"xi/pkg/util"
 	"xi/internal/infra/store"
+	model_config "xi/internal/models/config"
+	"xi/pkg/util"
 
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog/log"

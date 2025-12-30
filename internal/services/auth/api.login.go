@@ -5,8 +5,8 @@ import (
 	"net/http"
 	"time"
 
-	model_store "xi/internal/models/store"
 	"xi/internal/infra/store"
+	model_store "xi/internal/models/store"
 
 	"github.com/gin-gonic/gin"
 	"golang.org/x/crypto/bcrypt"

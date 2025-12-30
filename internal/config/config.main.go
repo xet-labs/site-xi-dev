@@ -10,9 +10,9 @@ import (
 	"sync"
 	"time"
 
-	model_config "xi/internal/models/config"
 	"xi/internal/config/cfg"
 	"xi/internal/config/env"
+	model_config "xi/internal/models/config"
 	"xi/pkg/hook"
 	"xi/pkg/util"
 

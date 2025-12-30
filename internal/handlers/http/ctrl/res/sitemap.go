@@ -7,10 +7,10 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	model_config "xi/internal/models/config"
-	model_ctrlRes "xi/internal/models/transport/http/res"
 	"xi/internal/handlers/http/router"
 	"xi/internal/infra/store"
+	model_config "xi/internal/models/config"
+	model_ctrlRes "xi/internal/models/transport/http/res"
 )
 
 type SitemapRes struct {

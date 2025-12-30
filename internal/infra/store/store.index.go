@@ -2,9 +2,9 @@ package store
 
 import (
 	"sync"
-	"xi/pkg/hook"
 	"xi/internal/infra/store/db"
 	"xi/internal/infra/store/rdb"
+	"xi/pkg/hook"
 )
 
 type (

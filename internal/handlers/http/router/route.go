@@ -3,10 +3,10 @@ package router
 import (
 	"sync"
 
-	model_config "xi/internal/models/config"
 	"xi/internal/config/cfg"
-	"xi/pkg/hook"
+	model_config "xi/internal/models/config"
 	"xi/internal/web"
+	"xi/pkg/hook"
 
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog/log"

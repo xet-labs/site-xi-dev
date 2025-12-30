@@ -7,8 +7,8 @@ import (
 	"encoding/hex"
 	"time"
 
-	model_store "xi/internal/models/store"
 	"xi/internal/infra/store"
+	model_store "xi/internal/models/store"
 )
 
 // generateOpaqueToken generates a URL-safe random string

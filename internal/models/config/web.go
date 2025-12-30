@@ -17,15 +17,15 @@ type WebPage struct {
 	Meta    WebMeta `json:"meta,omitempty"`
 	Web     Web     `json:"web,omitempty"`
 
-	NavMenu []WebNavMenu   `json:"nav_menu,omitempty"`
-	Css     []string       `json:"css,omitempty"`
-	Js      []string       `json:"js,omitempty"`
-	Js99    []string       `json:"js99,omitempty"`
-	LibHead []string       `json:"lib_head,omitempty"`
-	Lib     []string       `json:"lib,omitempty"`
-	Lib99   []string       `json:"lib99,omitempty"`
-	
-	R      map[string]any `json:"-"` // runtime render data
+	NavMenu []WebNavMenu `json:"nav_menu,omitempty"`
+	Css     []string     `json:"css,omitempty"`
+	Js      []string     `json:"js,omitempty"`
+	Js99    []string     `json:"js99,omitempty"`
+	LibHead []string     `json:"lib_head,omitempty"`
+	Lib     []string     `json:"lib,omitempty"`
+	Lib99   []string     `json:"lib99,omitempty"`
+
+	R map[string]any `json:"-"` // runtime render data
 }
 type WebCtrl struct {
 	Cache      *bool           `json:"cache,omitempty"`

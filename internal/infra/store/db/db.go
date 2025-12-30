@@ -3,8 +3,8 @@ package db
 import (
 	"errors"
 	"sync"
-	"xi/internal/services/handler"
 	"xi/internal/config/cfg"
+	"xi/internal/services/handler"
 
 	"gorm.io/gorm"
 )

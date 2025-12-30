@@ -6,8 +6,8 @@ import (
 	"html/template"
 	"net/url"
 	"strings"
-	"xi/pkg/util"
 	"xi/internal/web/htmlfn"
+	"xi/pkg/util"
 
 	"github.com/rs/zerolog/log"
 )

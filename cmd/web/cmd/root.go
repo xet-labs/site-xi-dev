@@ -23,7 +23,8 @@ var rootCmd = &cobra.Command{
 		services.InitCore() // Init services
 		services.InitPost() // Init services
 
-		webApp.App.Run(cfg.App.Port) // Init server
+		webApp.App.Init() // Init Web-server
+		webApp.App.Run(cfg.App.Port) // Run Web-server
 	},
 }
 

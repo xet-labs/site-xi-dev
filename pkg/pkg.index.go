@@ -7,11 +7,11 @@ import (
 
 // Expose structs
 type (
-	Hook      = hook.Hook // Only struct exposed
-	UtilLib   = util.UtilLib
+	Hook    = hook.Hook // Only struct exposed
+	UtilLib = util.UtilLib
 )
 
 // Expose Global instance
 var (
-	Util   = util.Util
+	Util = util.Util
 )

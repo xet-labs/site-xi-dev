@@ -2,8 +2,8 @@
 package web
 
 import (
-	"xi/internal/handlers/http/ctrl"
 	"xi/internal/config/cfg"
+	"xi/internal/handlers/http/ctrl"
 	srvcPkg "xi/internal/services"
 
 	"github.com/gin-gonic/gin"
@@ -15,7 +15,7 @@ func (s *WebApp) Run(port string) error {
 
 	gin.SetMode(cfg.App.Mode) // Init Gin Engine
 	engine := gin.Default()
-	
+
 	srvcPkg.Router.Init(engine, ctrl.Controllers) // Init routes
 
 	log.Info().Str("mode", cfg.App.Mode).
