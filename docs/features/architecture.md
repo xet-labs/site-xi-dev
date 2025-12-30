@@ -1,22 +1,30 @@
-# Architecture
+# Architecture & Routing
 
-The project follows a modular, scalable architecture designed to bootstrap standard web applications quickly.
+Modular, logic-first structure powered by a **Plugin-Based Router**.
 
-## Core Components
+## Components
+*   **`cmd/`**: Entry points.
+*   **`internal/services/`**: Singleton business logic (Auth, User).
+*   **`internal/handlers/`**: Http Controllers (`BaseController`).
+*   **`pkg/`**: Public libraries (`hook`, `lib/router`).
 
-### 1. Controllers (`internal/handlers`)
-Handle HTTP requests. We use a **Base Controller** pattern (`pkg/app/ctrl`) to standardize responses (JSON success, Error handling, View rendering).
+## Plugin-Based Routing
+Routes are not defined in a central file. Instead, each Controller implements the `CoreRouter` interface to register its own routes. This keeps the application modular.
 
-### 2. Services (`internal/services`)
-Contains the business logic (Auth, User management, etc.). Services are singletons initialized at startup (`services.init.go`).
+### Usage
+Implement the `RouterCore` method in your controller:
 
-### 3. Models (`internal/models`)
-*   **Store:** Database entities (GORM models).
-*   **Config:** Configuration structs.
+```go
+type MyCtrl struct{}
 
-### 4. Infrastructure (`internal/infra`)
-Low-level components like Database connections (`store`) and Logging (`logger`).
+// Register routes
+func (c *MyCtrl) RouterCore(r *gin.Engine) {
+    r.GET("/api/my-endpoint", c.MyHandler)
+}
 
-## Key Patterns
-*   **Plugin Router:** Routes are registered via plugins, keeping `main.go` clean.
-*   **Hooks:** Event-driven architecture for decoupling components.
+func (c *MyCtrl) MyHandler(ctx *gin.Context) {
+    ctx.JSON(200, gin.H{"status": "ok"})
+}
+```
+
+The system automatically detects this method and registers the routes at startup.

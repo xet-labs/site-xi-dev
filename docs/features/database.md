@@ -1,19 +1,15 @@
-# Database & Store
+# Database
 
-The application uses **GORM** for ORM capabilities, supporting distinct profiles for modular database management.
+ORM layer powered by **GORM**, supporting MySQL, SQLite, and PostgreSQL.
 
-## Features
-*   **Multi-Database Support:** Configure SQLite, MySQL, or PostgreSQL via config.
-*   **Auto-Migration:** Automatically syncs Go structs in `internal/models/store` with the database schema on startup.
-*   **Connection Pooling:** Configurable pool settings for high performance.
+## Core Features
+*   **Auto-Migration:** Syncs registered Go models (`internal/models/store`) with DB schema on startup.
+*   **Connection Pooling:** Configurable idle/max connections.
+*   **Profile Support:** Switch DB drivers via config.
 
 ## Usage
-Access the database instance via the global `Store` service:
-
 ```go
 import "xi/internal/infra/store"
 
-// Run a query
-var users []User
-store.Db.Cli().Find(&users)
+store.Db.Cli().Model(&User{}).First(&user)
 ```

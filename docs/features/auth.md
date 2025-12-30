@@ -1,24 +1,16 @@
 # Authentication
 
-XetIndustries uses a secure, stateless authentication system based on **JWT (JSON Web Tokens)**.
+Stateless authentication using **JWT (JSON Web Tokens)**.
 
-## Features
-*   **Stateless:** No server-side session storage required.
-*   **Dual Tokens:**
-    *   **Access Token:** Short-lived, used for API authorization. stored in memory/localStorage.
-    *   **Refresh Token:** Long-lived, used to obtain new access tokens. Stored in a secure, HTTP-only cookie.
-*   **Auto-Login:** Users are automatically logged in upon signup.
-*   **Security:** Passwords are hashed using `bcrypt` before storage.
+## Mechanism
+*   **Access Token:** Short-lived, stored in client memory/localStorage. Used for API access.
+*   **Refresh Token:** Long-lived, stored in HTTP-only Secure cookie. Used to rotate Access tokens.
+*   **Auto-Login:** Signup endpoint returns tokens immediately, logging the user in.
 
-## Usage
-*   **Signup:** `POST /api/auth/signup` - Creates a user and returns tokens.
-*   **Login:** `POST /api/auth/login` - Authenticates credentials and returns tokens.
-*   **Refresh:** `POST /api/auth/refresh` - Uses the cookie to get a new access token.
+## Endpoints
+*   `POST /api/auth/signup`: Create user, return tokens.
+*   `POST /api/auth/login`: Validate credentials, return tokens.
+*   `POST /api/auth/refresh`: Rotate access token.
 
-## Configuration
-Configure JWT secret and expiry in `config/config.json`:
-```json
-"auth": {
-  "jwt_secret": "your-secret-key"
-}
-```
+## Config
+Set `jwt_secret` in `config.json`.

@@ -1,24 +1,24 @@
 package config
 
 type StoreConf struct {
-	Db  DbStore  `json:"db,omitempty"`
-	Rdb RdbStore `json:"rdb,omitempty"`
+	Db  DbStore  `json:"db"`
+	Rdb RdbStore `json:"rdb"`
 }
 
 type DbStore struct {
-	Enable         bool                   `json:"enable,omitempty"`
+	Enable         bool                   `json:"enable"`
 	DefaultProfile string                 `json:"default_profile,omitempty"`
 	Conn           map[string]ConnProfile `json:"conn,omitempty"`
 }
 type RdbStore struct {
-	Enable         bool                   `json:"enable,omitempty"`
+	Enable         bool                   `json:"enable"`
 	DefaultProfile string                 `json:"default_profile,omitempty"`
-	Prefix         string                 `json:"prefix,omitempty"`
 	Conn           map[string]ConnProfile `json:"conn,omitempty"`
+	Prefix         string                 `json:"prefix,omitempty"`
 }
 
 type ConnProfile struct {
-	Enable        bool   `json:"enable,omitempty"`
+	Enable        bool   `json:"enable"`
 	Db            string `json:"db,omitempty"`
 	Rdb           int    `json:"rdb,omitempty"`
 	User          string `json:"user,omitempty"`

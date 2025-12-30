@@ -1,38 +1,29 @@
 # Hooks System
 
-The Hooks system (`pkg/hook`) provides a flexible, event-driven architecture allowing disparate parts of the application to interact without tight coupling.
+An event-driven notification system (`pkg/hook`) to decouple modules.
 
-## Overview
-Hooks allow you to register functions to be executed at specific lifecycles or events. Each hook can have **Pre**, **Core**, and **Post** execution phases.
+## Architecture
+Hooks manage lists of functions (Listeners) to run at specific points (Pre, Core, Post).
 
-## Structure
-*   **Path:** `pkg/hook`
-*   **Types:**
-    *   `HookFn`: The function signature for a hook.
-    *   `Hook`: The main struct managing lists of Pre/Core/Post functions.
+*   **Type:** `HookFn func(args ...any) (any, error)`
+*   **Safety:** Executed with panic recovery.
 
 ## Usage
 
-### defining a Hook
+**Define:**
 ```go
-// Create a hook
-myHook := hook.NewHook(nil, nil, nil)
+MyHook := hook.NewHook(nil, nil, nil)
 ```
 
-### Registering Listeners
+**Register:**
 ```go
-myHook.AddPre(func(args ...any) (any, error) {
-    fmt.Println("Before event...")
+MyHook.AddPre(func(args ...any) (any, error) {
+    // Logic here
     return nil, nil
 })
 ```
 
-### Executing
+**Trigger:**
 ```go
-// Run all 'Pre' hooks
-myHook.RunPre(someArgs)
+MyHook.RunPre(context)
 ```
-
-## Key Benefits
-*   **Decoupling:** Modules can extend functionality (e.g., a Plugin registering a route) without modifying the core bootstrap logic.
-*   **Safety:** Hooks run with panic recovery to prevent crashing the main application loop.
