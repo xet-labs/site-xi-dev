@@ -79,6 +79,7 @@ func (b *BlogApiCtrl) IndexCore(blogs *[]model_store.Blog, offset, limit int) er
 	}
 
 	return db.Preload("User").
+		Select("id", "uid", "status", "tags", "title", "short_title", "description", "featured_img", "slug", "path", "created_at", "updated_at").
 		Where("status IN ?", []string{"published", "published_hidden"}).
 		Order("updated_at DESC").
 		Offset(offset).

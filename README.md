@@ -1,9 +1,31 @@
-# XetIndustries
-A high-performance, modular web application to **Bootstrap new web projects**.
+<p align="center" style="margin: 0;">
+  <a href="#" style="margin: 0;">
+    <picture>
+      <!-- Dark mode -->
+      <source
+        srcset="public/res/static/org/logo-wordmark-white.svg"
+        media="(prefers-color-scheme: dark)"
+      >
+      <!-- Light mode -->
+      <source
+        srcset="public/res/static/org/logo-wordmark-black.svg"
+        media="(prefers-color-scheme: light)"
+      >
+      <!-- Fallback -->
+      <img
+        src="public/res/static/org/logo-wordmark-black.svg"
+        width="360"
+        height="100"
+      >
+    </picture>
+  </a>
+</p>
+
+<p align="center" style="margin-top: 0;"> A high-performance, modular web application to Bootstrap new web projects.</p>
 
 ---
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
 *   [Go](https://go.dev/dl/) 1.20+
@@ -28,7 +50,7 @@ A high-performance, modular web application to **Bootstrap new web projects**.
 
 ---
 
-## 🛠 Features
+## Features
 
 *   [**Hooks System:**](docs/features/hooks.md) **(Core)** Event-driven architecture. Decouples modules by allowing them to register listeners (`pkg/hook`).
 *   [**Plugin-based Routes:**](docs/features/architecture.md) Controllers register their own routes via interfaces, keeping the main entry point clean.
@@ -42,7 +64,7 @@ See [docs/](docs/) for details.
 
 ---
 
-## 📂 Directory Structure
+## Directory Structure
 
 ```graphql
 .
@@ -66,7 +88,7 @@ See [docs/](docs/) for details.
 
 ---
 
-## ⚙️ Key Technologies
+## Key Technologies
 
 *   **Framework:** [Gin](https://github.com/gin-gonic/gin)
 *   **Database:** [GORM](https://gorm.io/)

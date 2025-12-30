@@ -18,13 +18,13 @@ document.querySelectorAll(".pw-toggle").forEach(btn => {
   btn.onclick = function () {
     const wrapper = this.closest(".input-field");
     const input = wrapper.querySelector(".pw-input");
-
     const isHidden = input.type === "password";
 
     input.type = isHidden ? "text" : "password";
 
     // Toggle active state to switch icons
     this.classList.toggle("active", isHidden);
+    this.title = isHidden ? "Hide password" : "Show password";
   };
 });
 
@@ -44,17 +44,36 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Nav hide|reveal on scroll
   let lastScrollTop = 0;
+  let ticking = false;
   const header = document.querySelector('header');
   const headerHeight = header.offsetHeight;
+  const scrollDelta = 5;
 
   window.addEventListener('scroll', function () {
-    const currentScroll = window.pageYOffset || document.documentElement.scrollTop;
+    if (!ticking) {
+      window.requestAnimationFrame(function () {
+        const currentScroll = window.pageYOffset || document.documentElement.scrollTop;
 
-    if (currentScroll > lastScrollTop) {
-      header.style.top = `-${headerHeight}px`;
-    } else { header.style.top = '0'; }
+        // Ignore small scroll changes (jitter)
+        if (Math.abs(currentScroll - lastScrollTop) <= scrollDelta) {
+          ticking = false;
+          return;
+        }
 
-    lastScrollTop = currentScroll <= 0 ? 0 : currentScroll;
+        // Down scroll & past header -> hide
+        if (currentScroll > lastScrollTop && currentScroll > headerHeight) {
+          header.style.top = `-${headerHeight}px`;
+        } else {
+          // Up scroll or at top -> show
+          header.style.top = '0';
+        }
+
+        lastScrollTop = currentScroll <= 0 ? 0 : currentScroll;
+        ticking = false;
+      });
+
+      ticking = true;
+    }
   });
 
   // === Fix modal flicker for login/signup switch ===
