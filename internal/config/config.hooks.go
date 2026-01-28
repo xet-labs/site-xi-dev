@@ -5,6 +5,6 @@ import (
 	"xi/pkg/hook"
 )
 
-var PostHooks = []hook.HookFn{
+var PostHooks = []hook.NoArgFn[map[string]any]{
 	confHook.ViewPagesSetup,
 }

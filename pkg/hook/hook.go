@@ -7,95 +7,168 @@ import (
 	"sort"
 )
 
-type (
-	HookFn   func(args ...any) (any, error)
-	HookPre  HookFn
-	HookCore HookFn
-	HookPost HookFn
-)
+// Hook function signature
+type ArgFn[T, R any] func(T) (R, error)
 
-type NamedHook struct {
-	Name string
-	Fn   HookFn
+// NoArgHook Hook container, takes no args
+type NoArgFn[R any] func() (R, error)
+
+// EffectHook Hook container, no return value
+type EffectFn[T any] func(T) error
+
+// Internal representation
+type NamedHook[T, R any] struct {
+	Name     string
+	Priority int
+	Fn       ArgFn[T, R]
 }
 
-type Hook struct {
-	Pre  []NamedHook
-	Core []NamedHook
-	Post []NamedHook
-
-	PreCheck  func(obj any) (HookFn, bool)
-	CoreCheck func(obj any) (HookFn, bool)
-	PostCheck func(obj any) (HookFn, bool)
+// Hook container
+type Hook[T, R any] struct {
+	hooks []NamedHook[T, R]
 }
 
-// Factory for a Hook configured with interface signatures
-func NewHook(
-	preCheck func(obj any) (HookFn, bool),
-	coreCheck func(obj any) (HookFn, bool),
-	postCheck func(obj any) (HookFn, bool),
-) *Hook {
-	return &Hook{
-		PreCheck:  preCheck,
-		CoreCheck: coreCheck,
-		PostCheck: postCheck,
+// NoArgHook Hook container, takes no args
+type NoArgHook[R any] struct {
+	*Hook[struct{}, R]
+}
+
+// EffectHook Hook container, no return value
+type EffectHook[T any] struct {
+	*Hook[T, struct{}]
+}
+
+// Constructor
+func New[T, R any]() *Hook[T, R] {
+	return &Hook[T, R]{}
+}
+func NewNoArg[R any]() *NoArgHook[R] {
+	return &NoArgHook[R]{
+		Hook: New[struct{}, R](),
 	}
 }
+func NewEffectHook[T any]() *EffectHook[T] {
+	return &EffectHook[T]{Hook: New[T, struct{}]()}
+}
 
-func FnName(fn any) string { return runtime.FuncForPC(reflect.ValueOf(fn).Pointer()).Name() }
+// Add hooks
 
-// Standard Add methods
-func (h *Hook) AddPre(fns ...HookFn) {
+// Add registers a hook using the function name and default priority (0)
+func (h *Hook[T, R]) Add(fns ...ArgFn[T, R]) {
 	for _, fn := range fns {
-		h.Pre = append(h.Pre, NamedHook{"pre:" + FnName(fn), fn})
+		h.hooks = append(h.hooks, NamedHook[T, R]{
+			Name:     FnName(fn),
+			Priority: 0,
+			Fn:       fn,
+		})
 	}
 }
-func (h *Hook) AddCore(fns ...HookFn) {
+
+// AddNamed registers a hook with an explicit name
+func (h *Hook[T, R]) AddNamed(name string, fn ArgFn[T, R]) {
+	h.hooks = append(h.hooks, NamedHook[T, R]{
+		Name:     name,
+		Priority: 0,
+		Fn:       fn,
+	})
+}
+
+// AddWithPriority registers a hook with explicit name and priority
+func (h *Hook[T, R]) AddWithPriority(name string, priority int, fn ArgFn[T, R]) {
+	h.hooks = append(h.hooks, NamedHook[T, R]{
+		Name:     name,
+		Priority: priority,
+		Fn:       fn,
+	})
+}
+
+// Add no arg hook
+func (h *NoArgHook[R]) Add(fns ...NoArgFn[R]) {
 	for _, fn := range fns {
-		h.Core = append(h.Core, NamedHook{"core:" + FnName(fn), fn})
+		h.Hook.Add(func(_ struct{}) (R, error) {
+			return fn()
+		})
 	}
 }
-func (h *Hook) AddPost(fns ...HookFn) {
+
+func (h *NoArgHook[R]) AddNamed(name string, fn NoArgFn[R]) {
+	h.Hook.AddNamed(name, func(_ struct{}) (R, error) {
+		return fn()
+	})
+}
+
+func (h *NoArgHook[R]) AddWithPriority(name string, priority int, fn NoArgFn[R]) {
+	wrapped := func(_ struct{}) (R, error) {
+		return fn()
+	}
+	h.Hook.AddWithPriority(name, priority, wrapped)
+}
+
+// Add effect hook
+func (h *EffectHook[T]) Add(fns ...EffectFn[T]) {
 	for _, fn := range fns {
-		h.Post = append(h.Post, NamedHook{"post:" + FnName(fn), fn})
+		h.Hook.Add(func(t T) (struct{}, error) {
+			return struct{}{}, fn(t)
+		})
 	}
 }
 
-func (h *Hook) RunPre(args ...any) ([]any, []error)  { return runHooks(h.Pre, args...) }
-func (h *Hook) RunCore(args ...any) ([]any, []error) { return runHooks(h.Core, args...) }
-func (h *Hook) RunPost(args ...any) ([]any, []error) { return runHooks(h.Post, args...) }
-
-func (h *Hook) Add(fn HookPre) {
-	h.Pre = append(h.Pre, NamedHook{"func_" + FnName(fn), HookFn(fn)})
+func (h *EffectHook[T]) AddNamed(name string, fn EffectFn[T]) {
+	h.Hook.AddNamed(name, func(t T) (struct{}, error) {
+		return struct{}{}, fn(t)
+	})
 }
 
-func runHooks(hooks []NamedHook, args ...any) ([]any, []error) {
-	sort.SliceStable(hooks, func(i, j int) bool {
-		return hooks[i].Name < hooks[j].Name
+func (h *EffectHook[T]) AddWithPriority(name string, priority int, fn EffectFn[T]) {
+	wrapped := func(t T) (struct{}, error) {
+		return struct{}{}, fn(t)
+	}
+	h.Hook.AddWithPriority(name, priority, wrapped)
+}
+
+// Execute hooks
+func (h *Hook[T, R]) Run(arg T) ([]R, []error) {
+	// stable sort: lower priority runs first
+	sort.SliceStable(h.hooks, func(i, j int) bool {
+		if h.hooks[i].Priority == h.hooks[j].Priority {
+			return h.hooks[i].Name < h.hooks[j].Name
+		}
+		return h.hooks[i].Priority < h.hooks[j].Priority
 	})
 
 	var (
-		results []any
+		results []R
 		errs    []error
 	)
 
-	for _, hook := range hooks {
+	for _, hook := range h.hooks {
 		func() {
 			defer func() {
 				if r := recover(); r != nil {
-					errs = append(errs, fmt.Errorf("panic in hook:%s: %v", hook.Name, r))
+					errs = append(errs,
+						fmt.Errorf("hook '%s' panicked: %v", hook.Name, r),
+					)
 				}
 			}()
 
-			res, err := hook.Fn(args...)
+			res, err := hook.Fn(arg)
 			if err != nil {
-				errs = append(errs, fmt.Errorf("hook:%s failed: %w", hook.Name, err))
+				errs = append(errs,
+					fmt.Errorf("hook '%s' failed: %w", hook.Name, err),
+				)
 				return
 			}
-			if res != nil {
-				results = append(results, res)
-			}
+
+			results = append(results, res)
 		}()
 	}
+
 	return results, errs
+}
+
+// Utilities
+func FnName(fn any) string {
+	return runtime.FuncForPC(
+		reflect.ValueOf(fn).Pointer(),
+	).Name()
 }

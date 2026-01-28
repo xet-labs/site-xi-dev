@@ -1,11 +1,11 @@
-package ctrl
+package blog
 
 import (
 	"sync"
 	"time"
 
 	"xi/internal/config/cfg"
-	"xi/internal/handlers/http/ctrl/blog"
+	"xi/internal/handlers/http/router"
 	"xi/internal/infra/store"
 	model_config "xi/internal/models/config"
 	model_ctrlBlog "xi/internal/models/transport/http/blog"
@@ -15,16 +15,27 @@ import (
 )
 
 type BlogCtrl struct {
-	Http *blog.BlogHttpCtrl
-	Api  *blog.BlogApiCtrl
+	Http *BlogHttpCtrl
+	Api  *BlogApiCtrl
 
 	mu sync.RWMutex
 }
 
-var Blog = &BlogCtrl{
-	Http: blog.BlogHttp,
-	Api:  blog.BlogApi,
+var Blogs *BlogCtrl = &BlogCtrl{
+    Http: BlogHttp,
+    Api:  BlogApi,
 }
+
+var (
+	Blog = &BlogCtrl{
+		Http: BlogHttp,
+		Api:  BlogApi,
+	}
+
+	// compile-time assertion
+	_ router.CoreRouter   = (*BlogCtrl)(nil)
+	_ router.CoreSitemap  = (*BlogCtrl)(nil)
+)
 
 // Blog Routes
 func (b *BlogCtrl) RouterCore(r *gin.Engine) {
@@ -47,7 +58,7 @@ func (b *BlogCtrl) RouterCore(r *gin.Engine) {
 }
 
 // Blog Sitemap
-func (b *BlogCtrl) SitemapCore(c *gin.Context) (any, error) {
+func (b *BlogCtrl) SitemapCore(c *gin.Context) ([]model_config.MetaSitemap, error) {
 	rdbKey := c.Request.URL.Path + ".blog"
 	urls := []model_config.MetaSitemap{}
 

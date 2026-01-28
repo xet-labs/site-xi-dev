@@ -5,9 +5,9 @@ import (
 	"net/http"
 	"strings"
 
+	"xi/internal/handlers/http/apperr"
 	"xi/internal/infra/store"
 	model_store "xi/internal/models/store"
-	"xi/internal/services/handler"
 	"xi/pkg/util"
 
 	"github.com/gin-gonic/gin"
@@ -64,7 +64,7 @@ func (a *AuthApi) Signup(c *gin.Context) {
 				return
 			}
 		}
-		handler.Err.Handle(c, err, true)
+		apperr.Err.Handle(c, err, true)
 		return
 	}
 

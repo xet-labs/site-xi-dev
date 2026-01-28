@@ -4,12 +4,13 @@ import (
 	"errors"
 	"maps"
 
-	"github.com/rs/zerolog/log"
 	"xi/internal/config/cfg"
+
+	"github.com/rs/zerolog/log"
 )
 
 // In your ConfLib initialization:
-func ViewPagesSetup(args ...any) (any, error) {
+func ViewPagesSetup() (map[string]any, error) {
 
 	// Fetch defaults and pages
 	pageDefault := cfg.RGet("web.default").(map[string]any)

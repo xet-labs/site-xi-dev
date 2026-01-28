@@ -54,11 +54,11 @@
 
 *   [**Hooks System:**](docs/features/hooks.md) **(Core)** Event-driven architecture. Decouples modules by allowing them to register listeners (`pkg/hook`).
 *   [**Plugin-based Routes:**](docs/features/architecture.md) Controllers register their own routes via interfaces, keeping the main entry point clean.
-*   [**SEO & Sitemaps:**](docs/features/seo.md) Dynamic, hook-based sitemap generation. Modules auto-register their URLs.
+*   [**SEO & Sitemaps:**](docs/features/seo.md) Dynamic, hook-based sitemap generation. Modules register their URLs.
 *   [**Authentication:**](docs/features/auth.md) Stateless JWT auth with persistent sessions and auto-login.
 *   [**Configuration:**](docs/features/config.md) Hot-reloadable; supports JSON configuration with environment variable injection, fallbacks, and `.env` files.
 *   [**Database:**](docs/features/database.md) GORM-backed (MySQL/SQLite) with auto-migrations.
-*   **Asset Management:** Automated minification/serving.
+*   **Asset Management:** CSS, HTML minification/serving to save on bandwidth.
 
 See [docs/](docs/) for details.
 
@@ -74,15 +74,13 @@ See [docs/](docs/) for details.
 ├── internal            # Private app code
 │   ├── app             # Core components
 │   ├── config          # Config logic
-│   ├── handlers        # HTTP Controllers
+│   ├── constraints     # Validation rules and constraints
+│   ├── handlers        # HTTP Controllers, error handlers, etc.
 │   ├── infra           # Low-level infra (Logger, Store)
 │   ├── models          # Data/Config structs
 │   └── services        # Business logic
 ├── pkg                 # Shared libraries
-│   ├── hook            # Hook system
-│   ├── lib             # Core libs
-│   └── util            # Utilities
-├── public              # Static assets
+├── public              # Publicly accessible static assets
 └── ui                  # Frontend templates
 ```
 
@@ -98,8 +96,8 @@ See [docs/](docs/) for details.
 
 ---
 
-<a href="https://buymeacoffee.com/rishikeshprasad" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" ></a>
+<p align="center"> <a href="https://buymeacoffee.com/rishikeshprasad" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" ></a> </p>
 
-If this project saved you time or helped you learn, consider supporting the development! ☕
+<p align="center"> If this project saved you time or helped you learn, consider supporting the development! ☕ </p>
 
-Licensed under the [Apache License](LICENSE).
+<p align="center"> Licensed under the <a href="?tab=License-1-ov-file"> Apache License </a>. </p>

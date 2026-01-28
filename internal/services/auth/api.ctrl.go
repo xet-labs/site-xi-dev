@@ -1,10 +1,19 @@
 package auth
 
-import "github.com/gin-gonic/gin"
+import (
+	"xi/internal/handlers/http/router"
+
+	"github.com/gin-gonic/gin"
+)
 
 type AuthApi struct{}
 
-var Api = &AuthApi{}
+var (
+	Api = &AuthApi{}
+
+	// compile-time assertion
+	_ router.CoreRouter   = (*AuthApi)(nil)
+)
 
 func (a *AuthApi) RouterCore(r *gin.Engine) {
 	authApi := r.Group("/api/auth")

@@ -4,7 +4,7 @@ import (
 	"errors"
 	"sync"
 	"xi/internal/config/cfg"
-	"xi/internal/services/handler"
+	"xi/internal/handlers/http/apperr"
 
 	"gorm.io/gorm"
 )
@@ -58,7 +58,7 @@ func (d *DbStore) Cli(cliProfiles ...string) *gorm.DB {
 		if d.cli != nil {
 			return d.cli
 		}
-		return &gorm.DB{Error: handler.DbUnavailable.Err}
+		return &gorm.DB{Error: apperr.DbUnavailable.Err}
 	}
 
 	// Check profiles under a single read lock
@@ -77,5 +77,5 @@ func (d *DbStore) Cli(cliProfiles ...string) *gorm.DB {
 	}
 
 	// No DB found — return dummy
-	return &gorm.DB{Error: handler.DbUnavailable.Err}
+	return &gorm.DB{Error: apperr.DbUnavailable.Err}
 }

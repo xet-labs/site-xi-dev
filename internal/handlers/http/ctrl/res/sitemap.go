@@ -14,16 +14,14 @@ import (
 )
 
 type SitemapRes struct {
-	router.SitemapLib
+	*router.SitemapLib
 
 	mu   sync.RWMutex
 	once sync.Once
 }
 
 var Sitemap = &SitemapRes{
-	SitemapLib: router.SitemapLib{
-		Hooks: router.Sitemap.Hooks, // share the same hook instance from lib.route::Sitemap
-	},
+	SitemapLib: router.Sitemap, // share the SAME hook instances
 }
 
 func (s *SitemapRes) Index(c *gin.Context) {
@@ -37,26 +35,29 @@ func (s *SitemapRes) Index(c *gin.Context) {
 	}
 
 	var urls []model_config.MetaSitemap
+
 	// Run Pre Hooks
-	if _, errs := s.Hooks.RunPre(c); len(errs) > 0 {
+	if _, errs := s.HookPre.Run(c); len(errs) > 0 {
 		for _, e := range errs {
 			c.Error(e)
 		}
 	}
 
 	// Run Core Hooks
-	results, errs := s.Hooks.RunCore(c)
+	// Core hooks are expected to APPEND to `urls`
+	results, errs := s.HookCore.Run(c)
 	for _, e := range errs {
 		c.Error(e)
 	}
 	for _, r := range results {
-		if u, ok := r.([]model_config.MetaSitemap); ok {
-			urls = append(urls, u...)
-		}
+		urls = append(urls, r...)
 	}
 
 	// Run Post Hooks
-	if _, errs := s.Hooks.RunPost(c, urls); len(errs) > 0 {
+	if _, errs := s.HookPost.Run(router.SitemapPostArgs{
+		Ctx:  c,
+		URLs: urls,
+	}); len(errs) > 0 {
 		for _, e := range errs {
 			c.Error(e)
 		}
@@ -71,6 +72,6 @@ func (s *SitemapRes) Index(c *gin.Context) {
 	// Response
 	c.XML(http.StatusOK, sitemapObj)
 
-	// Cache
+	// Cache async
 	go func() { store.Rdb.SetJson(rdbKey, sitemapObj, 15*time.Minute) }()
 }

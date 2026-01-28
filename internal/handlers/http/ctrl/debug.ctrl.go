@@ -5,13 +5,19 @@ import (
 	"sort"
 	"xi/internal/config"
 	"xi/internal/config/cfg"
+	"xi/internal/handlers/http/router"
 
 	"github.com/gin-gonic/gin"
 )
 
 type DebugCtrl struct{}
 
-var Debug = &DebugCtrl{}
+var (
+	Debug = &DebugCtrl{}
+
+	// compile-time assertion
+	_ router.CoreRouter   = (*DebugCtrl)(nil)
+)
 
 func (d *DebugCtrl) RouterCore(r *gin.Engine) {
 	if cfg.App.Mode != "test" {

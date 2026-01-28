@@ -1,27 +1,25 @@
 package ctrl
 
 import (
+	"xi/internal/handlers/http/ctrl/blog"
+	"xi/internal/handlers/http/ctrl/res"
 	"xi/internal/services"
 )
 
 type (
-	CtrlPkg struct {
-		Blog *BlogCtrl
-	}
+	CtrlPkg struct{}
 )
 
-var Ctrl = &CtrlPkg{
-	Blog: Blog,
-}
+var Ctrl = &CtrlPkg{}
 
 // Add controller's global instance to register its routes,
 // Global instance must have methods 'RouterPre', 'RouterCore', 'RouterPost'
 var Controllers = []any{
-	Blog,
+	blog.Blog,
 	Custom,
 
 	services.Auth.Api,
-	Res,
+	res.Res,
 	Managed,
 	Debug,
 }
