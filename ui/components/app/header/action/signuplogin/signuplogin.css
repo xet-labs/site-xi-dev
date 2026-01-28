@@ -23,20 +23,23 @@ header .signuplogin-wrap {
     max-height: min(var(--signuplogin-y-max, 90vh), 100vh);
     left: 50%;
     top: 50%;
-    transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%) scale(.975);
 
     background: var(--signuplogin-bg, var(--bg));
     border: 1px solid var(--header-signuplogin-brdr-colr, var(--colr-outln, transparent));
     border-radius: var(--radius-xxl);
-    transition: .08s ease;
+    transition:
+        transform .06s ease-in;
 }
 
 body:has(#id-login-btn:checked, #id-signup-btn:checked) .signuplogin-widget,
 .signuplogin-widget.active {
     opacity: 1;
-    pointer-events: initial;
-    transform: translate(-50%, -50%);
-    transition: .06s ease;
+    pointer-events: auto;
+    transform: translate(-50%, -50%) scale(1);
+    transition:
+        opacity .06s ease-out,
+        transform .06s ease-out;
 }
 
 .signuplogin {

@@ -3,6 +3,7 @@ package services
 import (
 	"xi/internal/config"
 	"xi/internal/infra/logger"
+	"xi/internal/infra/store"
 )
 
 // Init Core Libs
@@ -12,7 +13,7 @@ func InitPre() {
 	config.Config.Init()
 }
 func InitCore() {
-	Store.Init()
+	store.Store.Init()
 }
 func InitPost() {
 }

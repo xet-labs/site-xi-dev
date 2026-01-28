@@ -33,17 +33,19 @@ type ConfigService struct {
 	LoadDefaults *bool
 	Initialized  bool
 
-	Hooks *hook.Hook
-	Raw   *koanf.Koanf
-	watch *fsnotify.Watcher
-	mu    sync.RWMutex
-	once  sync.Once
+	HookPre  *hook.Hook[struct{}, struct{}]
+	HookPost *hook.NoArgHook[map[string]any]
+	Raw      *koanf.Koanf
+	watch    *fsnotify.Watcher
+	mu       sync.RWMutex
+	once     sync.Once
 }
 
 var (
 	Config = &ConfigService{
 		DirDefault: []string{"data/default/config", "config"},
-		Hooks:      &hook.Hook{},
+		HookPre:    hook.New[struct{}, struct{}](),
+		HookPost:   hook.NewNoArg[map[string]any](),
 	}
 
 	reJsonEnv         = regexp.MustCompile(`\$\{([A-Z0-9_]+)(:-([^}]*))?\}`)
@@ -58,7 +60,7 @@ func (c *ConfigService) Init(filePath ...string) {
 	c.once.Do(func() {
 		env.Init()
 
-		c.Hooks.AddPost(PostHooks...)
+		c.HookPost.Add(PostHooks...)
 		c.LoadConfigsPath()
 		c.InitCore(filePath...)
 
@@ -73,7 +75,7 @@ func (c *ConfigService) InitCore(files ...string) error {
 	c.mu.Lock()
 	defer c.mu.Unlock()
 
-	c.Hooks.RunPre()
+	c.HookPre.Run(struct{}{})
 
 	if len(files) > 0 {
 		c.Files = files
@@ -207,14 +209,12 @@ func (c *ConfigService) LoadConfigsPath() {
 // Process and store Config globally
 func (c *ConfigService) PostProcess() {
 	// Process PostHooks and their data
-	rawDat, errs := c.Hooks.RunPost()
+	rawDat, errs := c.HookPost.Run(struct{}{})
 	for _, e := range errs {
 		c.Error(e)
 	}
 	for _, r := range rawDat {
-		if rawConf, ok := r.(map[string]any); ok {
-			c.MergeConf(&rawConf)
-		}
+		c.MergeConf(&r)
 	}
 
 	// Generate Global Config

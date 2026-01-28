@@ -21,7 +21,7 @@ func (s *StoreService) Init() { s.once.Do(s.InitCore) }
 // Initializes all DBs and Redis clients (forced)
 func (s *StoreService) InitCore() {
 	config.Config.Init()
-	s.Hooks.RunPre()
+	s.HookPre.Run(struct{}{})
 
 	// --- Initialize SQL DBs ---
 	if cfg.Store.Db.Enable {
@@ -93,6 +93,4 @@ func (s *StoreService) InitCore() {
 		}
 	}
 
-	s.Hooks.RunCore()
-	s.Hooks.RunPost()
 }

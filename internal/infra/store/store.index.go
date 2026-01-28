@@ -9,8 +9,8 @@ import (
 
 type (
 	StoreService struct {
-		Hooks *hook.Hook
-		once  sync.Once
+		HookPre *hook.Hook[struct{}, struct{}]
+		once    sync.Once
 	}
 
 	DbStore  = db.DbStore
@@ -19,7 +19,7 @@ type (
 
 var (
 	Store = &StoreService{
-		Hooks: &hook.Hook{},
+		HookPre: hook.New[struct{}, struct{}](),
 	}
 	Db  = db.Db
 	Rdb = rdb.Rdb

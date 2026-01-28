@@ -8,9 +8,9 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"xi/internal/config/cfg"
+	"xi/internal/handlers/http/apperr"
 	model_config "xi/internal/models/config"
 	model_store "xi/internal/models/store"
-	"xi/internal/services/handler"
 	"xi/internal/web"
 	"xi/pkg/util"
 )
@@ -33,7 +33,7 @@ func (b *BlogHttpCtrl) Show(c *gin.Context) {
 	rawID := c.Param("id")
 
 	if err := BlogApi.Validate(rawUID, rawID); err != nil {
-		handler.Err.Handle(c, err)
+		apperr.Err.Handle(c, err)
 		return
 	}
 
@@ -42,7 +42,7 @@ func (b *BlogHttpCtrl) Show(c *gin.Context) {
 	err := BlogApi.ShowCore(&blog, rawUID, rawID)
 	b.mu.Unlock()
 	if err != nil {
-		handler.Err.Handle(c, err)
+		apperr.Err.Handle(c, err)
 		return
 	}
 

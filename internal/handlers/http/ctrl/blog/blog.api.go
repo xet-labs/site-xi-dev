@@ -9,10 +9,10 @@ import (
 
 	"github.com/gin-gonic/gin"
 
+	"xi/internal/constraints"
+	"xi/internal/handlers/http/apperr"
 	"xi/internal/infra/store"
 	model_store "xi/internal/models/store"
-	"xi/internal/services/handler"
-	"xi/pkg/lib"
 )
 
 type BlogApiCtrl struct{}
@@ -46,7 +46,7 @@ func (b *BlogApiCtrl) Index(c *gin.Context) {
 	// Fetch from DB
 	offset := (pageNum - 1) * limitNum
 	if err := b.IndexCore(&blogs, offset, limitNum); err != nil {
-		handler.Err.Handle(c, err, true)
+		apperr.Err.Handle(c, err, true)
 		return
 	}
 
@@ -208,14 +208,14 @@ func ptrTime(t time.Time) *time.Time {
 
 func (b *BlogApiCtrl) Validate(rawUID, rawID string) error {
 	if strings.HasPrefix(rawUID, "@") {
-		if !lib.Validate.Uname(rawUID) {
-			return handler.InvalidUserName.Err
+		if !constraints.Uname(rawUID) {
+			return apperr.InvalidUserName.Err
 		}
-	} else if !lib.Validate.UID(rawUID) {
-		return handler.InvalidUID.Err
+	} else if !constraints.UID(rawUID) {
+		return apperr.InvalidUID.Err
 	}
-	if !lib.Validate.Slug(rawID) {
-		return handler.InvalidSlug.Err
+	if !constraints.Slug(rawID) {
+		return apperr.InvalidSlug.Err
 	}
 	return nil
 }

@@ -43,6 +43,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
   // Nav hide|reveal on scroll
+  // Nav hide|reveal on scroll
   let lastScrollTop = 0;
   let ticking = false;
   const header = document.querySelector('header');
@@ -75,6 +76,8 @@ document.addEventListener("DOMContentLoaded", () => {
       ticking = true;
     }
   });
+setupNavAutoHide();
+
 
   // === Fix modal flicker for login/signup switch ===
   const loginBtn = document.getElementById('id-login-btn');
