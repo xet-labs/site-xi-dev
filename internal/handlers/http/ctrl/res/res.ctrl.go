@@ -1,21 +1,24 @@
-// ctrl/res
-package ctrl
+package res
 
 import (
-	"xi/internal/handlers/http/ctrl/res"
+	"xi/internal/handlers/http/router"
 
 	"github.com/gin-gonic/gin"
 )
 
 type ResCtrl struct {
-	Css     *res.CssRes
-	Sitemap *res.SitemapRes
+	Css     *CssRes
+	Sitemap *SitemapRes
 }
 
-var Res = &ResCtrl{
-	Css:     res.Css,
-	Sitemap: res.Sitemap,
+var (
+	Res = &ResCtrl{
+	Css:     Css,
+	Sitemap: Sitemap,
 }
+	// compile-time assertion
+	_ router.CoreRouter   = (*ResCtrl)(nil)
+)
 
 func (rc *ResCtrl) RouterCore(r *gin.Engine) {
 	// css

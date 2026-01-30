@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"xi/internal/config/cfg"
+	"xi/internal/handlers/http/router"
 	"xi/internal/infra/store"
 	model_config "xi/internal/models/config"
 	"xi/internal/web"
@@ -19,7 +20,13 @@ type ManagedCtrl struct {
 	// once sync.Once
 }
 
-var Managed = &ManagedCtrl{}
+var (
+	Managed = &ManagedCtrl{}
+
+	// compile-time assertion
+	_ router.CoreRouter   = (*ManagedCtrl)(nil)
+	_ router.CoreSitemap  = (*ManagedCtrl)(nil)
+)
 
 // All cfg.Web.Pages[@].Route are added automatically for mode={"", "managed"}
 func (m *ManagedCtrl) RouterCore(r *gin.Engine) {
@@ -59,29 +66,9 @@ func (m *ManagedCtrl) RouterCore(r *gin.Engine) {
 	}
 
 }
-func routeMethodHead(c *gin.Context, p *model_config.WebPage) {
-
-	if len(p.Ctrl.Header) == 0 {
-		// Add default headers to the slice if empty
-		p.Ctrl.Header = append(
-			p.Ctrl.Header,
-			[]model_config.WebCtrlHeader{
-				{Key: "Location", Value: cfg.Org.URL},
-				{Key: "X-Endpoint-Status", Value: "Available"},
-			}...,
-		)
-	}
-	for _, header := range p.Ctrl.Header {
-		c.Header(header.Key, header.Value)
-	}
-	if p.Ctrl.StatusCode == 0 {
-		p.Ctrl.StatusCode = 200 // Default to 200 OK if not set
-	}
-	c.Status(p.Ctrl.StatusCode)
-}
 
 // Sitemap
-func (m *ManagedCtrl) SitemapCore(c *gin.Context) (any, error) {
+func (m *ManagedCtrl) SitemapCore(c *gin.Context) ([]model_config.MetaSitemap, error) {
 	rdbKey := c.Request.URL.Path + ".managed"
 	urls := []model_config.MetaSitemap{}
 
@@ -127,4 +114,27 @@ func (m *ManagedCtrl) SitemapCore(c *gin.Context) (any, error) {
 	// Cache
 	go func() { store.Rdb.SetJson(rdbKey, urls, 15*time.Minute) }()
 	return urls, nil
+}
+
+
+// helper
+func routeMethodHead(c *gin.Context, p *model_config.WebPage) {
+
+	if len(p.Ctrl.Header) == 0 {
+		// Add default headers to the slice if empty
+		p.Ctrl.Header = append(
+			p.Ctrl.Header,
+			[]model_config.WebCtrlHeader{
+				{Key: "Location", Value: cfg.Org.URL},
+				{Key: "X-Endpoint-Status", Value: "Available"},
+			}...,
+		)
+	}
+	for _, header := range p.Ctrl.Header {
+		c.Header(header.Key, header.Value)
+	}
+	if p.Ctrl.StatusCode == 0 {
+		p.Ctrl.StatusCode = 200 // Default to 200 OK if not set
+	}
+	c.Status(p.Ctrl.StatusCode)
 }
