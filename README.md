@@ -68,20 +68,25 @@ See [docs/](docs/) for details.
 
 ```graphql
 .
-├── cmd                 # Entry points
-├── config              # Config files (JSON)
-├── docs                # Documentation
-├── internal            # Private app code
-│   ├── app             # Core components
-│   ├── config          # Config logic
-│   ├── constraints     # Validation rules and constraints
+├── cmd                 # entry points
+├── config              # config files (JSON)
+├── data                # app Data
+│   └── default         # default app data
+│       ├── config      # app config
+│       ├── infra       # infra related files (docker configs etc)
+│       └── seed        # seed data (databases etc)
+├── docs                # documentation
+├── internal            # private app code
+│   ├── app             # core components
+│   ├── config          # config logic
+│   ├── constraints     # validation rules and constraints
 │   ├── handlers        # HTTP Controllers, error handlers, etc.
-│   ├── infra           # Low-level infra (Logger, Store)
-│   ├── models          # Data/Config structs
-│   └── services        # Business logic
-├── pkg                 # Shared libraries
-├── public              # Publicly accessible static assets
-└── ui                  # Frontend templates
+│   ├── infra           # low-level infra (Logger, Store)
+│   ├── models          # data/Config structs
+│   └── services        # business logic
+├── pkg                 # shared libraries
+├── public              # publicly accessible static assets
+└── ui                  # frontend templates
 ```
 
 ---
