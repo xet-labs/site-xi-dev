@@ -9,10 +9,11 @@ COPY go.mod go.sum ./
 RUN go mod download
 
 # Copy the rest of your code
-COPY . .
+COPY ../../../. .
 
 # Build the Go binary
-RUN go build -o app .
+RUN "go build -o ./app -ldflags=\"-X 'xi/internal/config/cfg/static.BuildDate=$(date -u +%Y-%m-%dT%H:%M:%SZ )' -X 'xi/internal/config/cfg/static.BuildRevision=$(git rev-parse --short HEAD)' -X 'xi/internal/config/cfg/static.BuildMode=test' -X 'xi/internal/config/cfg/static.BuildVersion=$(git describe --tags --match 'v*.*.*' --abbrev=0 2>/dev/null || echo vx.x.x)'\" ./cmd/web"
+
 
 # Use a minimal image to run the binary
 FROM alpine:latest
