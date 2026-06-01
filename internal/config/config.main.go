@@ -64,7 +64,7 @@ func (c *ConfigService) Init(filePath ...string) {
 		c.LoadConfigsPath()
 		c.InitCore(filePath...)
 
-		if err := Config.Daemon(); err != nil {
+		if err := c.Daemon(); err != nil {
 			log.Warn().Caller().Err(err).Msgf("config Daemon: setup failed")
 		}
 	})

@@ -20,7 +20,7 @@ builds:
       - -X 'xi/internal/config/cfg/static.BuildRevision={{.ShortCommit}}'
       - -X 'xi/internal/config/cfg/static.BuildVersion={{ if index .Env "BuildVerPrepend" }}{{ .Env.BuildVerPrepend }}{{ else }}{{ .Branch }}{{ end }}-{{.Version}}'
       - -X 'xi/internal/config/cfg/static.BuildName={{ if index .Env "BuildName" }}{{ .Env.BuildName }}{{ else }}{{ .ProjectName  }}{{ end }}'
-      - -X 'xi/internal/config/cfg/static.BuildMode=release'
+      - -X 'xi/internal/config/cfg/static.BuildMode={{ if index .Env "BuildMode" }}{{ .Env.BuildMode }}{{ else }}release{{ end }}'
     goos:
       - linux
       # - darwin

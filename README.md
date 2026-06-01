@@ -3,17 +3,17 @@
     <picture>
       <!-- Dark mode -->
       <source
-        srcset="public/res/static/org/logo-wordmark-white.svg"
+        srcset="public/static/org/logo-wordmark-white.svg"
         media="(prefers-color-scheme: dark)"
       >
       <!-- Light mode -->
       <source
-        srcset="public/res/static/org/logo-wordmark-black.svg"
+        srcset="public/static/org/logo-wordmark-black.svg"
         media="(prefers-color-scheme: light)"
       >
       <!-- Fallback -->
       <img
-        src="public/res/static/org/logo-wordmark-black.svg"
+        src="public/static/org/logo-wordmark-black.svg"
         width="360"
         height="100"
       >

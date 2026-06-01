@@ -13,7 +13,7 @@ prefix = "air:"
 
 [watch]
 extensions = ["go", "tpl", "tmpl", "html", "toml", "yaml"]
-ignore = ["tmp", "vendor", "node_modules"]
+ignore = ["vendor", "node_modules"]
 
 [screen]
 clear_on_rebuild = true
