@@ -1,3 +1,10 @@
+public/**/*.js linguist-detectable=false
+public/**/*.css linguist-detectable=false
+public/**/*.html linguist-detectable=false
+public/** linguist-vendored
+#vendor/** linguist-vendored
+#ui/** linguist-documentation
+
 # Keep our version always during merges
 
 # Asset/config
