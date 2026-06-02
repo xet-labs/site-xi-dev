@@ -1,8 +1,8 @@
 #*.css linguist-detectable=false
 #*.js linguist-detectable=false
-public/res/** linguist-vendored
-public/lib/** linguist-vendored
-public/static/** linguist-vendored
+public/ linguist-documentation=true
+vendor/ linguist-vendored=true
+#ui/     linguist-documentation=true
 
 # Keep our version always during merges
 
